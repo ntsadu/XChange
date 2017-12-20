@@ -1,0 +1,113 @@
+<ng-sidebar-container style="height: 100vh !important;">
+  <ng-sidebar class="sidebar-style"
+    [(opened)]="_opened"
+    [mode]="_MODES[_modeNum]"
+    [keyClose]="_keyClose"
+    [position]="_POSITIONS[_positionNum]"
+    [dock]="_dock"
+    [dockedSize]="'50px'"
+    [autoCollapseHeight]="_autoCollapseHeight"
+    [autoCollapseWidth]="_autoCollapseWidth"
+    [closeOnClickOutside]="_closeOnClickOutside"
+    [closeOnClickBackdrop]="_closeOnClickBackdrop"
+    [showBackdrop]="_showBackdrop"
+    [animate]="_animate"
+    [trapFocus]="_trapFocus"
+    [autoFocus]="_autoFocus"
+    [sidebarClass]="'demo-sidebar'"
+    [ariaLabel]="'My sidebar'"
+    (onOpenStart)="_onOpenStart()"
+    (onOpened)="_onOpened()"
+    (onCloseStart)="_onCloseStart()"
+    (onClosed)="_onClosed()">
+
+    <div class="container sidebar-header">
+      <div class="row">
+        <div class="col-8 sidebar-title">
+          Menu
+        </div>
+        <div class="col-4" style="padding-right: 4px; padding-top: 4px;">
+          <button class="demo-control close" (click)="_toggleOpened()">
+            <i class="fa fa-times" style="color: black;"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <div class="container sidebar-options">
+      <div class="row">
+        <p class="sidebar-option">
+          <i class="fa fa-cog"></i>
+          <span class="format">Settings</span>
+        </p>
+      </div>
+      <div class="row">
+        <p class="sidebar-option">
+            <i class="fa fa-info-circle"></i>
+            <span class="format">Help</span>
+        </p>
+      </div>
+      <div class="row">
+        <p class="sidebar-option">
+            <i class="fa fa-sign-out"></i>
+            <span class="format" (click)="logout()">Logout</span>
+        </p>
+      </div>
+    </div>
+  </ng-sidebar>
+
+  <div ng-sidebar-content style="height: 100vh;">
+    <header class="demo-header" style="box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.14), 0 0px 5px 0 rgba(0, 0, 0, 0.12), 0 0px 8px 0px rgba(0, 0, 0, 0.2);">
+      <button (click)="_toggleOpened()" class="demo-header__toggle"></button>
+      <img src='../../assets/logos/ers-logo.svg' height="30" width="30" style="width: 60px; margin-left: 0%;">
+    </header>
+
+    <div class="dashboard-container">
+      <div class="container" style="height: 100%; width: 100%; max-width: 100%; padding-left: 0px; margin-left: 0px; padding-right: 0px;">
+          <div class="row dashboard-content" style="height: 100%; width: 100%;">
+              <div class="col-md-2 col-sm-4" style="padding-left: 0px; padding-right: 0px;     box-shadow: 0 6px 5px 0px rgba(0, 0, 0, 0.14), 0 3px 5px 2px rgba(0, 0, 0, 0.12), 0 5px 8px 1px rgba(0, 0, 0, 0.2);">
+                  <div class="dashboard-menu-panel">
+                    <div class="dashboard-header">
+                        <div class="input-group">
+                          <input style="height: 2.5rem;" type="text" class="form-control">
+                          <span class="input-group-addon" style="width: 40px; height: 2.65rem;">
+                              <i class="fa fa-search"></i>
+                          </span>
+                        </div>
+                    </div>
+                    <div class="list-group  dashboard-options">
+                          <a id="news" class="list-group-item list-group-item-action" (click)="switchPage($event)">News Feed</a>
+                          <a id="listings" class="list-group-item list-group-item-action" (click)="switchPage($event)">Equity Listings</a>
+                          <a id="watchlist" class="list-group-item list-group-item-action" (click)="switchPage($event)">My Watch List</a>
+                          <a id="subscriptions" class="list-group-item list-group-item-action" (click)="switchPage($event)">Subscriptions</a>
+                          <a id="search" class="list-group-item list-group-item-action" (click)="switchPage($event)">Search</a>
+                        <div class="panel-filler"></div>
+                    </div>
+                  </div>
+              </div>
+              <div class="col-md-10 col-sm-8" style="background-color: rgba(227, 228, 219, 0.23); padding-left: 8px; padding-right: 8px; padding-top: 8px;">
+                
+                  <div *ngIf="newsPage">
+                    <app-news></app-news>
+                  </div>
+                  <div *ngIf="listingsPage">
+                    <app-listings></app-listings>
+                  </div>
+                  <div *ngIf="watchlistPage">
+                    <app-watchlist></app-watchlist>
+                  </div>
+                  <div *ngIf="subscriptionsPage">
+                    <app-subscriptions></app-subscriptions>
+                  </div>
+                  <div *ngIf="searchPage">
+                    <app-search></app-search>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</ng-sidebar-container>
+
+
