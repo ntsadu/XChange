@@ -12,3 +12,10 @@ export const endpoints = {
     GetAllReimbursementStatus: "/GetAllReimbursementStatus",
     GetAllReimbursementTypes: "/GetAllReimbursementTypes"
 };
+
+export const xchange_endpoints = {
+    user: "/user",
+    usersubscriptions: "/usersubscriptions",
+    userfavorites: "/userfavorites",
+    company: "/company"
+}

@@ -16,6 +16,7 @@ import { appRoutes } from './app.routes';
 
 //Primary App Service/Controller Injectable.. 
 import { ERSController } from '../providers/ers-controller/ers-controller';
+import { XChangeController } from '../providers/ers-controller/xchange-controller';
 
 //Root Component
 import { AppComponent } from './app.component';
@@ -30,7 +31,6 @@ import { PendingRequestsPage } from '../pages/employee-page/pending-requests/pen
 import { PendingRequestsManagerPage } from '../pages/manager-page/pending-requests/pending-requests-manager';
 import { ProcessedRequestsPage } from '../pages/employee-page/processed-requests/processed-request';
 import { ProcessedRequestsManagerPage } from '../pages/manager-page/processed-requests/processed-requests-manager';
-
 
 //Third Party Modules To Enhance UI/UX
 import { SidebarModule } from 'ng-sidebar';
@@ -88,9 +88,7 @@ import { ListingsComponent } from './listings/listings.component';
     SidebarModule.forRoot(),
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [ERSController],
-  bootstrap: [
-    AppComponent
-  ]
+  providers: [ERSController, XChangeController],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
