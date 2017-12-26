@@ -18,7 +18,8 @@
                     hasIcon="true"
                     [options]="options"
                     [searchDelay]="0"
-                    (resultSelected)="alertSelected($event)"></sui-search>
+                    (resultSelected)="alertSelected($event)">
+            </sui-search>
         <!-- <div class="input-group">
                 <input style="height: 2.5rem;" type="text" class="form-control">
                 <span class="input-group-addon" style="width: 40px; height: 2.65rem;">
@@ -49,19 +50,28 @@
             </th>
         </tr>
     </thead>
-        <tbody>
-            <tr *ngFor="let c of companyList | paginate: { itemsPerPage: 15, currentPage: p }; let i = index;" style="background-color: rgba(255, 255, 255, 0.611764705882353);; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #c5bdbd; color: #5a5656; font-family: 'Arimo', sans-serif;">
-                <td style="width: 7%;">{{c.symbol}}</td>
-                <td style="width: 10%;">{{c.exchange}}</td>
-                <td style="width: 38%;">{{c.name}}</td>
-                <td style="width: 15%; padding-left: 2px;">{{c.sector}}</td>
-                <td style="width: 20%; padding-left: 2px;">{{c.industry}}</td>
-                <td style="width: 10%; padding-top: 10px; padding-left: 3.55%;">
-                    <button type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px;" (click)="openModal(c)">
-                        <i class="fa fa-arrows-alt"></i>
-                    </button>
-                </td>
-            </tr>
+        <tbody style="margin-right: -8px;">
+            <div *ngIf="loading">
+                <div class="ui segment" style="height: 63vh;">
+                    <div class="ui active inverted dimmer">
+                        <div class="ui text loader">Loading</div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="loading == false">
+                <tr *ngFor="let c of companyList | paginate: { itemsPerPage: 15, currentPage: p }; let i = index;" style="background-color: rgba(255, 255, 255, 0.611764705882353);; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #c5bdbd; color: #5a5656; font-family: 'Arimo', sans-serif; font-weight: 600;">
+                    <td style="width: 7%; padding-left: 20px;">{{c.symbol}}</td>
+                    <td style="width: 10%;">{{c.exchange}}</td>
+                    <td style="width: 38%;">{{c.name}}</td>
+                    <td style="width: 15%; padding-left: 3px;">{{c.sector}}</td>
+                    <td style="width: 20%; padding-left: 5px;">{{c.industry}}</td>
+                    <td style="width: 10%; padding-top: 10px; padding-left: 3.55%;">
+                        <button type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px;" (click)="openModal(c)">
+                            <i class="fa fa-arrows-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            </div>
         </tbody>
     <tfoot>
     <tr>

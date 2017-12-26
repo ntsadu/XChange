@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { XChangeController } from '../../providers/ers-controller/xchange-controller';
 import { Company } from '../../interfaces/xchange-interfaces/interfaces';
 import * as _ from 'lodash';
@@ -10,11 +10,12 @@ import * as _ from 'lodash';
 })
 export class ListingsComponent implements OnInit {
 
+  loading = true;
   tableHeader: string = "Equity Listings";
   options : string[] = [];
   companyList: Company[];
 
-  constructor(public xchangeApp : XChangeController) { 
+  constructor(public xchangeApp : XChangeController, public ngZone : NgZone) { 
     this.xchangeApp.httpService
     .GetAllCompanies()
     .subscribe(
@@ -28,6 +29,12 @@ export class ListingsComponent implements OnInit {
           });
 
           console.log(this.companyList);
+
+          if(!_.isNil(this.companyList)) {
+            this.ngZone.run(()=>{
+              this.loading = false;
+            });
+          }
       }, () => {console.log("ERROR: COULD NOT GET COMPANIES");}
     );
   }

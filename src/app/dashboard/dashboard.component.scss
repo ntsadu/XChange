@@ -389,6 +389,17 @@ app-dashboard{
         border-color: rgba(4, 224, 4, 0.94);
     }
 
+    .ui.inverted.segment, .ui.primary.inverted.segment {
+        background: #454648;
+        color: rgba(255,255,255,.9);
+    }
+
+    [data-tooltip]:after, [data-tooltip]:before {
+        pointer-events: none;
+        visibility: hidden;
+        display: none;
+    }
+
     .inner-view{
         box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14), 0 1px 7px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -1px rgba(0, 0, 0, 0.2);
         height: 90.7vh;
