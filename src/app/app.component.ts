@@ -18,9 +18,10 @@ export class AppComponent {
               public router: Router, 
               public snackBar: MatSnackBar){
 
-      this.xchangeApp.getAllUsers();
-      this.xchangeApp.getAllUserSubscriptions();
-      this.xchangeApp.getAllUserFavorites();
-      this.xchangeApp.getAllCompanies();
+      // this.xchangeApp.getAllUsers();
+      // this.xchangeApp.getAllUserSubscriptions();
+      // this.xchangeApp.getAllUserFavorites();
+      // this.xchangeApp.getAllCompanies();
+      
   }
 }

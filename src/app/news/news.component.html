@@ -2,4 +2,12 @@
 <p>
   news works!
 </p>
+
+
+ <sui-search placeholder="Example Search..."
+            hasIcon="true"
+            [options]="options"
+            [searchDelay]="0"
+            (resultSelected)="alertSelected($event)"></sui-search>
+
 </div>

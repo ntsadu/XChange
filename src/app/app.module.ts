@@ -14,9 +14,11 @@ import { RouterModule, Routes } from '@angular/router';
 //App Routes
 import { appRoutes } from './app.routes';
 
-//Primary App Service/Controller Injectable.. 
+//App Services.. 
 import { ERSController } from '../providers/ers-controller/ers-controller';
 import { XChangeController } from '../providers/ers-controller/xchange-controller';
+import { FetchingService } from '../providers/fetching.service';
+import { ParsingService } from '../providers/parsing.service';
 
 //Root Component
 import { AppComponent } from './app.component';
@@ -32,6 +34,12 @@ import { PendingRequestsManagerPage } from '../pages/manager-page/pending-reques
 import { ProcessedRequestsPage } from '../pages/employee-page/processed-requests/processed-request';
 import { ProcessedRequestsManagerPage } from '../pages/manager-page/processed-requests/processed-requests-manager';
 
+import { NewsComponent } from './news/news.component';
+import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
+import { SearchComponent } from './search/search.component';
+import { WatchlistComponent } from './watchlist/watchlist.component';
+import { ListingsComponent } from './listings/listings.component';
+
 //Third Party Modules To Enhance UI/UX
 import { SidebarModule } from 'ng-sidebar';
 import { DataTableModule } from "angular2-datatable";
@@ -45,11 +53,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DialogOverviewExampleDialog } from '../pages/manager-page/pending-requests/pending-requests-manager';
-import { NewsComponent } from './news/news.component';
-import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
-import { SearchComponent } from './search/search.component';
-import { WatchlistComponent } from './watchlist/watchlist.component';
-import { ListingsComponent } from './listings/listings.component';
+import { SuiModule } from 'ng2-semantic-ui';
 
 @NgModule({
   declarations: [
@@ -85,10 +89,16 @@ import { ListingsComponent } from './listings/listings.component';
     MatSelectModule,
     MatSnackBarModule,
     MatDialogModule,
+    SuiModule,
     SidebarModule.forRoot(),
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [ERSController, XChangeController],
+  providers: [
+    ERSController, 
+    XChangeController,
+    FetchingService,
+    ParsingService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,5 +1,75 @@
 <div class="inner-view">
-<p>
-  listings works!
-</p>
+
+  <div class="panel panel-default" style="height: calc(100% - 8px); border: 1px solid rgba(0, 0, 0, 0.16);">
+    <div class="panel-heading" style="height: 68px;"> <span style="letter-spacing: 2.5px;">{{tableHeader}}</span>
+        <a class="tooltipped" data-position="right" data-delay="20" materialize="tooltip" data-tooltip="This is a list of all reimbursement requests that are awaiting a decision" 
+            style="margin-top: -6px;
+                margin-left: 5px;
+                padding-left: 10px;
+                padding-right: 10px;
+                background-color: rgba(255, 255, 255, 0);">
+            <i class="fa fa-info-circle" 
+                style="margin-top: 1px;
+                    color: #777575;
+                    font-size: 1.82rem;">
+            </i>
+        </a>
+        <sui-search placeholder="Search Listings..."
+                    hasIcon="true"
+                    [options]="options"
+                    [searchDelay]="0"
+                    (resultSelected)="alertSelected($event)"></sui-search>
+        <!-- <div class="input-group">
+                <input style="height: 2.5rem;" type="text" class="form-control">
+                <span class="input-group-addon" style="width: 40px; height: 2.65rem;">
+                    <i class="fa fa-search"></i>
+                </span>
+        </div> -->
+    </div>
+<table class="table table-striped" [mfData]="pendingRequests" [mfActivePage] = "1" [mfRowsOnPage]="5">
+    <thead style="color: rgba(224, 224, 224, 0.94); background-color: rgba(76, 76, 76, 0.7607843137254902);">
+        <tr>
+            <th style="width: 7%; padding-left: 20px;">
+                <mfDefaultSorter by="name">SYMBOL</mfDefaultSorter>
+            </th>
+            <th style="width: 10%">
+                <mfDefaultSorter by="name">EXCHANGE</mfDefaultSorter>
+            </th>
+            <th style="width: 37%">
+                <mfDefaultSorter by="email">NAME</mfDefaultSorter>
+            </th>
+            <th style="width: 15%">
+                <mfDefaultSorter by="age">SECTOR</mfDefaultSorter>
+            </th>
+            <th style="width: 20%">
+                <mfDefaultSorter by="city">INDUSTRY</mfDefaultSorter>
+            </th>
+            <th style="width: 11%; font-size: 18px; padding-top: 14px; padding-left: 4%;">
+                <i class="fa fa-cog" style="font-size: 1.5rem; padding-left: 5px;"></i>
+            </th>
+        </tr>
+    </thead>
+        <tbody>
+            <tr *ngFor="let c of companyList | paginate: { itemsPerPage: 15, currentPage: p }; let i = index;" style="background-color: rgba(255, 255, 255, 0.611764705882353);; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #c5bdbd; color: #5a5656; font-family: 'Arimo', sans-serif;">
+                <td style="width: 7%;">{{c.symbol}}</td>
+                <td style="width: 10%;">{{c.exchange}}</td>
+                <td style="width: 38%;">{{c.name}}</td>
+                <td style="width: 15%; padding-left: 2px;">{{c.sector}}</td>
+                <td style="width: 20%; padding-left: 2px;">{{c.industry}}</td>
+                <td style="width: 10%; padding-top: 10px; padding-left: 3.55%;">
+                    <button type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px;" (click)="openModal(c)">
+                        <i class="fa fa-arrows-alt"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="4">
+            <pagination-controls (pageChange)="p = $event" style="text-align: center;"></pagination-controls>
+        </td>
+    </tr>
+    </tfoot>
+</table>
+</div>
 </div>

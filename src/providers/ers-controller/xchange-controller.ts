@@ -50,11 +50,6 @@ export class XChangeController {
     }
 
     public getAllCompanies(){
-        this.httpService.GetAllCompanies().subscribe(
-            (data) => {
-                console.log("GET ALL COMPANIES >>");
-                console.log(data);
-            }, () => {console.log("ERROR: COULD NOT GET COMPANIES");}
-        )
+        return this.httpService.GetAllCompanies();
     }
 }
