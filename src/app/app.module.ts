@@ -54,6 +54,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DialogOverviewExampleDialog } from '../pages/manager-page/pending-requests/pending-requests-manager';
 import { SuiModule } from 'ng2-semantic-ui';
+import { MatCardModule } from '@angular/material/card';
+import { NewsService } from './news.service'
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -81,6 +84,7 @@ import { SuiModule } from 'ng2-semantic-ui';
     BrowserAnimationsModule,
     FormsModule,
     HttpModule,
+    HttpClientModule,
     MomentModule,
     DataTableModule,
     NgxPaginationModule,
@@ -89,6 +93,7 @@ import { SuiModule } from 'ng2-semantic-ui';
     MatSelectModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatCardModule,
     SuiModule,
     SidebarModule.forRoot(),
     RouterModule.forRoot(appRoutes)
@@ -97,7 +102,8 @@ import { SuiModule } from 'ng2-semantic-ui';
     ERSController, 
     XChangeController,
     FetchingService,
-    ParsingService
+    ParsingService,
+    NewsService
   ],
   bootstrap: [AppComponent]
 })
