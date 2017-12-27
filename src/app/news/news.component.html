@@ -1,5 +1,26 @@
+
 <div class="inner-view">
-<p>
-  news works!
-</p>
+  <div style="overflow-y: scroll; height:720px;">
+    <div *ngFor="let a of Articles">
+      <mat-card class="card">
+        <a target="_blank" href= "{{ a.urlToImage }}"><img mat-card-image id = "image" title="View Image" src = "{{ a.urlToImage }}"></a>
+        <mat-card-content>
+          <mat-card-title id = "title" >
+            <b>{{ a.title }}</b>
+          </mat-card-title>
+          <div id = "description">
+            <p>{{ a.description }}</p>
+          </div>
+        </mat-card-content>
+        <div id = "footer">
+            <button id="btn" target="_blank" type="submit" class="btn btn-primary" value="Read Full Article">
+                <a id="hyper" target="_blank" href="{{a.url}}">Read Full Article</a>
+            </button>
+            <div id = "date">
+              <p>{{ a.publishedAt | amDateFormat:'MM-DD-YYYY' }}</p>
+            </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
 </div>
