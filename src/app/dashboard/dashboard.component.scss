@@ -135,14 +135,17 @@ app-dashboard{
                         color: rgba(232, 232, 232, 0.65);
                         background: rgb(84, 84, 84);
                         font-family: 'Arimo', sans-serif;
-                        letter-spacing: 2px;
+                        letter-spacing: 1.5px;
                     }
 
                     .list-group-item:hover{
                         // color: #02c202;
-                        font-weight: bold;
+                        // font-weight: bold;
                         border-top-right-radius: 2px;
                         border-bottom-right-radius: 2px;
+                        border-bottom-style: solid;
+                        border-bottom-width: 1.5px;
+                        border-bottom-color: rgba(72, 68, 68, 0.71);
                         // background: rgba(27, 195, 27, 0.7019607843137254);
                         // background: #02c202;
                         background-color: rgb(75, 75, 75);
@@ -157,7 +160,9 @@ app-dashboard{
                         font-weight: bold;
                         border-top-right-radius: 2px;
                         border-bottom-right-radius: 2px;
-
+                        border-bottom-style: solid;
+                        border-bottom-width: 1.5px;
+                        border-bottom-color: rgba(72, 68, 68, 0.71);
                         padding-left:25px;
                         // background: rgba(27, 195, 27, 0.7019607843137254);
                         // background: #02c202;
