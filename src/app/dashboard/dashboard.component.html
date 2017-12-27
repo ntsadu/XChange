@@ -96,16 +96,25 @@
                         </div> -->
                     </div>
                     <div class="list-group  dashboard-options">
-                          <a id="news" class="list-group-item list-group-item-action" (click)="switchPage($event)" style="font-family: 'Arimo', sans-serif;">News Feed</a>
-                          <a id="listings" class="list-group-item list-group-item-action" (click)="switchPage($event)">Equity Listings</a>
-                          <a id="watchlist" class="list-group-item list-group-item-action" (click)="switchPage($event)">My Watch List</a>
-                          <a id="subscriptions" class="list-group-item list-group-item-action" (click)="switchPage($event)">Subscriptions</a>
-                          <a id="search" class="list-group-item list-group-item-action" (click)="switchPage($event)">Search</a>
+                        <a *ngIf="newsPage" id="news" class="list-group-item list-group-item-clicked list-group-item-action" (click)="switchPage($event)" style="font-family: 'Arimo', sans-serif;">News Feed<i class="fa fa-chevron-right" style="padding-top: 3px; float: right;" aria-hidden="true"></i></a>
+                        <a *ngIf="!newsPage" id="news" class="list-group-item list-group-item-action" (click)="switchPage($event)" style="font-family: 'Arimo', sans-serif;">News Feed</a>
+                          
+                          <a *ngIf="listingsPage" id="listings" class="list-group-item list-group-item-clicked list-group-item-action" (click)="switchPage($event)">Equity Listings<i class="fa fa-chevron-right" style="padding-top: 3px; float: right;" aria-hidden="true"></i></a>
+                          <a *ngIf="!listingsPage" id="listings" class="list-group-item list-group-item-action" (click)="switchPage($event)">Equity Listings</a>
+
+                          <a *ngIf="watchlistPage" id="watchlist" class="list-group-item list-group-item-clicked list-group-item-action" (click)="switchPage($event)">My Watch List<i class="fa fa-chevron-right" style="padding-top: 3px; float: right;" aria-hidden="true"></i></a>
+                          <a *ngIf="!watchlistPage" id="watchlist" class="list-group-item list-group-item-action" (click)="switchPage($event)">My Watch List</a>
+                          
+                          <a *ngIf="subscriptionsPage" id="subscriptions" class="list-group-item list-group-item-clicked list-group-item-action" (click)="switchPage($event)">Subscriptions<i class="fa fa-chevron-right" style="padding-top: 3px; float: right;" aria-hidden="true"></i></a>
+                          <a *ngIf="!subscriptionsPage" id="subscriptions" class="list-group-item list-group-item-action" (click)="switchPage($event)">Subscriptions</a>
+
+                          <a *ngIf="searchPage" id="search" class="list-group-item list-group-item-clicked list-group-item-action" (click)="switchPage($event)">Search <i class="fa fa-chevron-right" style="padding-top: 3px; float: right;" aria-hidden="true"></i></a>
+                          <a *ngIf="!searchPage" id="search" class="list-group-item list-group-item-action" (click)="switchPage($event)">Search</a>
                         <div class="panel-filler"></div>
                     </div>
                   </div>
               </div>
-              <div class="col-md-10 col-sm-8" style="background-color: rgba(25, 25, 25, 0.66); padding-left: 8px; padding-right: 8px; padding-top: 8px;">
+              <div class="col-md-10 col-sm-8" style="background-color: rgba(78, 76, 76, 0.66); padding-left: 8px; padding-right: 8px; padding-top: 8px;     height: calc(100vh - 55px);">
                 
                   <div *ngIf="newsPage">
                     <app-news></app-news>

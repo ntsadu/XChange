@@ -2,7 +2,7 @@
 
   <div class="panel panel-default" style="height: calc(100% - 8px); border: 1px solid rgba(0, 0, 0, 0.16);">
     <div class="panel-heading" style="height: 68px;"> <span style="letter-spacing: 2.5px;">{{tableHeader}}</span>
-        <a class="tooltipped" data-position="right" data-delay="20" materialize="tooltip" data-tooltip="This is a list of all reimbursement requests that are awaiting a decision" 
+        <a class="tooltipped" data-position="right" data-delay="20" materialize="tooltip" data-tooltip="This is a list of all available eqiity listings" 
             style="margin-top: -6px;
                 margin-left: 5px;
                 padding-left: 10px;
@@ -30,27 +30,47 @@
 <table class="table table-striped" [mfData]="pendingRequests" [mfActivePage] = "1" [mfRowsOnPage]="5">
     <thead style="color: rgba(224, 224, 224, 0.94); background-color: rgba(76, 76, 76, 0.7607843137254902);">
         <tr>
-            <th style="width: 7%; padding-left: 20px;">
-                <mfDefaultSorter by="name">SYMBOL</mfDefaultSorter>
+            <th style="width: 7%;" 
+                [style.padding-left]="symbol_left" [style.padding-top]="symbol_top">
+                <mfDefaultSorter id="symbol" by="name" (click)="sort('symbol')">SYMBOL
+                    <i *ngIf="symbol_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
+                    <i *ngIf="symbol_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
+                </mfDefaultSorter>
             </th>
-            <th style="width: 10%">
-                <mfDefaultSorter by="name">EXCHANGE</mfDefaultSorter>
+            <th style="width: 10%;"
+                [style.padding-left]="exchange_left" [style.padding-top]="exchange_top">
+                <mfDefaultSorter by="name" (click)="sort('exchange')">EXCHANGE
+                    <i *ngIf="exchange_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
+                    <i *ngIf="exchange_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
+                </mfDefaultSorter>
             </th>
-            <th style="width: 37%">
-                <mfDefaultSorter by="email">NAME</mfDefaultSorter>
+            <th style="width: 27%"
+                [style.padding-left]="name_left" [style.padding-top]="name_top">
+                <mfDefaultSorter by="email" (click)="sort('name')">NAME
+                    <i *ngIf="name_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
+                    <i *ngIf="name_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
+                </mfDefaultSorter>
             </th>
-            <th style="width: 15%">
-                <mfDefaultSorter by="age">SECTOR</mfDefaultSorter>
+            <th style="width: 20%"
+                [style.padding-left]="sector_left" [style.padding-top]="sector_top">
+                <mfDefaultSorter by="age" (click)="sort('sector')">SECTOR
+                    <i *ngIf="sector_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
+                    <i *ngIf="sector_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
+                </mfDefaultSorter>
             </th>
-            <th style="width: 20%">
-                <mfDefaultSorter by="city">INDUSTRY</mfDefaultSorter>
+            <th style="width: 25%"
+                [style.padding-left]="industry_left" [style.padding-top]="industry_top">
+                <mfDefaultSorter by="city" (click)="sort('industry')">INDUSTRY
+                    <i *ngIf="industry_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
+                    <i *ngIf="industry_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
+                </mfDefaultSorter>
             </th>
             <th style="width: 11%; font-size: 18px; padding-top: 14px; padding-left: 4%;">
                 <i class="fa fa-cog" style="font-size: 1.5rem; padding-left: 5px;"></i>
             </th>
         </tr>
     </thead>
-        <tbody style="margin-right: -8px;">
+        <tbody style="margin-right: -8px; height: calc(100vh - 283px);">
             <div *ngIf="loading">
                 <div class="ui segment" style="height: 63vh;">
                     <div class="ui active inverted dimmer">
@@ -58,13 +78,13 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="loading == false">
-                <tr *ngFor="let c of companyList | paginate: { itemsPerPage: 15, currentPage: p }; let i = index;" style="background-color: rgba(255, 255, 255, 0.611764705882353);; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #c5bdbd; color: #5a5656; font-family: 'Arimo', sans-serif; font-weight: 600;">
-                    <td style="width: 7%; padding-left: 20px;">{{c.symbol}}</td>
-                    <td style="width: 10%;">{{c.exchange}}</td>
-                    <td style="width: 38%;">{{c.name}}</td>
-                    <td style="width: 15%; padding-left: 3px;">{{c.sector}}</td>
-                    <td style="width: 20%; padding-left: 5px;">{{c.industry}}</td>
+            <div *ngIf="loading == false" style="height: calc(100vh - 283px);">
+                <tr *ngFor="let c of companyList | paginate: { itemsPerPage: 50, currentPage: p }; let i = index;" class="table-row" style="background-color: rgba(255, 255, 255, 0.611764705882353);; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #c5bdbd; color: #5a5656; font-family: 'Arimo', sans-serif; font-weight: 600;">
+                    <td style="width: 7%; padding-left: 16px;">{{c.symbol}}</td>
+                    <td style="width: 10%; padding-left: 20px;">{{c.exchange}}</td>
+                    <td style="width: 28%; padding-left: 12px;">{{c.name}}</td>
+                    <td style="width: 20%; padding-left: 0px;">{{c.sector}}</td>
+                    <td style="width: 25%; padding-left: 5px;">{{c.industry}}</td>
                     <td style="width: 10%; padding-top: 10px; padding-left: 3.55%;">
                         <button type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px;" (click)="openModal(c)">
                             <i class="fa fa-arrows-alt"></i>
