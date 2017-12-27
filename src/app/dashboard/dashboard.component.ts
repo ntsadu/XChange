@@ -1,4 +1,5 @@
 import { Component, AnimationTransitionEvent, ViewEncapsulation, Output, EventEmitter, NgZone, OnInit } from '@angular/core';
+import { TransitionController, Transition, TransitionDirection } from "ng2-semantic-ui";
 import { SidebarModule } from 'ng-sidebar';
 import { MaterializeAction } from 'angular2-materialize';
 import { ERSController } from '../../providers/ers-controller/ers-controller';
@@ -16,6 +17,7 @@ import { Router } from '@angular/router';
 export class DashboardComponent implements OnInit {
 
   @Output() logoutEvent: EventEmitter<any> = new EventEmitter<any>();
+  public transitionController = new TransitionController();
 
   amount : number = 0.00;
   description : string;
@@ -81,6 +83,9 @@ export class DashboardComponent implements OnInit {
     //     this.newRequestPage = true;        
     //   }
     // });
+
+
+
     this.ngZone.run(() => {
       if(id == "news"){
         this.newsPage = true;
@@ -88,12 +93,18 @@ export class DashboardComponent implements OnInit {
         this.watchlistPage = false;
         this.subscriptionsPage = false;
         this.searchPage = false;
+
+        // this.animate("shake");
+
       }else if(id == "listings"){
         this.newsPage = false;
         this.listingsPage = true;
         this.watchlistPage = false;
         this.subscriptionsPage = false;
         this.searchPage = false;
+
+        // this.animate("shake");
+        
       }else if(id == "watchlist"){
         this.newsPage = false;
         this.listingsPage = false;
@@ -114,6 +125,11 @@ export class DashboardComponent implements OnInit {
         this.searchPage = true;   
       }
     });
+  }
+
+  public animate(transitionName:string) {
+    this.transitionController.animate(
+        new Transition(transitionName, 500, TransitionDirection.In, () => console.log("Completed transition.")));
   }
 
   logout(){
