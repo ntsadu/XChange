@@ -74,6 +74,7 @@ export class ListingsComponent implements OnInit {
   }
 
   //This is disgusting
+  
   sort(op? : any){
     console.log(op);
     if(op == "symbol"){
