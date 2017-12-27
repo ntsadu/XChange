@@ -14,62 +14,67 @@ import { Router } from "@angular/router";
 })
 export class LoginComponent implements OnInit {
 
-  @Output() loginEvent: EventEmitter<any> = new EventEmitter<any>();
-
-  username : string;
-  password : string;
-  loginDone : boolean = false;
-  loginType : number = 0;
-
-  tabChanged : Function = (tabChangeEvent: MatTabChangeEvent): void => {
-    this.loginType = tabChangeEvent.index;
-    console.log('Login Type => ', this.loginType);
-  }
-
-  promiseEmployeeLogin : Function = ()=> {
-    new Promise((resolve, reject) => {
-      if(this.ersApp.currentUser != null) resolve();
-      else reject();
-      }).then(()=>{this.ersApp.initializeEmployee(this.loginEvent);}, 
-              ()=>{console.log("Employee Login Failed!");});
-  }
-
-  promiseManagerLogin : Function = ()=> {
-    new Promise((resolve, reject) => {
-      if(this.ersApp.currentUser != null) resolve();
-      else reject();
-      }).then(()=>{this.ersApp.initializeManager(this.loginEvent);}, 
-              ()=>{console.log("Manager Login Failed!");});
-  }
-
-  constructor(public ersApp : ERSController, public router: Router, public snackBar: MatSnackBar) { }
-
   ngOnInit() {
-    this.ersApp.currentUser = {firstname: "Jon", lastName: "Doe"};
-  }
 
-  openSnackBar(message:string) {
-    this.snackBar.open(message, "OK", {
-      duration: 2000,
-    });
   }
+  constructor() { }
 
-  login(){
-    // if(this.loginType == 0) this.ersApp.loginEmployee(this.username, this.password, this.promiseEmployeeLogin, this.openSnackBar);
-    // else if(this.loginType == 1) this.ersApp.loginManager(this.username, this.password, this.promiseManagerLogin);
-    if(this.loginType == 0) this.router.navigate(["dashboard"]);
-    else if(this.loginType == 1) console.log("Out of service..");
-  }
+  // @Output() loginEvent: EventEmitter<any> = new EventEmitter<any>();
 
-  register(){
-    this.router.navigate(["register"]);
-  }
+  // username : string;
+  // password : string;
+  // loginDone : boolean = false;
+  // loginType : number = 0;
 
-  updateUsername(u : any){
-    this.username = u;
-  }
+  // tabChanged : Function = (tabChangeEvent: MatTabChangeEvent): void => {
+  //   this.loginType = tabChangeEvent.index;
+  //   console.log('Login Type => ', this.loginType);
+  // }
 
-  updatePassword(p : any){
-    this.password = p;
-  }
+  // promiseEmployeeLogin : Function = ()=> {
+  //   new Promise((resolve, reject) => {
+  //     if(this.ersApp.currentUser != null) resolve();
+  //     else reject();
+  //     }).then(()=>{this.ersApp.initializeEmployee(this.loginEvent);}, 
+  //             ()=>{console.log("Employee Login Failed!");});
+  // }
+
+  // promiseManagerLogin : Function = ()=> {
+  //   new Promise((resolve, reject) => {
+  //     if(this.ersApp.currentUser != null) resolve();
+  //     else reject();
+  //     }).then(()=>{this.ersApp.initializeManager(this.loginEvent);}, 
+  //             ()=>{console.log("Manager Login Failed!");});
+  // }
+
+  // constructor(public ersApp : ERSController, public router: Router, public snackBar: MatSnackBar) { }
+
+  // ngOnInit() {
+  //   this.ersApp.currentUser = {firstname: "Jon", lastName: "Doe"};
+  // }
+
+  // openSnackBar(message:string) {
+  //   this.snackBar.open(message, "OK", {
+  //     duration: 2000,
+  //   });
+  // }
+
+  // login(){
+  //   // if(this.loginType == 0) this.ersApp.loginEmployee(this.username, this.password, this.promiseEmployeeLogin, this.openSnackBar);
+  //   // else if(this.loginType == 1) this.ersApp.loginManager(this.username, this.password, this.promiseManagerLogin);
+  //   if(this.loginType == 0) this.router.navigate(["dashboard"]);
+  //   else if(this.loginType == 1) console.log("Out of service..");
+  // }
+
+  // register(){
+  //   this.router.navigate(["register"]);
+  // }
+
+  // updateUsername(u : any){
+  //   this.username = u;
+  // }
+
+  // updatePassword(p : any){
+  //   this.password = p;
+  // }
 }
