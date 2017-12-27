@@ -70,9 +70,10 @@ export class ListingsComponent implements OnInit {
 
   openModal(c?:any){
     console.log("OPEN MODAL CLICKED"); 
-    
+
   }
 
+  //This is disgusting
   sort(op? : any){
     console.log(op);
     if(op == "symbol"){
