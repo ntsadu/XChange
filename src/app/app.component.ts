@@ -1,5 +1,6 @@
 import { Component, NgZone, AnimationTransitionEvent } from '@angular/core';
 import { ERSController } from '../providers/ers-controller/ers-controller';
+import { XChangeController } from '../providers/ers-controller/xchange-controller';
 import { MatSnackBar } from '@angular/material';
 import { Router } from "@angular/router";
 
@@ -11,5 +12,16 @@ import { Router } from "@angular/router";
 
 export class AppComponent {
 
-  constructor(private ersApp: ERSController, public ngZone:NgZone, public router: Router, public snackBar: MatSnackBar){}
+  constructor(private ersApp: ERSController, 
+              private xchangeApp: XChangeController,
+              public ngZone:NgZone, 
+              public router: Router, 
+              public snackBar: MatSnackBar){
+
+      // this.xchangeApp.getAllUsers();
+      // this.xchangeApp.getAllUserSubscriptions();
+      // this.xchangeApp.getAllUserFavorites();
+      // this.xchangeApp.getAllCompanies();
+      
+  }
 }
