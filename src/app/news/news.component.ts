@@ -1,8 +1,9 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { NewsService } from '../news.service'
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
+import * as _ from 'lodash';
 
 
 @Component({
@@ -12,6 +13,8 @@ import * as moment from 'moment';
 })
 export class NewsComponent implements OnInit {
   
+  loading = true;
+
   News: any[];
   Articles: any[];
   
@@ -24,7 +27,7 @@ export class NewsComponent implements OnInit {
   Url: string[];
   UrlToImage: string[];
 
-  constructor(private NewsService: NewsService) { }
+  constructor(private NewsService: NewsService, public ngZone: NgZone) { }
 
   ngOnInit() {
     this.getNews();
@@ -37,6 +40,12 @@ export class NewsComponent implements OnInit {
       this.News = <any>news;
       this.Articles = this.News["articles"];
       console.log(this.Articles);
+
+      if(!_.isNil(this.Articles)){
+        this.ngZone.run(()=>{
+          this.loading = false;
+        });
+      }
     })
   }
 

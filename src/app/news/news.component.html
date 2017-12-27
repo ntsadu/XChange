@@ -1,6 +1,14 @@
 
 <div class="inner-view">
-  <div style="overflow-y: scroll; height:720px;">
+    <div *ngIf="loading">
+        <div class="ui segment" style="height: 90.7vh;">
+            <div class="ui active dimmer">
+                <div class="ui text loader">Loading</div>
+            </div>
+        </div>
+    </div>
+
+  <div style="overflow-y: scroll; height: 672px; margin-right: 3px; margin-left: 5px;">
     <div *ngFor="let a of Articles">
       <mat-card class="card">
         <a target="_blank" href= "{{ a.urlToImage }}"><img mat-card-image id = "image" title="View Image" src = "{{ a.urlToImage }}"></a>
