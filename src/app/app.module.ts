@@ -50,6 +50,7 @@ import { SubscriptionsComponent } from './subscriptions/subscriptions.component'
 import { SearchComponent } from './search/search.component';
 import { WatchlistComponent } from './watchlist/watchlist.component';
 import { ListingsComponent } from './listings/listings.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { ListingsComponent } from './listings/listings.component';
     SubscriptionsComponent,
     SearchComponent,
     WatchlistComponent,
-    ListingsComponent
+    ListingsComponent,
+    ProfileComponent
   ],
   entryComponents: [
     DialogOverviewExampleDialog
