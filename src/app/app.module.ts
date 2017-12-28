@@ -57,14 +57,16 @@ import { DialogOverviewExampleDialog } from '../pages/manager-page/pending-reque
 import { SuiModule } from 'ng2-semantic-ui';
 import { MatCardModule } from '@angular/material/card';
 
+import { NewsService } from './news.service';
+import { ChartsModule } from 'ng2-charts';
+import { ProfileComponent } from './profile/profile.component';
+
 const routes: Routes = [
   { path: "login", component: LoginComponent},
   { path: "dashboard", component: DashboardComponent},
   { path: "news", component: NewsComponent}
 ]
 
-import { NewsService } from './news.service';
-import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -82,7 +84,8 @@ import { ChartsModule } from 'ng2-charts';
     SubscriptionsComponent,
     SearchComponent,
     WatchlistComponent,
-    ListingsComponent
+    ListingsComponent,
+    ProfileComponent
   ],
   entryComponents: [
     DialogOverviewExampleDialog
