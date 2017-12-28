@@ -436,6 +436,7 @@ app-dashboard{
     .btn-primary {
         color: #fff;
         background-color: rgb(2, 194, 2);
+        // background-color: rgba(2, 194, 2, 0.432);
         border-color: rgba(4, 224, 4, 0.94);
     }
 
@@ -461,6 +462,7 @@ app-dashboard{
     .ngx-pagination a, .ngx-pagination button {
         cursor: pointer;
         color: #02c202 !important;
+        // color: #02c202 !important;
         padding-top: 13px;
         height: 25px;
     }
