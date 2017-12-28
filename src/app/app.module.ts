@@ -61,7 +61,8 @@ import { LoginService } from 'app/login.service';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent},
-  { path: "dashboard", component: DashboardComponent}
+  { path: "dashboard", component: DashboardComponent},
+  { path: "news", component: NewsComponent}
 ]
 
 @NgModule({
@@ -88,7 +89,6 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    FormsModule,
     HttpModule,
     HttpClientModule,
     MomentModule,
@@ -102,7 +102,8 @@ const routes: Routes = [
     MatCardModule,
     SuiModule,
     SidebarModule.forRoot(),
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    FormsModule
   ],
   providers: [
     ERSController, 

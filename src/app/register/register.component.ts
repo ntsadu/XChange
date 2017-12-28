@@ -22,6 +22,7 @@ export class RegisterComponent implements OnInit {
 
   register(){
     this.loginService.register(this.user);
+    this.router.navigate(["/login"]);
   }
 
   // firstname : string;

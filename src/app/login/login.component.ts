@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
 
   login(){
     this.loginService.login(this.username, this.password);
-    this.router.navigate(["/dashboard"]);
+    this.router.navigate(["/news"]);
   }
 
   // @Output() loginEvent: EventEmitter<any> = new EventEmitter<any>();

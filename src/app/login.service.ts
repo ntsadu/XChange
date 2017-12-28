@@ -15,7 +15,7 @@ export class LoginService {
 /**************** need login url mapping at backend here******************* */
 
   login(username: String, password: String){
-    this.http.post<User>(API_URL, {
+    this.http.post<User>(API_URL + "users/login", {
       username: username,
       password: password
     })
@@ -23,6 +23,7 @@ export class LoginService {
         if(users == null) {
           alert("Incorrect username or password.")
         }
+        console.log("log in success");
         localStorage.setItem("user", JSON.stringify({
           userId: users.userId,
           firstname: users.firstname,
@@ -40,8 +41,8 @@ export class LoginService {
 
   register(user: User){
     this.http.post(API_URL + "users/AddNewUser", {
-      firstname: user.firstname,
-      lastname: user.lastname,
+      firstName: user.firstname,
+      lastName: user.lastname,
       email: user.email,
       username: user.username,
       password: user.password
@@ -49,6 +50,24 @@ export class LoginService {
       .subscribe(data => {
         console.log("register success");
       });
-  }   
+  }
+
+  validateUsername(username: String) {
+    this.http.post(API_URL + "users/GetUserByUsername", {
+      username: username
+    })
+      .subscribe(data => {
+        console.log("inside validate username");
+      })
+  }
+
+  validateEmail(email: String) {
+    this.http.post(API_URL + "users/GetUserByEmail", {
+      email: email
+    })
+      .subscribe(data => {
+        console.log("inside validate email");
+      })
+  }
 
 }
