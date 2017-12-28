@@ -135,8 +135,56 @@ app-dashboard{
                         color: rgba(232, 232, 232, 0.65);
                         background: rgb(84, 84, 84);
                         font-family: 'Arimo', sans-serif;
+                        letter-spacing: 1.5px;
+                    }
+
+                    .list-group-item:hover{
+                        // color: #02c202;
+                        // font-weight: bold;
+                        border-top-right-radius: 2px;
+                        border-bottom-right-radius: 2px;
+                        border-bottom-style: solid;
+                        border-bottom-width: 1.5px;
+                        border-bottom-color: rgba(72, 68, 68, 0.71);
+                        // background: rgba(27, 195, 27, 0.7019607843137254);
+                        // background: #02c202;
+                        background-color: rgb(75, 75, 75);
+                        // background: #02c202;
+                        width: 16.9vw;
+                        font-family: 'Arimo', sans-serif;
+                        // letter-spacing: 2px;
+                        padding-left: 23px;
+                    }
+
+                    .list-group-item-clicked:hover{
+                        padding-left: 25px;                        
+                    }
+
+                    .list-group-item-clicked{
+                        color: #02c202;
+                        font-weight: bold;
+                        border-top-right-radius: 2px;
+                        border-bottom-right-radius: 2px;
+                        border-bottom-style: solid;
+                        border-bottom-width: 1.5px;
+                        border-bottom-color: rgba(72, 68, 68, 0.71);
+                        padding-left:25px;
+                        // background: rgba(27, 195, 27, 0.7019607843137254);
+                        // background: #02c202;
+                        background-color: rgb(75, 75, 75);
+                        // background: #02c202;
+                        width: 16.9vw;
+                        font-family: 'Arimo', sans-serif;
                         letter-spacing: 2px;
                     }
+
+                    // .list-group-item:active{
+                    //     color: rgba(56, 52, 52, 0.65);
+                    //     font-weight: bold;
+                    //     background: rgba(27, 195, 27, 0.7019607843137254);
+                    //     font-family: 'Arimo', sans-serif;
+                    //     letter-spacing: 2px;
+                    // }
 
                     .list-group-item:first-child {
                         border-top-left-radius: unset;
@@ -169,6 +217,7 @@ app-dashboard{
         background-color: #d7d7e2;
         width: 100%;
         margin-top: 0px;
+        margin-bottom: 0px;
     }
 
     .table thead th{
@@ -183,7 +232,7 @@ app-dashboard{
  
     
     .panel-heading{
-        background: rgba(0, 0, 0, 0);        
+            background: #545454;        
         height: 68px;
         padding-top: 15px;
         padding-left: 21px;
@@ -242,6 +291,7 @@ app-dashboard{
         display:block;
         max-height:100%;
         overflow-y:scroll;
+        height: calc(100vh - 283px);
     }
 
     tfoot{
@@ -400,14 +450,32 @@ app-dashboard{
         display: none;
     }
 
-    .card {
-        border: 1px solid rgba(0, 0, 0, 0);
+    .table-row:hover {
+        background-color: #dbe4d5 !important;
     }
+
+    .ng-sidebar__content[_ngcontent-c2] {
+        height: calc(100vh - 0px);
+    }
+
+    .ngx-pagination a, .ngx-pagination button {
+        cursor: pointer;
+        color: #02c202 !important;
+        padding-top: 13px;
+        height: 25px;
+    }
+
+    .ui.dimmer{
+        background-color: rgba(21, 21, 21, 0.46);
+    }
+
 
     .inner-view{
         box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14), 0 1px 7px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -1px rgba(0, 0, 0, 0.2);
-        height: 90.7vh;
-        background: rgba(0, 0, 0, 0.19);
+        // height: 90.7vh;
+        height: calc(100vh - 74px);
+        // background: rgba(0, 0, 0, 0.19);
+        background: #545454;   
     }
 }
 
