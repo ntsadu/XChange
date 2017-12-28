@@ -1,27 +1,32 @@
-<div class="inner-view">  
-<p>
-  subscriptions works!
-</p>
-<div class="ui inverted segment">
-    <div class="ui inverted relaxed divided list">
-      <div class="item">
-        <div class="content">
-          <div class="header">Snickerdoodle</div>
-          An excellent companion
-        </div>
-      </div>
-      <div class="item">
-        <div class="content">
-          <div class="header">Poodle</div>
-          A poodle, its pretty basic
-        </div>
-      </div>
-      <div class="item">
-        <div class="content">
-          <div class="header">Paulo</div>
-          He's also a dog
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="inner-view">
+    <br>
+    <mat-card class="example-card">
+        <mat-card-header>
+            <mat-card-title id="title">User Profile</mat-card-title>
+        </mat-card-header>
+        <img mat-card-image alt="User Pic" src="https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg"
+            id="profile-image" class="img-circle img-responsive">
+        <!-- <img mat-card-image src = "'../../assets/murphy.jpg"> -->
+        <mat-card-content>
+            <div id = "info">
+                <div class="col-sm-5 col-xs-6">First Name:</div>
+                <div class="bot-border"></div>
+
+                <div class="col-sm-5 col-xs-6">Last Name:</div>
+                <div class="bot-border"></div>
+
+                <div class="col-sm-5 col-xs-6 tital ">Username:</div>
+                <div class="bot-border"></div>
+
+                <div class="col-sm-5 col-xs-6 tital ">Email:</div>
+                <div class="col-sm-7"></div>
+            </div>
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-button>Upload Profile Picture</button>
+            <button mat-button>Change Information</button>
+        </mat-card-actions>
+    </mat-card>
+
+
 </div>

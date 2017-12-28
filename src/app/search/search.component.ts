@@ -43,7 +43,7 @@ export class SearchComponent implements OnInit {
 
   search() { 
     this.apiParser = this.parsingService.buildParser(this.apiFunction, this.apiInterval);
-    //console.log(this.apiParser);
+    console.log(this.apiParser);
     this.stock = this.fetchingService.getStockData(this.apiFunction, this.apiSymbol, this.apiParser, this.apiInterval);
 
   }
