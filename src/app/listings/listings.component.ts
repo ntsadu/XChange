@@ -122,6 +122,7 @@ export class ListingsComponent implements OnInit {
 
     config.closeResult = "closed!";
     // config.transition = "fade up";
+    config.mustScroll = true;
     config.context = { symbol: company.symbol, name: company.name, dataString: JSON.stringify(company)};
 
     this.modalService

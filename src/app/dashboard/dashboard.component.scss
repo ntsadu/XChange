@@ -152,7 +152,12 @@ app-dashboard{
                         // background: #02c202;
                         width: 16.9vw;
                         font-family: 'Arimo', sans-serif;
-                        letter-spacing: 2px;
+                        // letter-spacing: 2px;
+                        padding-left: 23px;
+                    }
+
+                    .list-group-item-clicked:hover{
+                        padding-left: 25px;                        
                     }
 
                     .list-group-item-clicked{
