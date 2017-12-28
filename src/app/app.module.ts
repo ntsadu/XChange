@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule, NgModel } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
 
 //App Routes
@@ -55,15 +56,15 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { DialogOverviewExampleDialog } from '../pages/manager-page/pending-requests/pending-requests-manager';
 import { SuiModule } from 'ng2-semantic-ui';
 import { MatCardModule } from '@angular/material/card';
-import { NewsService } from './news.service'
-import { HttpClientModule } from '@angular/common/http';
-import { LoginService } from 'app/login.service';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent},
   { path: "dashboard", component: DashboardComponent},
   { path: "news", component: NewsComponent}
 ]
+
+import { NewsService } from './news.service';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -101,6 +102,7 @@ const routes: Routes = [
     MatDialogModule,
     MatCardModule,
     SuiModule,
+    ChartsModule,
     SidebarModule.forRoot(),
     RouterModule.forRoot(appRoutes),
     FormsModule

@@ -1,5 +1,46 @@
 <div class="inner-view">
 
+        <!-- <div style="margin-left: -34vw; width: 70vw;"> -->
+        <ng-template let-context let-modal="modal" #modalTemplate>
+            
+                <div class="header">{{context.symbol}} &ensp; |  &ensp; {{context.name}}</div>
+                <div class="content">
+                    <p>{{context.dataString}}</p>
+
+                    <div class="row">
+                            <div class="col-md-6">
+                              <div style="display: block;">
+                              <canvas baseChart width="400" height="400"
+                                          [datasets]="lineChartData"
+                                          [labels]="lineChartLabels"
+                                          [options]="lineChartOptions"
+                                          [colors]="lineChartColors"
+                                          [legend]="lineChartLegend"
+                                          [chartType]="lineChartType"
+                                          (chartHover)="chartHovered($event)"
+                                          (chartClick)="chartClicked($event)"></canvas>
+                              </div>
+                            </div>
+                            <div class="col-md-6" style="margin-bottom: 10px">
+                              <table class="table table-responsive table-condensed">
+                                <tr>
+                                  <th *ngFor="let label of lineChartLabels">{{label}}</th>
+                                </tr>
+                                <tr *ngFor="let d of lineChartData">
+                                  <td *ngFor="let label of lineChartLabels; let j=index">{{d && d.data[j]}}</td>
+                                </tr>
+                              </table>
+                              <button (click)="randomize()">CLICK</button>
+                            </div>
+                          </div>
+                </div>
+                <!-- <div class="actions">
+                    <button class="ui red button" (click)="modal.deny('denied')">Cancel</button>
+                    <button class="ui green button" (click)="modal.approve('approved')" autofocus>OK</button>
+                </div> -->
+        </ng-template>
+    <!-- </div> -->
+
   <div class="panel panel-default" style="height: calc(100% - 8px); border: 1px solid rgba(0, 0, 0, 0.16);">
     <div class="panel-heading" style="height: 68px;"> <span style="letter-spacing: 2.5px;">{{tableHeader}}</span>
         <a class="tooltipped" data-position="right" data-delay="20" materialize="tooltip" data-tooltip="This is a list of all available eqiity listings" 
@@ -80,9 +121,9 @@
             </div>
             <div *ngIf="loading == false" style="height: calc(100vh - 283px);">
                 <tr *ngFor="let c of companyList | paginate: { itemsPerPage: 50, currentPage: p }; let i = index;" class="table-row" style="background-color: rgba(255, 255, 255, 0.611764705882353);; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #c5bdbd; color: #5a5656; font-family: 'Arimo', sans-serif; font-weight: 600;">
-                    <td style="width: 7%; padding-left: 16px;">{{c.symbol}}</td>
+                    <td style="width: 7%; padding-left: 16px;"><a (click)="openModal(c)">{{c.symbol}}</a></td>
                     <td style="width: 10%; padding-left: 20px;">{{c.exchange}}</td>
-                    <td style="width: 28%; padding-left: 12px;">{{c.name}}</td>
+                    <td style="width: 28%; padding-left: 12px;"><a (click)="openModal(c)">{{c.name}}</a></td>
                     <td style="width: 20%; padding-left: 0px;">{{c.sector}}</td>
                     <td style="width: 25%; padding-left: 5px;">{{c.industry}}</td>
                     <td style="width: 10%; padding-top: 10px; padding-left: 3.55%;">
