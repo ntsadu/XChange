@@ -5,6 +5,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component' 
 import { Routes } from '@angular/router';
+import { NewsComponent } from 'app/news/news.component';
 
 export const appRoutes : Routes = [
     {   path: '', 
@@ -22,5 +23,9 @@ export const appRoutes : Routes = [
     {
         path: 'dashboard',
         component: DashboardComponent
+    },
+    {
+        path: 'news',
+        component: NewsComponent
     }
 ];
