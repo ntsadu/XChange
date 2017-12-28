@@ -1,6 +1,6 @@
 
 export interface User {
-    userID : number;
+    userId : number;
     firstname : string;
     lastname : string;
     email : string;
@@ -9,17 +9,17 @@ export interface User {
 }
 
 export interface UserSubscription {
-    userID : number;
-    subscribingUserID : number;
+    userId : number;
+    subscribingUserId : number;
 }
 
 export interface UserFavorite {
-    userID : number;
-    companyID : number;
+    userId : number;
+    companyId : number;
 }
 
 export interface Company {
-    companyID : number;
+    companyId : number;
     exchange : string;
     symbol : string;
     name : string;

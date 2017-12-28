@@ -56,6 +56,13 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { DialogOverviewExampleDialog } from '../pages/manager-page/pending-requests/pending-requests-manager';
 import { SuiModule } from 'ng2-semantic-ui';
 import { MatCardModule } from '@angular/material/card';
+
+const routes: Routes = [
+  { path: "login", component: LoginComponent},
+  { path: "dashboard", component: DashboardComponent},
+  { path: "news", component: NewsComponent}
+]
+
 import { NewsService } from './news.service';
 import { ChartsModule } from 'ng2-charts';
 
@@ -83,7 +90,6 @@ import { ChartsModule } from 'ng2-charts';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    FormsModule,
     HttpModule,
     HttpClientModule,
     MomentModule,
@@ -98,14 +104,16 @@ import { ChartsModule } from 'ng2-charts';
     SuiModule,
     ChartsModule,
     SidebarModule.forRoot(),
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    FormsModule
   ],
   providers: [
     ERSController, 
     XChangeController,
     FetchingService,
     ParsingService,
-    NewsService
+    NewsService,
+    LoginService
   ],
   bootstrap: [AppComponent]
 })
