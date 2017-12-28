@@ -5,6 +5,8 @@ import { MatTabChangeEvent } from '@angular/material';
 import { MatSnackBar } from '@angular/material';
 import { setTimeout } from 'timers';
 import { Router } from "@angular/router";
+import { HttpClient } from '@angular/common/http';
+import { LoginService } from 'app/login.service';
 
 
 @Component({
@@ -14,12 +16,18 @@ import { Router } from "@angular/router";
 })
 export class LoginComponent implements OnInit {
 
+  username: string = "";
+  password: string = "";
+
   ngOnInit() {
 
   }
-  constructor() { }
+  constructor(private loginService: LoginService, private router: Router) { }
 
-  
+  login(){
+    this.loginService.login(this.username, this.password);
+    this.router.navigate(["/dashboard"]);
+  }
 
   // @Output() loginEvent: EventEmitter<any> = new EventEmitter<any>();
 

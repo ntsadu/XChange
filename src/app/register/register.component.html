@@ -27,13 +27,13 @@
   <div class="col s6">
     <div class="form-group">
       <label for="name">First Name</label>
-      <input #firstname (keyup.enter)="updateFirstName(firstname.value)" (blur)="updateFirstName(firstname.value)" style="border-bottom-style: solid; width: 585px;" placeholder="First Name" type="text" class="form-control" id="name" required>
+      <input #firstname [(ngModel)]="user.firstname" style="border-bottom-style: solid; width: 585px;" placeholder="First Name" type="text" class="form-control" id="name" required>
     </div>
   </div>
   <div class="col s6">
     <div class="form-group">
       <label for="name">Last Name</label>
-      <input #lastname (keyup.enter)="updateLastName(lastname.value)" (blur)="updateLastName(lastname.value)" style="border-bottom-style: solid; width: 585px;" placeholder="Last Name" type="text" class="form-control" id="name" required>
+      <input #lastname [(ngModel)]="user.lastname" style="border-bottom-style: solid; width: 585px;" placeholder="Last Name" type="text" class="form-control" id="name" required>
     </div>
   </div>
 </div>
@@ -42,7 +42,7 @@
     <div class="col s6">
       <div class="form-group">
         <label for="name">Email</label>
-        <input #email (keyup.enter)="updateEmail(email.value)" (blur)="updateEmail(email.value)" style="border-bottom-style: solid; width: 585px;" placeholder="Email" type="text" class="form-control" id="name" required>
+        <input #email [(ngModel)]="user.email" style="border-bottom-style: solid; width: 585px;" placeholder="Email" type="text" class="form-control" id="name" required>
       </div>
     </div>
     <div class="col s6">
@@ -63,13 +63,13 @@
     <div class="col s6">
         <div class="form-group">
           <label for="name">Username</label>
-          <input #username (keyup.enter)="updateUsername(username.value)" (blur)="updateUsername(username.value)" style="border-bottom-style: solid; width: 585px;" placeholder="Username" type="text" class="form-control" id="name" required>
+          <input #username [(ngModdel)]="user.username" style="border-bottom-style: solid; width: 585px;" placeholder="Username" type="text" class="form-control" id="name" required>
         </div>
       </div>
       <div class="col s6">
           <div class="form-group">
             <label for="name">Password</label>
-            <input #password (keyup.enter)="updatePassword(password.value)" (blur)="updatePassword(password.value)" style="border-bottom-style: solid; width: 585px;" placeholder="Password" type="password" class="form-control" id="name" required>
+            <input #password [(ngModel)]="user.password" style="border-bottom-style: solid; width: 585px;" placeholder="Password" type="password" class="form-control" id="name" required>
           </div>
         </div>
   </div>

@@ -16,9 +16,9 @@
             </mat-tab-group>
             <span class="card-title" style="font-weight: 400; color: grey;">Login</span>
             <label for="username" style="margin-top: 20px;">Username</label>
-            <input #username (keyup.enter)="updateUsername(username.value)" (blur)="updateUsername(username.value)" id="username" type="text" style="color: #524f4f; padding-left: 10px;">
+            <input #username [(ngModel)]="username" id="username" type="text" style="color: #524f4f; padding-left: 10px;">
             <label for="password">Password</label>
-            <input #password (keyup.enter)="updatePassword(password.value)" (blur)="updatePassword(password.value)" id="password" type="password" style="color: #524f4f; padding-left: 10px;">
+            <input #password [(ngModel)]="password" id="password" type="password" style="color: #524f4f; padding-left: 10px;">
             <p><a href="register">Register</a></p>
           </div>
           <div class="card-action">

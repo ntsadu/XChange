@@ -57,6 +57,12 @@ import { SuiModule } from 'ng2-semantic-ui';
 import { MatCardModule } from '@angular/material/card';
 import { NewsService } from './news.service'
 import { HttpClientModule } from '@angular/common/http';
+import { LoginService } from 'app/login.service';
+
+const routes: Routes = [
+  { path: "login", component: LoginComponent},
+  { path: "dashboard", component: DashboardComponent}
+]
 
 @NgModule({
   declarations: [
@@ -103,7 +109,8 @@ import { HttpClientModule } from '@angular/common/http';
     XChangeController,
     FetchingService,
     ParsingService,
-    NewsService
+    NewsService,
+    LoginService
   ],
   bootstrap: [AppComponent]
 })
