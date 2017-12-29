@@ -20,38 +20,35 @@ export class LoginComponent implements OnInit {
   password: string = "";
 
   ngOnInit() {
-    this.loginService.subscribeToLogin(() => {
-      this.loginService.subscribers.getValue();
-      //this.router.navigate(["news"]);
+    this.loginService.subscribers.subscribe(u => {
+      if(u != null) {
+       this.router.navigate(["dashboard"]);
+      }
     });
   }
   constructor(private loginService: LoginService, private router: Router) { }
 
   login(){
-<<<<<<< HEAD
-    if(this.loginService.subscribers.getValue() != null){
-      this.router.navigate(["/news"]);
-    }
-    else {
-      alert("in correct password");
-      //this.router.navigate(["/login"]);
-    }
-    
-=======
     this.loginService.login(this.username, this.password);
-    localStorage.setItem("user", JSON.stringify({
-          userID: 1000000000,
-          firstname: "Nahom",
-          lastname: "Tsadu",
-          email: "nahomtsadu@gmail.com",
-          username: "ntsadu",
-          password: "ntsadu"
-    }));
-
+    // if(this.loginService.subscribers.getValue() != null){
+    //   this.router.navigate(["/dashboard"]);
+    // }
+    // else {
+    //   alert("in correct password");
+    // }
     
 
-    this.router.navigate(["/dashboard"]);
->>>>>>> master
+    // this.loginService.login(this.username, this.password);
+    // localStorage.setItem("user", JSON.stringify({
+    //       userID: 1000000000,
+    //       firstname: "Nahom",
+    //       lastname: "Tsadu",
+    //       email: "nahomtsadu@gmail.com",
+    //       username: "ntsadu",
+    //       password: "ntsadu"
+    // }));
+
+    // this.router.navigate(["/dashboard"]);
   }
 
   // @Output() loginEvent: EventEmitter<any> = new EventEmitter<any>();

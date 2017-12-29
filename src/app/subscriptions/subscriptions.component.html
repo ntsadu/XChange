@@ -9,17 +9,18 @@
         <img mat-card-image src = "'../../assets/murphy.jpg">
         <mat-card-content>
             <div id = "info">
-                <div class="col-sm-5 col-xs-6">First Name:</div>
+                <div><b>First Name: </b><span>{{ user.firstName }}</span></div>
                 <div class="bot-border"></div>
-
-                <div class="col-sm-5 col-xs-6">Last Name:</div>
+ 
+                <div><b>Last Name: </b><span>{{ user.lastName }}</span></div>
                 <div class="bot-border"></div>
-
-                <div class="col-sm-5 col-xs-6 tital ">Username:</div>
+ 
+                <div><b>Username: </b><span>{{ user.username }}</span></div>
                 <div class="bot-border"></div>
-
-                <div class="col-sm-5 col-xs-6 tital ">Email:</div>
-                <div class="col-sm-7"></div>
+ 
+                <div><b>Email: </b><span>{{ user.email }}</span></div>
+                <div class="bot-border"></div>
+ 
             </div>
         </mat-card-content>
         <mat-card-actions>

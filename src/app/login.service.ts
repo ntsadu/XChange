@@ -29,10 +29,8 @@ export class LoginService {
       password: password
     })
       .subscribe(users => {
-        if(users == null) {
-          alert("Incorrect username or password.");
-        }
         console.log("log in success");
+        this.subscribers.next(users);
         localStorage.setItem("user", JSON.stringify(users));
       },
       err => {
@@ -46,15 +44,12 @@ export class LoginService {
   }
 
   register(user: User){
-    this.http.post(API_URL + "users/AddNewUser", {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      username: user.username,
-      password: user.password
-    })
+    this.http.post(API_URL + "users/AddNewUser", user)
       .subscribe(data => {
         console.log("register success");
+        if(data == null) {
+          alert("user/email already exists");
+        }
       });
   }
 
@@ -74,6 +69,12 @@ export class LoginService {
       .subscribe(data => {
         console.log("inside validate email");
       })
+  }
+
+  logout() {
+    localStorage.removeItem("user");
+    this.subscribers.next(null);
+    console.log("user logged out");
   }
 
 }

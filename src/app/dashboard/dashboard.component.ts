@@ -6,6 +6,8 @@ import { ERSController } from '../../providers/ers-controller/ers-controller';
 import { MatSnackBar } from '@angular/material';
 import * as _ from 'lodash';
 import { Router } from '@angular/router';
+import { LoginService } from 'app/login.service';
+import { User } from 'interfaces/xchange-interfaces/interfaces';
 
 @Component({
   selector: 'app-dashboard',
@@ -54,7 +56,10 @@ export class DashboardComponent implements OnInit {
   private _MODES: Array<string> = ['over', 'push', 'slide'];
   private _POSITIONS: Array<string> = ['left', 'right', 'top', 'bottom'];
   
-  constructor(public ersApp:ERSController, public ngZone:NgZone, private router: Router) { 
+  user: User = this.loginService.subscribers.getValue();
+
+  constructor(public ersApp:ERSController, public ngZone:NgZone, private router: Router,
+      private loginService: LoginService) { 
     // if(this.ersApp.currentUser == null || this.ersApp.currentUser == undefined){
     //   this.router.navigate(["login"]);
     // }
@@ -133,15 +138,17 @@ export class DashboardComponent implements OnInit {
   }
 
   logout(){
-    new Promise((resolve, reject) => {
-        this.ersApp.users = null;
-        this.ersApp.currentUser = null;
-        this.ersApp.reimbursementRequests = null;
-        this.ersApp.reimbursementStatus = null;
-        this.ersApp.reimbursementTypes = null;
-        if(this.ersApp.currentUser == null) resolve();   
-      }).then(()=>{ this.router.navigate(["login"]); }, 
-              ()=>{ });
+    // new Promise((resolve, reject) => {
+    //     this.ersApp.users = null;
+    //     this.ersApp.currentUser = null;
+    //     this.ersApp.reimbursementRequests = null;
+    //     this.ersApp.reimbursementStatus = null;
+    //     this.ersApp.reimbursementTypes = null;
+    //     if(this.ersApp.currentUser == null) resolve();   
+    //   }).then(()=>{ this.router.navigate(["login"]); }, 
+    //           ()=>{ });
+    this.loginService.logout();
+    this.router.navigate(["/login"]);
   }
 
   updateAmount(a : any){

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { LoginService } from 'app/login.service';
+import { User } from 'interfaces/xchange-interfaces/interfaces';
 
 @Component({
   selector: 'app-subscriptions',
@@ -7,9 +9,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SubscriptionsComponent implements OnInit {
 
-  constructor() { }
+  user: User = this.loginService.subscribers.getValue();
+
+  constructor(private loginService: LoginService) { 
+    
+  }
+
+  
 
   ngOnInit() {
+    this.user = this.loginService.subscribers.getValue();
   }
 
 }
