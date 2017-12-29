@@ -26,7 +26,18 @@ export class LoginComponent implements OnInit {
 
   login(){
     this.loginService.login(this.username, this.password);
-    this.router.navigate(["/news"]);
+    localStorage.setItem("user", JSON.stringify({
+          userID: 1000000000,
+          firstname: "Nahom",
+          lastname: "Tsadu",
+          email: "nahomtsadu@gmail.com",
+          username: "ntsadu",
+          password: "ntsadu"
+    }));
+
+    
+
+    this.router.navigate(["/dashboard"]);
   }
 
   // @Output() loginEvent: EventEmitter<any> = new EventEmitter<any>();

@@ -60,6 +60,7 @@ import { MatCardModule } from '@angular/material/card';
 import { NewsService } from './news.service';
 import { ChartsModule } from 'ng2-charts';
 import { ProfileComponent } from './profile/profile.component';
+import { LoginService } from '../app/login.service';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent},
