@@ -6,7 +6,15 @@ username: {{username}}
 password: {{password}}
 
 <div class="inner-view">
-  <div style="overflow-y: scroll; height:720px;">
+    <div *ngIf="loading">
+        <div class="ui segment" style="height: 90.7vh; background: #23232340; border: none;">
+            <div class="ui active dimmer">
+                <div class="ui large text loader">Loading</div>
+            </div>
+        </div>
+    </div>
+
+  <div style="overflow-y: scroll; height: 87vh; margin-right: 3px; margin-left: 5px;">
     <div *ngFor="let a of Articles">
       <mat-card class="card">
         <a target="_blank" href= "{{ a.urlToImage }}"><img mat-card-image id = "image" title="View Image" src = "{{ a.urlToImage }}"></a>
@@ -19,12 +27,15 @@ password: {{password}}
           </div>
         </mat-card-content>
         <div id = "footer">
-            <button id="btn" target="_blank" type="submit" class="btn btn-primary" value="Read Full Article">
-                <a id="hyper" target="_blank" href="{{a.url}}">Read Full Article</a>
+            <div class = "row">
+
+            <button id="btn" target="_blank" type="submit" class="btn btn-primary" value="Read Full Article" style="width: 40.5px;">
+                <a id="hyper" target="_blank" href="{{a.url}}"><i class="fa fa-external-link" style="padding-top: 1.8px;" aria-hidden="true"></i></a>
             </button>
             <div id = "date">
-              <p>{{ a.publishedAt | amDateFormat:'MM-DD-YYYY' }}</p>
+              <p>{{ a.publishedAt | amDateFormat:'MMMM Do YYYY' }}</p>
             </div>
+          </div>
         </div>
       </mat-card>
     </div>

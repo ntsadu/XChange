@@ -1,5 +1,164 @@
 <div class="inner-view">
 
+        <!-- <div style="margin-left: -34vw; width: 70vw;"> -->
+        <ng-template let-context let-modal="modal" #modalTemplate>
+            
+                <div class="header">{{context.symbol}} &ensp; |  &ensp; {{context.name}}</div>
+                <div class="content">
+                    <!-- <p>{{context.dataString}}</p> -->
+
+                    <div class="row">
+                            <div class="col-md-6">
+                                    <div class="ui segment" style="width: 33.6vw; height: 69vh; padding-top: 4vh;">
+                              <div style="display: block;">
+                            <div *ngIf="loading_chart">
+                                    <div class="ui segment" style="height: 485px; border: none;">
+                                        <div class="ui active inverted dimmer">
+                                            <div class="ui text loader">Loading</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                              <canvas *ngIf="loading_chart == false" baseChart width="350" height="450"
+                                          [datasets]="lineChartData"
+                                          [labels]="lineChartLabels"
+                                          [options]="lineChartOptions"
+                                          [colors]="lineChartColors"
+                                          [legend]="lineChartLegend"
+                                          [chartType]="lineChartType"
+                                          (chartHover)="chartHovered($event)"
+                                          (chartClick)="chartClicked($event)"></canvas>
+                              </div>
+                            </div>
+                            </div>
+                            <div class="col-md-6" style="margin-bottom: 10px">
+                              <!-- <table class="table table-responsive table-condensed">
+                                <tr>
+                                  <th *ngFor="let label of lineChartLabels">{{label}}</th>
+                                </tr>
+                                <tr *ngFor="let d of lineChartData">
+                                  <td *ngFor="let label of lineChartLabels; let j=index">{{d && d.data[j]}}</td>
+                                </tr>
+                              </table>
+                              <button (click)="randomize()">CLICK</button> -->
+
+                                <div class="ui segment" style="width: 28.6vw; float: right;">
+                                    <sui-select class="selection" [(ngModel)]="selectedFunction" [options]="function_options" (selectedOptionChange)="selectedFunctionEvent($event)" #function_select>
+                                        <sui-select-option *ngFor="let option of function_options" [value]="option">
+                                        </sui-select-option>
+                                    </sui-select>
+                                    <sui-select class="selection" [(ngModel)]="selectedInterval" [options]="interval_options" [isDisabled]="interval_disabled" (selectedOptionChange)="selectedIntervalEvent($event)" #interval_select>
+                                            <sui-select-option *ngFor="let option of interval_options" [value]="option">
+                                            </sui-select-option>
+                                    </sui-select>
+                                </div>
+
+                                <table class="ui celled table" style="margin-left: 45px; width: 458px;">
+                                        <thead><tr style="height: 34px;"><th colspan="2">OHLC Outlook <span style="font-weight: 200;"> &ensp; {{ohlc_outlook_type}}</span></th></tr></thead>
+                                        <tbody>
+                                          <tr>
+                                            <td style="width: 110px;">
+                                              <div class="ui ribbon label" style="width: 110px; height: 29px; padding-left: 37px;">Open</div>
+                                            </td>
+                                            <!-- <td *ngIf="loading_chart"><div class="ui active inline loader"></div></td> -->
+                                            <td style="background: white;">
+                                                <div >
+                                                    <div class="ui segment" style="height: 20px;">
+                                                        <div class="ui active mini inverted dimmer" style="margin-top: 9px; height: 8px; background: transparent;">
+                                                            <div *ngIf="loading_chart" class="ui mini loader"></div>
+                                                            <div *ngIf="loading_chart == false" 
+                                                                 style="text-align: center; padding-top: 0px; font-weight: 400;">
+                                                                 {{ohlc_outlook.open}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <!-- <td *ngIf="loading_chart == false">{{ohlc_outlook.open}}</td> -->
+
+                                          </tr>
+                                          <tr>
+                                            <td>
+                                              <div class="ui ribbon label" style="width: 110px; height: 29px; padding-left: 37px;">High</div>
+                                            </td>
+                                            <td style="background: white;">
+                                                <div >
+                                                    <div class="ui segment" style="height: 20px;">
+                                                        <div class="ui active mini inverted dimmer" style="margin-top: 9px; height: 8px; background: transparent;">
+                                                            <div *ngIf="loading_chart" class="ui mini loader"></div>
+                                                            <div *ngIf="loading_chart == false" 
+                                                                 style="text-align: center; padding-top: 0px; font-weight: 400;">
+                                                                 {{ohlc_outlook.high}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>
+                                              <div class="ui ribbon label" style="width: 110px; height: 29px; padding-left: 37px;">Low</div>
+                                            </td>
+                                            <td style="background: white;">
+                                                <div >
+                                                    <div class="ui segment" style="height: 20px;">
+                                                        <div class="ui active mini inverted dimmer" style="margin-top: 9px; height: 8px; background: transparent;">
+                                                            <div *ngIf="loading_chart" class="ui mini loader"></div>
+                                                            <div *ngIf="loading_chart == false" 
+                                                                 style="text-align: center; padding-top: 0px; font-weight: 400;">
+                                                                 {{ohlc_outlook.low}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>
+                                              <div class="ui ribbon label" style="width: 110px; height: 29px; padding-left: 37px;">Close</div>
+                                            </td>
+                                            <td style="background: white;">
+                                                <div >
+                                                    <div class="ui segment" style="height: 20px;">
+                                                        <div class="ui active mini inverted dimmer" style="margin-top: 9px; height: 8px; background: transparent;">
+                                                            <div *ngIf="loading_chart" class="ui mini loader"></div>
+                                                            <div *ngIf="loading_chart == false" 
+                                                                 style="text-align: center; padding-top: 0px; font-weight: 400; padding-left: 12px;"
+                                                                 [style.color]="closing_color_indicator">
+                                                                 {{ohlc_outlook.close}}
+                                                                 <i [class]="closing_icon_class" [style.color]="closing_color_indicator" aria-hidden="true"></i>
+                                                                 {{closing_percent}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                <!-- <div class="ui segment">
+                                        <p>Single Select (with <code>selection</code> class applied)</p>
+                                        <sui-select class="selection"
+                                                    [(ngModel)]="selectedInterval"
+                                                    [options]="interval_options"
+                                                    labelField="name"
+                                                    [isDisabled]="interval_disabled"
+                                                    #select>
+                                            <sui-select-option *ngFor="let option of interval_options"
+                                                               [value]="option">
+                                            </sui-select-option>
+                                        </sui-select>
+                                    </div> -->
+                            </div>
+                          </div>
+                </div>
+                <!-- <div class="actions">
+                    <button class="ui red button" (click)="modal.deny('denied')">Cancel</button>
+                    <button class="ui green button" (click)="modal.approve('approved')" autofocus>OK</button>
+                </div> -->
+        </ng-template>
+    <!-- </div> -->
+
   <div class="panel panel-default" style="height: calc(100% - 8px); border: 1px solid rgba(0, 0, 0, 0.16);">
     <div class="panel-heading" style="height: 68px;"> <span style="letter-spacing: 2.5px;">{{tableHeader}}</span>
         <a class="tooltipped" data-position="right" data-delay="20" materialize="tooltip" data-tooltip="This is a list of all available eqiity listings" 
@@ -18,7 +177,7 @@
                     hasIcon="true"
                     [options]="options"
                     [searchDelay]="0"
-                    (resultSelected)="alertSelected($event)">
+                    (resultSelected)="resultSelected($event)">
             </sui-search>
         <!-- <div class="input-group">
                 <input style="height: 2.5rem;" type="text" class="form-control">
@@ -80,9 +239,9 @@
             </div>
             <div *ngIf="loading == false" style="height: calc(100vh - 283px);">
                 <tr *ngFor="let c of companyList | paginate: { itemsPerPage: 50, currentPage: p }; let i = index;" class="table-row" style="background-color: rgba(255, 255, 255, 0.611764705882353);; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #c5bdbd; color: #5a5656; font-family: 'Arimo', sans-serif; font-weight: 600;">
-                    <td style="width: 7%; padding-left: 16px;">{{c.symbol}}</td>
+                    <td style="width: 7%; padding-left: 16px;"><a (click)="openModal(c)">{{c.symbol}}</a></td>
                     <td style="width: 10%; padding-left: 20px;">{{c.exchange}}</td>
-                    <td style="width: 28%; padding-left: 12px;">{{c.name}}</td>
+                    <td style="width: 28%; padding-left: 12px;"><a (click)="openModal(c)">{{c.name}}</a></td>
                     <td style="width: 20%; padding-left: 0px;">{{c.sector}}</td>
                     <td style="width: 25%; padding-left: 5px;">{{c.industry}}</td>
                     <td style="width: 10%; padding-top: 10px; padding-left: 3.55%;">

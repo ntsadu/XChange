@@ -28,6 +28,7 @@ export class LoginComponent implements OnInit {
   constructor(private loginService: LoginService, private router: Router) { }
 
   login(){
+<<<<<<< HEAD
     if(this.loginService.subscribers.getValue() != null){
       this.router.navigate(["/news"]);
     }
@@ -36,6 +37,21 @@ export class LoginComponent implements OnInit {
       //this.router.navigate(["/login"]);
     }
     
+=======
+    this.loginService.login(this.username, this.password);
+    localStorage.setItem("user", JSON.stringify({
+          userID: 1000000000,
+          firstname: "Nahom",
+          lastname: "Tsadu",
+          email: "nahomtsadu@gmail.com",
+          username: "ntsadu",
+          password: "ntsadu"
+    }));
+
+    
+
+    this.router.navigate(["/dashboard"]);
+>>>>>>> master
   }
 
   // @Output() loginEvent: EventEmitter<any> = new EventEmitter<any>();

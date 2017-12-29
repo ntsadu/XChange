@@ -7,8 +7,9 @@ Author: Nahom Tsadu
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { FormsModule, NgModel } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, NgModel } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
 
 //App Routes
@@ -55,15 +56,18 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { DialogOverviewExampleDialog } from '../pages/manager-page/pending-requests/pending-requests-manager';
 import { SuiModule } from 'ng2-semantic-ui';
 import { MatCardModule } from '@angular/material/card';
-import { NewsService } from './news.service'
-import { HttpClientModule } from '@angular/common/http';
-import { LoginService } from 'app/login.service';
+
+import { NewsService } from './news.service';
+import { ChartsModule } from 'ng2-charts';
+import { ProfileComponent } from './profile/profile.component';
+import { LoginService } from '../app/login.service';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent},
   { path: "dashboard", component: DashboardComponent},
   { path: "news", component: NewsComponent}
 ]
+
 
 @NgModule({
   declarations: [
@@ -81,7 +85,8 @@ const routes: Routes = [
     SubscriptionsComponent,
     SearchComponent,
     WatchlistComponent,
-    ListingsComponent
+    ListingsComponent,
+    ProfileComponent
   ],
   entryComponents: [
     DialogOverviewExampleDialog
@@ -89,6 +94,8 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     HttpClientModule,
     MomentModule,
@@ -101,6 +108,7 @@ const routes: Routes = [
     MatDialogModule,
     MatCardModule,
     SuiModule,
+    ChartsModule,
     SidebarModule.forRoot(),
     RouterModule.forRoot(appRoutes),
     FormsModule

@@ -55,14 +55,14 @@ export class DashboardComponent implements OnInit {
   private _POSITIONS: Array<string> = ['left', 'right', 'top', 'bottom'];
   
   constructor(public ersApp:ERSController, public ngZone:NgZone, private router: Router) { 
-    if(this.ersApp.currentUser == null || this.ersApp.currentUser == undefined){
-      this.router.navigate(["login"]);
-    }
+    // if(this.ersApp.currentUser == null || this.ersApp.currentUser == undefined){
+    //   this.router.navigate(["login"]);
+    // }
   }
 
   ngOnInit() { 
-    (this.ersApp.currentUser == null || this.ersApp.currentUser == undefined) ?
-      this.router.navigate(["login"]) : this.currentUserRoleId = this.ersApp.currentUser.userRoleId; 
+    // (this.ersApp.currentUser == null || this.ersApp.currentUser == undefined) ?
+    //   this.router.navigate(["login"]) : this.currentUserRoleId = this.ersApp.currentUser.userRoleId; 
   }
 
   public switchPage(e : any){

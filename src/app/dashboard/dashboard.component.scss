@@ -135,21 +135,29 @@ app-dashboard{
                         color: rgba(232, 232, 232, 0.65);
                         background: rgb(84, 84, 84);
                         font-family: 'Arimo', sans-serif;
-                        letter-spacing: 2px;
+                        letter-spacing: 1.5px;
                     }
 
                     .list-group-item:hover{
                         // color: #02c202;
-                        font-weight: bold;
+                        // font-weight: bold;
                         border-top-right-radius: 2px;
                         border-bottom-right-radius: 2px;
+                        border-bottom-style: solid;
+                        border-bottom-width: 1.5px;
+                        border-bottom-color: rgba(72, 68, 68, 0.71);
                         // background: rgba(27, 195, 27, 0.7019607843137254);
                         // background: #02c202;
                         background-color: rgb(75, 75, 75);
                         // background: #02c202;
                         width: 16.9vw;
                         font-family: 'Arimo', sans-serif;
-                        letter-spacing: 2px;
+                        // letter-spacing: 2px;
+                        padding-left: 23px;
+                    }
+
+                    .list-group-item-clicked:hover{
+                        padding-left: 25px;                        
                     }
 
                     .list-group-item-clicked{
@@ -157,7 +165,9 @@ app-dashboard{
                         font-weight: bold;
                         border-top-right-radius: 2px;
                         border-bottom-right-radius: 2px;
-
+                        border-bottom-style: solid;
+                        border-bottom-width: 1.5px;
+                        border-bottom-color: rgba(72, 68, 68, 0.71);
                         padding-left:25px;
                         // background: rgba(27, 195, 27, 0.7019607843137254);
                         // background: #02c202;
@@ -426,6 +436,7 @@ app-dashboard{
     .btn-primary {
         color: #fff;
         background-color: rgb(2, 194, 2);
+        // background-color: rgba(2, 194, 2, 0.432);
         border-color: rgba(4, 224, 4, 0.94);
     }
 
@@ -451,9 +462,15 @@ app-dashboard{
     .ngx-pagination a, .ngx-pagination button {
         cursor: pointer;
         color: #02c202 !important;
+        // color: #02c202 !important;
         padding-top: 13px;
         height: 25px;
     }
+
+    .ui.dimmer{
+        background-color: rgba(21, 21, 21, 0.46);
+    }
+
 
     .inner-view{
         box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14), 0 1px 7px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -1px rgba(0, 0, 0, 0.2);
