@@ -20,13 +20,22 @@ export class LoginComponent implements OnInit {
   password: string = "";
 
   ngOnInit() {
-
+    this.loginService.subscribeToLogin(() => {
+      this.loginService.subscribers.getValue();
+      //this.router.navigate(["news"]);
+    });
   }
   constructor(private loginService: LoginService, private router: Router) { }
 
   login(){
-    this.loginService.login(this.username, this.password);
-    this.router.navigate(["/news"]);
+    if(this.loginService.subscribers.getValue() != null){
+      this.router.navigate(["/news"]);
+    }
+    else {
+      alert("in correct password");
+      //this.router.navigate(["/login"]);
+    }
+    
   }
 
   // @Output() loginEvent: EventEmitter<any> = new EventEmitter<any>();
