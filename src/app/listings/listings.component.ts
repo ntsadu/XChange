@@ -2,6 +2,10 @@ import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui';
 import { XChangeController } from '../../providers/ers-controller/xchange-controller';
 import { Company } from '../../interfaces/xchange-interfaces/interfaces';
+import { FetchingService } from '../../providers/fetching.service';
+import { ParsingService } from '../../providers/parsing.service';
+import { Stock } from '../../model/stock.class';
+import * as moment from 'moment';
 import * as _ from 'lodash';
 
 
@@ -22,6 +26,7 @@ export class ListingsComponent implements OnInit {
   public modalTemplate:ModalTemplate<ModalContext, string, string>
 
   loading = true;
+  loading_chart = true;
 
   symbol_asc = true;
   symbol_desc = false;
@@ -52,19 +57,54 @@ export class ListingsComponent implements OnInit {
   options : string[] = [];
   companyList: Company[];
 
-  public lineChartData:Array<any> = [
-    {data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A'},
-    {data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B'},
-    {data: [18, 48, 77, 9, 100, 27, 40], label: 'Series C'}
+  selectedFunction = "Daily";
+  selectedInterval = " ";
+  function_options:Array<string> = ["Intraday", "Daily", "Weekly", "Monthly"];
+  interval_options:Array<string> = ["1 Minute", "5 Minute", "15 Minute", "30 Minute", "60 Minute"];
+  interval_disabled = true;
+  option = "hello";
+
+  functions = [
+    { name: "Intraday", apiCall: "function=TIME_SERIES_INTRADAY"},
+    { name: "Daily", apiCall: "function=TIME_SERIES_DAILY", forParsing: "Time Series (Daily)"},
+    { name: "Weekly", apiCall: "function=TIME_SERIES_WEEKLY", forParsing: "Weekly Time Series"},
+    { name: "Monthly", apiCall: "function=TIME_SERIES_MONTHLY", forParsing: "Monthly Time Series"},
+    { name: "Daily Adjusted", apiCall: "function=TIME_SERIES_DAILY_ADJUSTED", forParsing: "Time Series(Daily)"},
+    { name: "Weekly Adjusted", apiCall: "function=TIME_SERIES_WEEKLY_ADJUSTED", forParsing: "Weekly Adjusted Time Series"},
+    { name: "Monthly Adjusted", apiCall: "function=TIME_SERIES_MONTHLY_ADJUSTED", forParsing: "Monthly Adjusted Time Series"}
   ];
+
+  intervals = [
+    { name: "1 minute", apiCall: "interval=1min", forParsing: "Time Series (1min)" },
+    { name: "5 minute", apiCall: "interval=5min", forParsing: "Time Series (5min)" },
+    { name: "15 minute", apiCall: "interval=15min", forParsing: "Time Series (15min)" },
+    { name: "30 minute", apiCall: "interval=30min", forParsing: "Time Series (30min)" },
+    { name: "60 minute", apiCall: "interval=60min", forParsing: "Time Series (60min)" }
+  ];
+
+  apiFunction: string = '';
+  apiSymbol: string = '';
+  apiInterval: string = '';
+  apiParser: string[] = [];
+
+  stock: Stock = new Stock();
+
+  ohlc_outlook = {open: " ", high: " ", low: " ", close: " "};
+
+  public lineChartData:Array<any> = [
+    {data: [65, 59, 80, 81, 56, 55, 40], label: 'Time Series (Daily)'}
+  ];
+
   public lineChartLabels:Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+
   public lineChartOptions:any = {
     responsive: true
   };
+
   public lineChartColors:Array<any> = [
     { // grey
-      backgroundColor: 'rgba(148,159,177,0.2)',
-      borderColor: 'rgba(148,159,177,1)',
+      backgroundColor: 'rgba(2, 194, 2, 0.432)',
+      borderColor: '#02c202',
       pointBackgroundColor: 'rgba(148,159,177,1)',
       pointBorderColor: '#fff',
       pointHoverBackgroundColor: '#fff',
@@ -79,7 +119,7 @@ export class ListingsComponent implements OnInit {
       pointHoverBorderColor: 'rgba(77,83,96,1)'
     },
     { // grey
-      backgroundColor: 'rgba(148,159,177,0.2)',
+      backgroundColor: 'black',
       borderColor: 'rgba(148,159,177,1)',
       pointBackgroundColor: 'rgba(148,159,177,1)',
       pointBorderColor: '#fff',
@@ -87,10 +127,17 @@ export class ListingsComponent implements OnInit {
       pointHoverBorderColor: 'rgba(148,159,177,0.8)'
     }
   ];
+
   public lineChartLegend:boolean = true;
   public lineChartType:string = 'line';
 
-  constructor(public xchangeApp : XChangeController, public ngZone : NgZone, public modalService: SuiModalService) { 
+  constructor(
+    public xchangeApp : XChangeController, 
+    public ngZone : NgZone, 
+    public modalService: SuiModalService, 
+    public alphaFetcher: FetchingService, 
+    public alphaParser: ParsingService) { 
+
     this.xchangeApp.httpService
     .GetAllCompanies()
     .subscribe(
@@ -118,6 +165,10 @@ export class ListingsComponent implements OnInit {
   }
 
   public openModal(company : any) {
+    this.clearOHLC();
+    this.ngZone.run(()=>{this.loading_chart = true});
+    // this.alphaFetcher.getStockData(this.apiFunction, this.apiSymbol, this.apiParser, this.apiInterval);
+    this.apiSymbol = company.symbol;
     const config = new TemplateModalConfig<ModalContext, string, string>(this.modalTemplate);
 
     config.closeResult = "closed!";
@@ -125,14 +176,194 @@ export class ListingsComponent implements OnInit {
     config.mustScroll = true;
     config.context = { symbol: company.symbol, name: company.name, dataString: JSON.stringify(company)};
 
+    this.selectedInterval = " "; 
+    this.interval_disabled = true;
+    this.apiFunction = _.filter(this.functions, (f)=>{if(f.name == this.selectedFunction) return f;})[0].apiCall;
+    this.apiInterval = null;
+    this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval);      
+    this.alphaFetcher.getStockData(this.apiFunction, this.apiSymbol, this.apiParser, this.apiInterval)
+    .subscribe((results)=>{
+      console.log(results.json());
+      // results = results.json();
+      this.stock.open = results.json()[this.apiParser[0]][this.apiParser[1]]["1. open"];
+      this.stock.high = results.json()[this.apiParser[0]][this.apiParser[1]]["2. high"];
+      this.stock.low = results.json()[this.apiParser[0]][this.apiParser[1]]["3. low"];
+      this.stock.close = results.json()[this.apiParser[0]][this.apiParser[1]]["4. close"];
+      this.stock.volume = results.json()[this.apiParser[0]][this.apiParser[1]]["5. volume"];
+
+      this.daily(results);
+
+      // console.log(time_series);
+
+    });
+
     this.modalService
         .open(config)
         .onApprove(result => { /* approve callback */ })
-        .onDeny(result => { /* deny callback */});
+        .onDeny(result => { this.dismissed()});
+  }
+
+  public dismissed(){
+    this.selectedFunction = "Daily";
+  }
+
+  public resultSelected($event : any){
+    this.clearOHLC();
+    console.log($event.substring(0, $event.indexOf(" ")));
+    
+    let company = _.filter(this.companyList, (c)=>{
+      if(c.symbol == ($event.substring(0, $event.indexOf(" ")))) return c;
+    })[0];
+
+    this.openModal(company);
+  }
+
+  public daily(results : any){
+    this.clearOHLC();
+    let time_series : any[] = [];
+    Object.getOwnPropertyNames(results.json()["Time Series (Daily)"])
+    .map((key: string) => {time_series.push({
+      key: key, 
+      open: results.json()["Time Series (Daily)"][key]["1. open"],
+      high: results.json()["Time Series (Daily)"][key]["2. high"],
+      low: results.json()["Time Series (Daily)"][key]["3. low"],
+      close: results.json()["Time Series (Daily)"][key]["4. close"]});});
+    
+    let labels:any[] = [];
+    let data:any[] = [];
+
+    for(let i = 6; i >= 0; i--){
+      labels.push(moment(time_series[i].key).format("ddd"));
+      data.push(parseFloat(time_series[i].close));
+    }
+
+    this.ngZone.run(()=>{
+      this.ohlc_outlook.open = time_series[0].open;
+      this.ohlc_outlook.high = time_series[0].high;
+      this.ohlc_outlook.low = time_series[0].low;
+      this.ohlc_outlook.close = time_series[0].close;
+      this.lineChartLabels = labels;
+      this.lineChartData[0].data = data;
+      this.loading_chart = false;
+    });
+  }
+
+  public weekly(results : any){
+    this.clearOHLC();
+    let time_series : any[] = [];
+    Object.getOwnPropertyNames(results.json()["Weekly Time Series"])
+    .map((key: string) => {time_series.push({
+      key: key, 
+      open: results.json()["Weekly Time Series"][key]["1. open"],
+      high: results.json()["Weekly Time Series"][key]["2. high"],
+      low: results.json()["Weekly Time Series"][key]["3. low"],
+      close: results.json()["Weekly Time Series"][key]["4. close"]});});
+    
+    let labels:any[] = [];
+    let data:any[] = [];
+
+    for(let i = 11; i >= 0; i--){
+      labels.push(moment(time_series[i].key).format("MM/DD/YYYY"));
+      data.push(parseFloat(time_series[i].close));
+    }
+
+    this.ngZone.run(()=>{
+      this.ohlc_outlook.open = time_series[0].open;
+      this.ohlc_outlook.high = time_series[0].high;
+      this.ohlc_outlook.low = time_series[0].low;
+      this.ohlc_outlook.close = time_series[0].close;
+      this.lineChartLabels = labels;
+      this.lineChartData[0].data = data;
+      this.loading_chart = false;
+    });
+  }
+
+  public monthly(results : any){
+    this.ngZone.run(()=> this.clearOHLC());
+
+    let time_series : any[] = [];
+    Object.getOwnPropertyNames(results.json()["Monthly Time Series"])
+    .map((key: string) => {time_series.push({
+      key: key, 
+      open: results.json()["Monthly Time Series"][key]["1. open"],
+      high: results.json()["Monthly Time Series"][key]["2. high"],
+      low: results.json()["Monthly Time Series"][key]["3. low"],
+      close: results.json()["Monthly Time Series"][key]["4. close"]});});
+    
+    let labels:any[] = [];
+    let data:any[] = [];
+
+    for(let i = 7; i >= 0; i--){
+      labels.push(moment(time_series[i].key).format("MMM/YYYY"));
+      data.push(parseFloat(time_series[i].close));
+    }
+
+    this.ngZone.run(()=>{
+      this.ohlc_outlook.open = time_series[0].open;
+      this.ohlc_outlook.high = time_series[0].high;
+      this.ohlc_outlook.low = time_series[0].low;
+      this.ohlc_outlook.close = time_series[0].close;
+      this.lineChartLabels = labels;
+      this.lineChartData[0].data = data;
+      this.loading_chart = false;
+    });
+  }
+
+  public selectedFunctionEvent($event : any){
+    if($event == "Intraday") {this.ngZone.run(()=>{this.interval_disabled = false});}
+    else if($event != "Intraday"){
+      this.ngZone.run(()=> this.clearOHLC());
+      this.ngZone.run(()=>{this.loading_chart = true});
+      this.selectedInterval = " "; 
+      this.interval_disabled = true;
+      this.apiFunction = _.filter(this.functions, (f)=>{if(f.name == this.selectedFunction) return f;})[0].apiCall;
+      this.apiInterval = null;
+      this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval);      
+      this.alphaFetcher.getStockData(this.apiFunction, this.apiSymbol, this.apiParser, this.apiInterval)
+      .subscribe((results)=>{
+        console.log(results.json());
+        // results = results.json();
+        this.stock.open = results.json()[this.apiParser[0]][this.apiParser[1]]["1. open"];
+        this.stock.high = results.json()[this.apiParser[0]][this.apiParser[1]]["2. high"];
+        this.stock.low = results.json()[this.apiParser[0]][this.apiParser[1]]["3. low"];
+        this.stock.close = results.json()[this.apiParser[0]][this.apiParser[1]]["4. close"];
+        this.stock.volume = results.json()[this.apiParser[0]][this.apiParser[1]]["5. volume"];
+
+        console.log("$event: " + $event);
+        console.log($event == "Weekly");
+        if($event == "Daily"){this.daily(results);}
+        else if($event == "Weekly"){ this.weekly(results);}
+        else if($event == "Monthly"){ console.log("YOOO"); this.monthly(results);}
+        
+        // console.log(time_series);
+
+      });
+    }
+
+    this.selectedFunction = $event;
+    console.log(this.interval_disabled);
+    console.log(this.selectedFunction);
+  }
+  
+  public selectedIntervalEvent($event : any){
+    this.ngZone.run(()=>{this.loading_chart = true});
+    this.selectedInterval = $event;
+    this.apiFunction = _.filter(this.functions, (f)=>{if(f.name == this.selectedFunction) return f;})[0].apiCall;
+    this.apiInterval = _.filter(this.intervals, (i)=>{if(i.name == _.lowerCase(this.selectedFunction)) return i;})[0].apiCall;
+    this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval);      
+    
+    // this.alphaFetcher.getStockData(this.apiFunction, this.apiSymbol, this.apiParser, this.apiInterval)
+    // .subscribe((results)=>{
+    //   console.log(results);
+    //   // this.results = results.json().results;
+    //   // console.log(this.results["Meta Data"]["1. Information"]);
+    //   // resolve();
+    // });
+
+    console.log(this.selectedInterval);
   }
 
   //This is disgusting
-
   sort(op? : any){
     console.log(op);
     if(op == "symbol"){
@@ -447,5 +678,12 @@ export class ListingsComponent implements OnInit {
  
   public chartHovered(e:any):void {
     console.log(e);
+  }
+
+  public clearOHLC(){
+    this.ohlc_outlook.open = "N/A";
+    this.ohlc_outlook.high = "N/A";
+    this.ohlc_outlook.low = "N/A";
+    this.ohlc_outlook.close = "N/A";
   }
 }
