@@ -90,6 +90,10 @@ export class ListingsComponent implements OnInit {
   stock: Stock = new Stock();
 
   ohlc_outlook = {open: " ", high: " ", low: " ", close: " "};
+  ohlc_outlook_type = " ";
+  closing_icon_class = "fa fa-arrow-up";
+  closing_color_indicator = "black";
+  closing_percent = " ";
 
   public lineChartData:Array<any> = [
     {data: [65, 59, 80, 81, 56, 55, 40], label: 'Time Series (Daily)'}
@@ -183,7 +187,8 @@ export class ListingsComponent implements OnInit {
     this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval);      
     this.alphaFetcher.getStockData(this.apiFunction, this.apiSymbol, this.apiParser, this.apiInterval)
     .subscribe((results)=>{
-      console.log(results.json());
+      console.log(this.apiParser[1]);
+      console.log(results.json()[this.apiParser[0]]);
       // results = results.json();
       this.stock.open = results.json()[this.apiParser[0]][this.apiParser[1]]["1. open"];
       this.stock.high = results.json()[this.apiParser[0]][this.apiParser[1]]["2. high"];
@@ -224,16 +229,17 @@ export class ListingsComponent implements OnInit {
     Object.getOwnPropertyNames(results.json()["Time Series (Daily)"])
     .map((key: string) => {time_series.push({
       key: key, 
-      open: results.json()["Time Series (Daily)"][key]["1. open"],
-      high: results.json()["Time Series (Daily)"][key]["2. high"],
-      low: results.json()["Time Series (Daily)"][key]["3. low"],
-      close: results.json()["Time Series (Daily)"][key]["4. close"]});});
+      open: parseFloat(results.json()["Time Series (Daily)"][key]["1. open"]).toFixed(2),
+      high: parseFloat(results.json()["Time Series (Daily)"][key]["2. high"]).toFixed(2),
+      low: parseFloat(results.json()["Time Series (Daily)"][key]["3. low"]).toFixed(2),
+      close: parseFloat(results.json()["Time Series (Daily)"][key]["4. close"]).toFixed(2)});});
     
     let labels:any[] = [];
     let data:any[] = [];
 
     for(let i = 6; i >= 0; i--){
       labels.push(moment(time_series[i].key).format("ddd"));
+      console.log(parseFloat(time_series[i].close).toFixed(2));
       data.push(parseFloat(time_series[i].close));
     }
 
@@ -242,6 +248,20 @@ export class ListingsComponent implements OnInit {
       this.ohlc_outlook.high = time_series[0].high;
       this.ohlc_outlook.low = time_series[0].low;
       this.ohlc_outlook.close = time_series[0].close;
+
+      this.ohlc_outlook_type = " for the day of " + moment(time_series[0].key).format("MMM Do, YYYY");
+      console.log(time_series[1].close);
+      console.log(time_series[0].close);
+      this.closing_percent = "(" + (((parseFloat(time_series[1].close) - parseFloat(time_series[0].close)) / parseFloat(time_series[1].close)) * -100).toFixed(2) + "%)";
+
+      if(this.ohlc_outlook.close > this.ohlc_outlook.open){
+        this.closing_icon_class = "fa fa-arrow-up";
+        this.closing_color_indicator = "rgb(2, 194, 2)";
+      }else{
+        this.closing_icon_class = "fa fa-arrow-down";
+        this.closing_color_indicator = "rgb(212, 27, 27)";
+      }
+
       this.lineChartLabels = labels;
       this.lineChartData[0].data = data;
       this.loading_chart = false;
@@ -254,24 +274,35 @@ export class ListingsComponent implements OnInit {
     Object.getOwnPropertyNames(results.json()["Weekly Time Series"])
     .map((key: string) => {time_series.push({
       key: key, 
-      open: results.json()["Weekly Time Series"][key]["1. open"],
-      high: results.json()["Weekly Time Series"][key]["2. high"],
-      low: results.json()["Weekly Time Series"][key]["3. low"],
-      close: results.json()["Weekly Time Series"][key]["4. close"]});});
+      open: parseFloat(results.json()["Weekly Time Series"][key]["1. open"]).toFixed(2),
+      high: parseFloat(results.json()["Weekly Time Series"][key]["2. high"]).toFixed(2),
+      low: parseFloat(results.json()["Weekly Time Series"][key]["3. low"]).toFixed(2),
+      close: parseFloat(results.json()["Weekly Time Series"][key]["4. close"]).toFixed(2)});});
     
     let labels:any[] = [];
     let data:any[] = [];
 
     for(let i = 11; i >= 0; i--){
-      labels.push(moment(time_series[i].key).format("MM/DD/YYYY"));
+      labels.push(moment(time_series[i].key).format("MM/DD"));
       data.push(parseFloat(time_series[i].close));
     }
 
     this.ngZone.run(()=>{
-      this.ohlc_outlook.open = time_series[0].open;
-      this.ohlc_outlook.high = time_series[0].high;
-      this.ohlc_outlook.low = time_series[0].low;
-      this.ohlc_outlook.close = time_series[0].close;
+      // this.ohlc_outlook.open = time_series[0].open;
+      // this.ohlc_outlook.high = time_series[0].high;
+      // this.ohlc_outlook.low = time_series[0].low;
+      // this.ohlc_outlook.close = time_series[0].close;
+
+      // this.ohlc_outlook_type = " for the day of " + moment(time_series[0].key).format("MMM Do, YYYY");
+
+      // if(this.ohlc_outlook.close > this.ohlc_outlook.open){
+      //   this.closing_icon_class = "fa fa-arrow-up";
+      //   this.closing_color_indicator = "rgb(2, 194, 2)";
+      // }else{
+      //   this.closing_icon_class = "fa fa-arrow-down";
+      //   this.closing_color_indicator = "rgb(212, 27, 27)";
+      // }
+
       this.lineChartLabels = labels;
       this.lineChartData[0].data = data;
       this.loading_chart = false;
@@ -285,10 +316,10 @@ export class ListingsComponent implements OnInit {
     Object.getOwnPropertyNames(results.json()["Monthly Time Series"])
     .map((key: string) => {time_series.push({
       key: key, 
-      open: results.json()["Monthly Time Series"][key]["1. open"],
-      high: results.json()["Monthly Time Series"][key]["2. high"],
-      low: results.json()["Monthly Time Series"][key]["3. low"],
-      close: results.json()["Monthly Time Series"][key]["4. close"]});});
+      open: parseFloat(results.json()["Monthly Time Series"][key]["1. open"]).toFixed(2),
+      high: parseFloat(results.json()["Monthly Time Series"][key]["2. high"]).toFixed(2),
+      low: parseFloat(results.json()["Monthly Time Series"][key]["3. low"]).toFixed(2),
+      close: parseFloat(results.json()["Monthly Time Series"][key]["4. close"]).toFixed(2)});});
     
     let labels:any[] = [];
     let data:any[] = [];
@@ -299,10 +330,21 @@ export class ListingsComponent implements OnInit {
     }
 
     this.ngZone.run(()=>{
-      this.ohlc_outlook.open = time_series[0].open;
-      this.ohlc_outlook.high = time_series[0].high;
-      this.ohlc_outlook.low = time_series[0].low;
-      this.ohlc_outlook.close = time_series[0].close;
+      // this.ohlc_outlook.open = time_series[0].open;
+      // this.ohlc_outlook.high = time_series[0].high;
+      // this.ohlc_outlook.low = time_series[0].low;
+      // this.ohlc_outlook.close = time_series[0].close;
+
+      // this.ohlc_outlook_type = " for the day of " + moment(time_series[0].key).format("MMM Do, YYYY");
+
+      // if(this.ohlc_outlook.close > this.ohlc_outlook.open){
+      //   this.closing_icon_class = "fa fa-arrow-up";
+      //   this.closing_color_indicator = "rgb(2, 194, 2)";
+      // }else{
+      //   this.closing_icon_class = "fa fa-arrow-down";
+      //   this.closing_color_indicator = "rgb(212, 27, 27)";
+      // }
+
       this.lineChartLabels = labels;
       this.lineChartData[0].data = data;
       this.loading_chart = false;
@@ -312,7 +354,7 @@ export class ListingsComponent implements OnInit {
   public selectedFunctionEvent($event : any){
     if($event == "Intraday") {this.ngZone.run(()=>{this.interval_disabled = false});}
     else if($event != "Intraday"){
-      this.ngZone.run(()=> this.clearOHLC());
+      this.ngZone.run(()=> {this.clearOHLC();});
       this.ngZone.run(()=>{this.loading_chart = true});
       this.selectedInterval = " "; 
       this.interval_disabled = true;
@@ -681,9 +723,9 @@ export class ListingsComponent implements OnInit {
   }
 
   public clearOHLC(){
-    this.ohlc_outlook.open = "N/A";
-    this.ohlc_outlook.high = "N/A";
-    this.ohlc_outlook.low = "N/A";
-    this.ohlc_outlook.close = "N/A";
+    // this.ohlc_outlook.open = "N/A";
+    // this.ohlc_outlook.high = "N/A";
+    // this.ohlc_outlook.low = "N/A";
+    // this.ohlc_outlook.close = "N/A";
   }
 }
