@@ -26,6 +26,12 @@ canvas{
     height: 468px !important;
 }
 
+[data-tooltip]:after, [data-tooltip]:before {
+    pointer-events: none;
+    visibility: hidden;
+    display: none;
+}
+
 // .ui.modal{
 //     margin-top: 132px !important;    
 // }
