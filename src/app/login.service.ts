@@ -11,6 +11,10 @@ const API_URL: string = "http://localhost:8091/";
 @Injectable()
 export class LoginService {
 
+  usernameFlag: Boolean = false;
+  emailFlag: Boolean = false;
+  passwordFlag: Boolean = false;
+
   subscribers: BehaviorSubject<User> = new BehaviorSubject<User>(null);
 
   // if user exists, take the object from the local storage and put that
@@ -20,8 +24,6 @@ export class LoginService {
     console.log(u);
     if(u) this.subscribers.next(JSON.parse(u));
   }
-
-/**************** need login url mapping at backend here******************* */
 
   login(username: String, password: String){
     this.http.post<User>(API_URL + "users/login", {
@@ -69,6 +71,15 @@ export class LoginService {
       .subscribe(data => {
         console.log("inside validate email");
       })
+  }
+
+  validatePassword(password: String, confirmPassword: string){
+    if(password == confirmPassword) {
+      console.log("password matched");
+      this.passwordFlag = true;
+    } else {
+      console.log("password does not match");
+    }
   }
 
   logout() {

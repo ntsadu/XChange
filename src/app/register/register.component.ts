@@ -13,6 +13,7 @@ import { LoginService } from 'app/login.service';
 export class RegisterComponent implements OnInit {
 
   user: any = {};
+  confirmPass: String = "";
 
   constructor(private loginService: LoginService, private router: Router){}
 
@@ -23,6 +24,10 @@ export class RegisterComponent implements OnInit {
   register(){
     this.loginService.register(this.user);
     this.router.navigate(["/login"]);
+  }
+
+  validatePassword(){
+    this.loginService.validatePassword(this.confirmPass, this.user.password);
   }
 
   // firstname : string;

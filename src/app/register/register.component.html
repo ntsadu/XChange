@@ -27,24 +27,31 @@
   <div class="col s6">
     <div class="form-group">
       <label for="name">First Name</label>
-      <input name="firstname" [(ngModel)]="user.firstName" style="border-bottom-style: solid; width: 585px;" placeholder="First Name" type="text" class="form-control" id="name" required>
+      <input name="firstname" [(ngModel)]="user.firstName" style="border-bottom-style: solid; width: 100%;" placeholder="First Name" type="text" class="form-control" id="name" required>
     </div>
   </div>
   <div class="col s6">
     <div class="form-group">
       <label for="name">Last Name</label>
-      <input name="lastname" [(ngModel)]="user.lastName" style="border-bottom-style: solid; width: 585px;" placeholder="Last Name" type="text" class="form-control" id="name" required>
+      <input name="lastname" [(ngModel)]="user.lastName" style="border-bottom-style: solid; width: 100%;" placeholder="Last Name" type="text" class="form-control" id="name" required>
     </div>
   </div>
 </div>
 
 <div class="row">
     <div class="col s6">
+        <div class="form-group">
+          <label for="name">Username</label>
+          <input name="username" [(ngModel)]="user.username" style="border-bottom-style: solid; width: 100%;" placeholder="Username" type="text" class="form-control" id="name" required>
+        </div>
+      </div>
+    <div class="col s6">
       <div class="form-group">
         <label for="name">Email</label>
-        <input name="email" [(ngModel)]="user.email" style="border-bottom-style: solid; width: 585px;" placeholder="Email" type="text" class="form-control" id="name" required>
+        <input name="email" [(ngModel)]="user.email" style="border-bottom-style: solid; width: 100%;" placeholder="Email" type="text" class="form-control" id="name" required>
       </div>
     </div>
+    
     <!-- <div class="col s6">
         <div class="form-group" style="padding-right: 23vw;">
           <label for="type">Reimbursement Type</label>
@@ -60,16 +67,17 @@
   </div>
 
 <div class="row">
-    <div class="col s6">
-        <div class="form-group">
-          <label for="name">Username</label>
-          <input name="username" [(ngModel)]="user.username" style="border-bottom-style: solid; width: 585px;" placeholder="Username" type="text" class="form-control" id="name" required>
-        </div>
-      </div>
+    
       <div class="col s6">
           <div class="form-group">
             <label for="name">Password</label>
-            <input name="password" [(ngModel)]="user.password" style="border-bottom-style: solid; width: 585px;" placeholder="Password" type="password" class="form-control" id="name" required>
+            <input name="password" [(ngModel)]="user.password" style="border-bottom-style: solid; width: 100%;" placeholder="Password" type="password" class="form-control" required>
+          </div>
+        </div>
+        <div class="col s6">
+          <div class="form-group">
+            <label for="name">Confirm Password</label>
+            <input name="confirm_password" [(ngModel)]="confirmPass" (keyup)="validatePassword()" style="border-bottom-style: solid; width: 100%;" placeholder="Confirm Password" type="password" class="form-control" required>
           </div>
         </div>
   </div>
