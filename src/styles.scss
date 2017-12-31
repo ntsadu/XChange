@@ -5,12 +5,22 @@ $fa-font-path: "../node_modules/font-awesome/fonts";
 
 
 mat-ink-bar {
-    background-color: rgba(121, 154, 193, 0.79)!important;
+    background-color: rgb(105, 218, 25) !important;
+}
+
+.mat-tab-header {
+    background-color: #eaeaea;
+    height: 46.5px;
 }
 
 mat-dialog-container{
     width: 475px !important;
     margin-left: -118px;
+}
+
+.ui.input {
+    font-size: 1em;
+    width: 100%;
 }
 
 .modal {
@@ -24,6 +34,11 @@ canvas{
     margin-left: 6px !important;
     width: 476px !important;
     height: 468px !important;
+}
+
+.side-menu-chart{
+    width: 40vw !important;
+    height: 70vh !important;
 }
 
 [data-tooltip]:after, [data-tooltip]:before {

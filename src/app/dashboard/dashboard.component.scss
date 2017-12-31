@@ -136,16 +136,16 @@ app-dashboard{
                         background: rgb(84, 84, 84);
                         font-family: 'Arimo', sans-serif;
                         letter-spacing: 1.5px;
-                    }
+                        box-shadow: 0 6px 5px 1px rgba(0, 0, 0, 0.02), 0 0px 3px 1px rgba(0, 0, 0, 0.1), 0 14px 42px 5px rgba(0, 0, 0, 0.2);                    }
 
                     .list-group-item:hover{
                         // color: #02c202;
                         // font-weight: bold;
                         border-top-right-radius: 2px;
                         border-bottom-right-radius: 2px;
-                        border-bottom-style: solid;
-                        border-bottom-width: 1.5px;
-                        border-bottom-color: rgba(72, 68, 68, 0.71);
+                        // border-bottom-style: solid;
+                        // border-bottom-width: 1.5px;
+                        // border-bottom-color: rgba(72, 68, 68, 0.71);
                         // background: rgba(27, 195, 27, 0.7019607843137254);
                         // background: #02c202;
                         background-color: rgb(75, 75, 75);
@@ -162,7 +162,7 @@ app-dashboard{
 
                     .list-group-item-clicked{
                         color: #02c202;
-                        font-weight: bold;
+                        // font-weight: bold;
                         border-top-right-radius: 2px;
                         border-bottom-right-radius: 2px;
                         border-bottom-style: solid;
@@ -214,7 +214,7 @@ app-dashboard{
     }
 
     .table{
-        background-color: #d7d7e2;
+        background-color: #ededf2;
         width: 100%;
         margin-top: 0px;
         margin-bottom: 0px;
@@ -232,14 +232,16 @@ app-dashboard{
  
     
     .panel-heading{
-            background: #545454;        
+            // background: #545454; 
+            background: grey;       
         height: 68px;
         padding-top: 15px;
         padding-left: 21px;
         font-size: x-large;
         font-family: 'Arimo', sans-serif;
         
-        color: #d2d2d2;
+        // color: #d2d2d2;
+        color: #e2dede;
     }
 
 
@@ -296,7 +298,7 @@ app-dashboard{
 
     tfoot{
         // background: rgba(0, 0, 0, 0.678431);
-        background: rgb(84, 84, 84);
+        background: #737474;
         // background-color: white;
         border-top-style: solid;
         border-top-width: 1px;
@@ -320,7 +322,7 @@ app-dashboard{
 
     .ngx-pagination .current {
         padding: 0.1875rem 0.625rem;
-        background: #535353;
+        background: #727474;
         color: #fefefe;
         cursor: default;
         padding-top: 16px;
@@ -455,6 +457,10 @@ app-dashboard{
         background-color: #dbe4d5 !important;
     }
 
+    .table-row-fav:hover{
+        background-color: #9dde97 !important;
+    }
+
     .ng-sidebar__content[_ngcontent-c2] {
         height: calc(100vh - 0px);
     }
@@ -477,7 +483,7 @@ app-dashboard{
         // height: 90.7vh;
         height: calc(100vh - 74px);
         // background: rgba(0, 0, 0, 0.19);
-        background: #545454;   
+        background: grey;   
     }
 }
 

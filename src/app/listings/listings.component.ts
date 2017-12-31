@@ -294,7 +294,7 @@ export class ListingsComponent implements OnInit {
     let labels:any[] = [];
     let data:any[] = [];
 
-    for(let i = 11; i >= 0; i--){
+    for(let i = 7; i >= 0; i--){
       labels.push(moment(time_series[i].key).format("MM/DD"));
       data.push(parseFloat(time_series[i].close));
     }
@@ -321,7 +321,7 @@ export class ListingsComponent implements OnInit {
     let labels:any[] = [];
     let data:any[] = [];
 
-    for(let i = 7; i >= 0; i--){
+    for(let i = 11; i >= 0; i--){
       labels.push(moment(time_series[i].key).format("MMM/YYYY"));
       data.push(parseFloat(time_series[i].close));
     }
