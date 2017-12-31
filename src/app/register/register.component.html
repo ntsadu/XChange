@@ -27,13 +27,29 @@
   <div class="col s6">
     <div class="form-group">
       <label for="name">First Name</label>
-      <input name="firstname" [(ngModel)]="user.firstName" style="border-bottom-style: solid; width: 100%;" placeholder="First Name" type="text" class="form-control" id="name" required>
+      <input required name="firstname" #firstname="ngModel" [(ngModel)]="user.firstName" style="border-bottom-style: solid; width: 100%;" placeholder="First Name" type="text" class="form-control" required>
+      <div *ngIf="firstname.invalid && (firstname.dirty || firstname.touched)"
+     class="alert alert-danger">
+
+  <div *ngIf="firstname.errors.required">
+     First name is required.
+  </div>
+
+</div>
     </div>
   </div>
   <div class="col s6">
     <div class="form-group">
       <label for="name">Last Name</label>
-      <input name="lastname" [(ngModel)]="user.lastName" style="border-bottom-style: solid; width: 100%;" placeholder="Last Name" type="text" class="form-control" id="name" required>
+      <input required #lastname="ngModel" name="lastname" [(ngModel)]="user.lastName" style="border-bottom-style: solid; width: 100%;" placeholder="Last Name" type="text" class="form-control" >
+      <div *ngIf="lastname.invalid && (lastname.dirty || lastname.touched)"
+     class="alert alert-danger">
+
+  <div *ngIf="lastname.errors.required">
+     Last name is required.
+  </div>
+
+</div>
     </div>
   </div>
 </div>
@@ -42,13 +58,38 @@
     <div class="col s6">
         <div class="form-group">
           <label for="name">Username</label>
-          <input name="username" [(ngModel)]="user.username" style="border-bottom-style: solid; width: 100%;" placeholder="Username" type="text" class="form-control" id="name" required>
+          <input required #username="ngModel" (keyup)="validateUsername()" name="username" [(ngModel)]="user.username" style="border-bottom-style: solid; width: 100%;" placeholder="Username" type="text" class="form-control">
+          <div *ngIf="username.invalid && (username.dirty || username.touched)"
+     class="alert alert-danger">
+
+  <div *ngIf="username.errors.required">
+     Username is required.
+  </div>
+  <div>
+    Username is already taken.
+  </div>
+</div>
         </div>
       </div>
     <div class="col s6">
       <div class="form-group">
         <label for="name">Email</label>
-        <input name="email" [(ngModel)]="user.email" style="border-bottom-style: solid; width: 100%;" placeholder="Email" type="text" class="form-control" id="name" required>
+        <input required email #email="ngModel" name="email" (keyup)="validateEmail()" [(ngModel)]="user.email" style="border-bottom-style: solid; width: 100%;" placeholder="Email" type="email" class="form-control">
+        <div *ngIf="email.invalid && (email.dirty || email.touched)"
+     class="alert alert-danger">
+
+  <div *ngIf="email.errors.required">
+    Email is required.
+  </div>
+  <div *ngIf="email.errors.email">
+      Not a valid email address.
+    </div>
+    <div *ngIf="emailFlag">
+      Email address is already taken.
+    </div>
+
+</div>
+
       </div>
     </div>
     
@@ -71,13 +112,35 @@
       <div class="col s6">
           <div class="form-group">
             <label for="name">Password</label>
-            <input name="password" [(ngModel)]="user.password" style="border-bottom-style: solid; width: 100%;" placeholder="Password" type="password" class="form-control" required>
+            <input name="password" required #password="ngModel" [(ngModel)]="user.password" style="border-bottom-style: solid; width: 100%;" placeholder="Password" type="password" class="form-control" required>
+            <div *ngIf="password.invalid && (password.dirty || password.touched)"
+     class="alert alert-danger">
+
+  <div *ngIf="password.errors.required">
+    Please enter your password.
+  </div>
+    <div *ngIf="passwordFlag">
+      Password does not match.
+    </div>
+
+</div>
           </div>
         </div>
         <div class="col s6">
           <div class="form-group">
             <label for="name">Confirm Password</label>
-            <input name="confirm_password" [(ngModel)]="confirmPass" (keyup)="validatePassword()" style="border-bottom-style: solid; width: 100%;" placeholder="Confirm Password" type="password" class="form-control" required>
+            <input name="confirm_password" required #confirmPassword="ngModel" [(ngModel)]="confirmPass" (keyup)="validatePassword()" style="border-bottom-style: solid; width: 100%;" placeholder="Confirm Password" type="password" class="form-control" required>
+            <div *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)"
+     class="alert alert-danger">
+
+  <div *ngIf="confirmPassword.errors.required">
+    Please enter your password again.
+  </div>
+    <div *ngIf="passwordFlag">
+      Password does not match.
+    </div>
+
+</div>
           </div>
         </div>
   </div>

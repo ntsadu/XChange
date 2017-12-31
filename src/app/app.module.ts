@@ -111,7 +111,9 @@ const routes: Routes = [
     ChartsModule,
     SidebarModule.forRoot(),
     RouterModule.forRoot(appRoutes),
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
+    
   ],
   providers: [
     ERSController, 

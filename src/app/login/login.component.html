@@ -14,10 +14,13 @@
                 </div>  
               </mat-tab>
             </mat-tab-group>
-            <form (submit)="login()">
+            <form (submit)="login()" >
             <span class="card-title" style="font-weight: 400; color: grey;">Login</span>
             <label for="username" style="margin-top: 20px;">Username</label>
-            <input name="username" [(ngModel)]="username" id="username" type="text" style="color: #524f4f; padding-left: 10px;">
+            <input name="username" [(ngModel)]="username" class="form-control" id="username" type="text" style="color: #524f4f; padding-left: 10px;">
+        
+            <div>
+          </div>
             <label for="password">Password</label>
             <input name="password" [(ngModel)]="password" id="password" type="password" style="color: #524f4f; padding-left: 10px;">
             <div class="card-action">

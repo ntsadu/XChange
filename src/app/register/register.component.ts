@@ -14,12 +14,19 @@ export class RegisterComponent implements OnInit {
 
   user: any = {};
   confirmPass: String = "";
+  usernameFlag: Boolean = false;
+  emailFlag: Boolean = false;
+  passwordFlag: Boolean = false;
 
-  constructor(private loginService: LoginService, private router: Router){}
+
+  constructor(private loginService: LoginService, private router: Router){ }
 
   ngOnInit(){
 
   }
+
+  
+  
 
   register(){
     this.loginService.register(this.user);
@@ -27,7 +34,42 @@ export class RegisterComponent implements OnInit {
   }
 
   validatePassword(){
-    this.loginService.validatePassword(this.confirmPass, this.user.password);
+    if(this.confirmPass == this.user.password){
+      this.passwordFlag = true;
+    }
+    else{
+      this.passwordFlag = false;
+    }
+  }
+
+  validateEmail(){
+    this.loginService.validateEmail(this.user.email)
+    .subscribe(data => {
+      // return true when email is available
+      if(data == null) {
+        this.emailFlag = false;
+      }
+      // return false when email already exists in database
+      else{
+        this.emailFlag = true;
+      }
+      console.log(this.emailFlag);
+    })
+  }
+
+  validateUsername(){
+    this.loginService.validateUsername(this.user.username)
+    .subscribe(data => {
+      if(data == null) {
+        this.usernameFlag = false;
+        console.log("username is available");
+      }
+      else{
+        this.usernameFlag = true;
+        console.log("username is taken");
+      }
+      console.log(this.usernameFlag);
+    })
   }
 
   // firstname : string;

@@ -11,11 +11,12 @@ const API_URL: string = "http://localhost:8091/";
 @Injectable()
 export class LoginService {
 
+
+  subscribers: BehaviorSubject<User> = new BehaviorSubject<User>(null);
+
   usernameFlag: Boolean = false;
   emailFlag: Boolean = false;
   passwordFlag: Boolean = false;
-
-  subscribers: BehaviorSubject<User> = new BehaviorSubject<User>(null);
 
   // if user exists, take the object from the local storage and put that
   // in the behaviorSubject object
@@ -32,6 +33,7 @@ export class LoginService {
     })
       .subscribe(users => {
         console.log("log in success");
+        console.log(users);
         this.subscribers.next(users);
         localStorage.setItem("user", JSON.stringify(users));
       },
@@ -46,7 +48,7 @@ export class LoginService {
   }
 
   register(user: User){
-    this.http.post(API_URL + "users/AddNewUser", user)
+    return this.http.post(API_URL + "users/AddNewUser", user)
       .subscribe(data => {
         console.log("register success");
         if(data == null) {
@@ -56,31 +58,24 @@ export class LoginService {
   }
 
   validateUsername(username: String) {
-    this.http.post(API_URL + "users/GetUserByUsername", {
+    return this.http.post(API_URL + "users/GetUserByUsername", {
       username: username
     })
-      .subscribe(data => {
-        console.log("inside validate username");
-      })
   }
 
   validateEmail(email: String) {
-    this.http.post(API_URL + "users/GetUserByEmail", {
+    return this.http.post(API_URL + "users/GetUserByEmail", {
       email: email
     })
-      .subscribe(data => {
-        console.log("inside validate email");
-      })
   }
 
-  validatePassword(password: String, confirmPassword: string){
-    if(password == confirmPassword) {
-      console.log("password matched");
-      this.passwordFlag = true;
-    } else {
-      console.log("password does not match");
-    }
-  }
+  // validatePassword(password: String, confirmPassword: string){
+  //   if(password == confirmPassword) {
+  //     console.log("password matched");
+  //   } else {
+  //     console.log("password does not match");
+  //   }
+  // }
 
   logout() {
     localStorage.removeItem("user");

@@ -7,6 +7,7 @@ import { setTimeout } from 'timers';
 import { Router } from "@angular/router";
 import { HttpClient } from '@angular/common/http';
 import { LoginService } from 'app/login.service';
+import { FormBuilder, Validators, AbstractControl, FormGroup} from '@angular/forms';
 
 
 @Component({
@@ -19,24 +20,34 @@ export class LoginComponent implements OnInit {
   username: string = "";
   password: string = "";
 
+  someFormHandle: FormGroup;
+  //someFormHandle: ControlGroup;
+
   ngOnInit() {
+    this.someFormHandle = this.formBuilder.group({
+      someNumber: ['', [<any>Validators.required, <any>Validators.minLength(5)]]
+    });
+    //this.someFormHandle.addControl('someNumber', this.someNumber);
+
     this.loginService.subscribers.subscribe(u => {
       if(u != null) {
        this.router.navigate(["dashboard"]);
+      } 
+      else {
+        console.log("incorrect usernmae or password");
       }
+
     });
   }
-  constructor(private loginService: LoginService, private router: Router) { }
+
+  constructor(private loginService: LoginService, private router: Router,
+      private formBuilder: FormBuilder) {
+  }
 
   login(){
     this.loginService.login(this.username, this.password);
-    // if(this.loginService.subscribers.getValue() != null){
-    //   this.router.navigate(["/dashboard"]);
-    // }
-    // else {
-    //   alert("in correct password");
-    // }
     
+
 
     // this.loginService.login(this.username, this.password);
     // localStorage.setItem("user", JSON.stringify({
