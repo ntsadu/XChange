@@ -1,32 +1,40 @@
 <div class="inner-view">
-    <br>
+    <!-- <br>
     <mat-card class="example-card">
         <mat-card-header>
             <mat-card-title id="title">User Profile</mat-card-title>
         </mat-card-header>
         <img mat-card-image alt="User Pic" src="https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg"
             id="profile-image" class="img-circle img-responsive">
-        <!-- <img mat-card-image src = "'../../assets/murphy.jpg"> -->
+        <img mat-card-image src = "'../../assets/murphy.jpg">
         <mat-card-content>
             <div id = "info">
-                <div class="col-sm-5 col-xs-6">First Name:</div>
+                <div><b>First Name: </b><span>{{ user.firstName }}</span></div>
+                <div class="bot-border"></div>
+ 
+                <div><b>Last Name: </b><span>{{ user.lastName }}</span></div>
+                <div class="bot-border"></div>
+ 
+                <div><b>Username: </b><span>{{ user.username }}</span></div>
+                <div class="bot-border"></div>
+ 
+                <div><b>Email: </b><span>{{ user.email }}</span></div>
                 <div class="bot-border"></div>
 
-                <div class="col-sm-5 col-xs-6">Last Name:</div>
-                <div class="bot-border"></div>
-
-                <div class="col-sm-5 col-xs-6 tital ">Username:</div>
-                <div class="bot-border"></div>
-
-                <div class="col-sm-5 col-xs-6 tital ">Email:</div>
-                <div class="col-sm-7"></div>
             </div>
         </mat-card-content>
         <mat-card-actions>
             <button mat-button>Upload Profile Picture</button>
             <button mat-button>Change Information</button>
         </mat-card-actions>
-    </mat-card>
+    </mat-card> -->
 
+    <button (click)="changeValue()">Change Info</button>
+    
+    <div *ngIf="isValid; else change">
+        
+    </div>
+    <ng-template #change>Enter Info</ng-template>
 
+ 
 </div>

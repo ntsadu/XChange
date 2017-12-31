@@ -12,6 +12,8 @@ import { LoginService } from 'app/login.service';
 })
 export class RegisterComponent implements OnInit {
 
+  isValidUsername: boolean = true;
+  isValidEmail: boolean = true;
   user: any = {};
 
   constructor(private loginService: LoginService, private router: Router){}
@@ -20,9 +22,18 @@ export class RegisterComponent implements OnInit {
 
   }
 
-  register(){
-    this.loginService.register(this.user);
-    this.router.navigate(["/login"]);
+  register() {
+   this.loginService.register(this.user)
+   .subscribe(data => {
+    if(data.email == null) {
+      this.isValidEmail = !this.isValidEmail;
+    } 
+    else if(data.username == null) {
+      this.isValidUsername = !this.isValidUsername;
+        } 
+    else 
+      this.router.navigate(["/login"])
+  });
   }
 
   // firstname : string;

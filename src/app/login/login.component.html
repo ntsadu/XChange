@@ -26,8 +26,12 @@
                 Login
             </button>
           </div>
+          <div *ngIf="!isValid" class="alert alert-danger" style = "margin-left: 190px; text-align: center; width: 200px;">
+            Invalid Credentials  
+          </div>
         </div>
       </div>
   </div>
 </div>
+
 

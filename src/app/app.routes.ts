@@ -23,9 +23,10 @@ export const appRoutes : Routes = [
     {
         path: 'dashboard',
         component: DashboardComponent
-    },
-    {
-        path: 'news',
-        component: NewsComponent
     }
+    // },
+    // {
+    //     path: 'news',
+    //     component: NewsComponent
+    // }
 ];

@@ -1,11 +1,22 @@
-import { Component, AnimationTransitionEvent, ViewEncapsulation, Output, EventEmitter, NgZone, OnInit } from '@angular/core';
+import { Component, AnimationTransitionEvent, ViewEncapsulation, Output, EventEmitter, NgZone, OnInit, ViewChild } from '@angular/core';
 import { TransitionController, Transition, TransitionDirection } from "ng2-semantic-ui";
+import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui';
 import { SidebarModule } from 'ng-sidebar';
 import { MaterializeAction } from 'angular2-materialize';
 import { ERSController } from '../../providers/ers-controller/ers-controller';
 import { MatSnackBar } from '@angular/material';
 import * as _ from 'lodash';
 import { Router } from '@angular/router';
+import { LoginService } from 'app/login.service';
+import { User } from 'interfaces/xchange-interfaces/interfaces';
+
+
+export interface ModalContext {
+  firstName: string;
+  lastName: string;
+  userName: string;
+  email: string;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -15,6 +26,9 @@ import { Router } from '@angular/router';
 })
 
 export class DashboardComponent implements OnInit {
+
+  @ViewChild('modalTemplate')
+  public modalTemplate:ModalTemplate<ModalContext, string, string>
 
   @Output() logoutEvent: EventEmitter<any> = new EventEmitter<any>();
   public transitionController = new TransitionController();
@@ -54,15 +68,69 @@ export class DashboardComponent implements OnInit {
   private _MODES: Array<string> = ['over', 'push', 'slide'];
   private _POSITIONS: Array<string> = ['left', 'right', 'top', 'bottom'];
   
-  constructor(public ersApp:ERSController, public ngZone:NgZone, private router: Router) { 
-    if(this.ersApp.currentUser == null || this.ersApp.currentUser == undefined){
-      this.router.navigate(["login"]);
-    }
+
+  constructor(public ersApp:ERSController, public ngZone:NgZone,  private loginService: LoginService,
+    private router: Router, public modalService:SuiModalService) {}
+
+  // Get User Information from local storage
+  oldEmail: string;
+  oldUsername: string;
+  
+  // Email and Username Validation
+  isValidUsername: boolean = true;
+  isValidEmail: boolean = true;
+
+  user: User = this.loginService.subscribers.getValue();
+  ngOnInit() {
+      this.user = this.loginService.subscribers.getValue();
   }
 
-  ngOnInit() { 
-    (this.ersApp.currentUser == null || this.ersApp.currentUser == undefined) ?
-      this.router.navigate(["login"]) : this.currentUserRoleId = this.ersApp.currentUser.userRoleId; 
+  // Toggle views between editing and displaying user information
+  isValid: boolean = false;
+  changeValue() {
+    this.isValidUsername = true;
+    this.isValidEmail = true;
+    this.isValid = !this.isValid;
+    this.oldEmail = this.user.email;
+    this.oldUsername = this.user.username;
+  }
+
+  // User Profile Modal
+  public openProfileModal() {
+    const config = new TemplateModalConfig<ModalContext, string, string>(this.modalTemplate);
+    config.closeResult = "closed!";
+    config.mustScroll = true;
+    config.context = {  
+      firstName: this.user.firstName, 
+      lastName: this.user.lastName, 
+      userName: this.user.username, 
+      email: this.user.email 
+    };
+    this.modalService
+        .open(config)
+        .onApprove(result => {})
+        .onDeny(result => {});
+  }
+
+  update() {
+    this.isValidUsername = true;
+    this.isValidEmail = true;
+    this.loginService.updateInfo(this.user)
+    .subscribe(data => {
+      if(data.email == null) {
+        this.user.email = this.oldEmail;
+        this.isValidEmail = !this.isValidEmail;
+      }
+      else if(data.username == null) {
+        this.user.username = this.oldUsername;
+        this.isValidUsername = !this.isValidUsername;
+      }
+      else {
+        this.isValid = !this.isValid;
+      }
+      this.loginService.subscribers.next(data);
+      localStorage.setItem("user", JSON.stringify(data));
+    });
   }
 
   public switchPage(e : any){
@@ -133,15 +201,8 @@ export class DashboardComponent implements OnInit {
   }
 
   logout(){
-    new Promise((resolve, reject) => {
-        this.ersApp.users = null;
-        this.ersApp.currentUser = null;
-        this.ersApp.reimbursementRequests = null;
-        this.ersApp.reimbursementStatus = null;
-        this.ersApp.reimbursementTypes = null;
-        if(this.ersApp.currentUser == null) resolve();   
-      }).then(()=>{ this.router.navigate(["login"]); }, 
-              ()=>{ });
+    this.loginService.logout();
+    this.router.navigate(["/login"]);
   }
 
   updateAmount(a : any){
