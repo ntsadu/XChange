@@ -161,7 +161,7 @@ export class ListingsComponent implements OnInit {
               this.loading = false;
             });
           }
-      }, () => {console.log("ERROR: COULD NOT GET COMPANIES");}
+      }, (err) => {console.log(err);}
     );
   }
 

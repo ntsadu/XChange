@@ -15,6 +15,7 @@ import { ModalContext } from '../listings/listings.component';
 import { Subscription } from 'rxjs/Subscription';
 
 import { WatchListSorter } from './watchlist-sorter.service';
+import { LoginService } from '../login.service';
 
 @Component({
   selector: 'app-watchlist',
@@ -108,10 +109,13 @@ export class WatchlistComponent implements OnInit {
     public alphaVantage: AlphaVantageService, 
     public alphaFetcher: FetchingService, 
     public alphaParser: ParsingService,
-    public sorter: WatchListSorter) { 
+    public sorter: WatchListSorter,
+    public loginService: LoginService) { 
+
+      console.log(this.loginService.subscribers.getValue().userId);
 
     forkJoin([
-        this.xchangeApp.httpService.GetAllUserFavorites({userId: 1}), 
+        this.xchangeApp.httpService.GetAllUserFavorites({userId: this.loginService.subscribers.getValue().userId}), 
         this.xchangeApp.httpService.GetAllCompanies()
     ]).subscribe(results => {
 
@@ -153,7 +157,7 @@ export class WatchlistComponent implements OnInit {
     });
 
     this.xchangeApp.httpService
-    .RemoveUserFavorite({userId: 1, companyId: this.currentCompany.companyId})
+    .RemoveUserFavorite({userId: this.loginService.subscribers.getValue().userId, companyId: this.currentCompany.companyId})
     .subscribe((results)=>{
       console.log("COMPANY REMOVED FROM WATCHLIST!");
       console.log(results);
@@ -177,7 +181,7 @@ export class WatchlistComponent implements OnInit {
     });
 
     this.xchangeApp.httpService
-    .RemoveUserFavorite({userId: 1, companyId: company.companyId})
+    .RemoveUserFavorite({userId: this.loginService.subscribers.getValue().userId, companyId: company.companyId})
     .subscribe((results)=>{
       console.log("COMPANY REMOVED FROM WATCHLIST!");
       console.log(results);
