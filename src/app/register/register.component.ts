@@ -12,89 +12,73 @@ import { LoginService } from 'app/login.service';
 })
 export class RegisterComponent implements OnInit {
 
+  isValidUsername: boolean = true;
+  isValidEmail: boolean = true;
   user: any = {};
+  confirmPass: String;
+  usernameFlag: boolean = false;
+  emailFlag: boolean = false;
+  passwordFlag: boolean = true;
 
   constructor(private loginService: LoginService, private router: Router){}
 
-  ngOnInit(){
+  ngOnInit(){}
 
+  register() {
+   this.loginService.register(this.user)
+   .subscribe(data => {
+    if(data.email == null) {
+      //this.isValidEmail = !this.isValidEmail;
+    } 
+    else if(data.username == null) {
+      //this.isValidUsername = !this.isValidUsername;
+        } 
+    else 
+      this.router.navigate(["/login"])
+    });
   }
 
-  register(){
-    this.loginService.register(this.user);
-    this.router.navigate(["/login"]);
+  validateEmail(){
+    this.loginService.validateEmail(this.user.email)
+    .subscribe(data => {
+      // return true when email is available
+      if(data == null) {
+        this.emailFlag = false;
+      }
+      // return false when email already exists in database
+      else{
+        this.emailFlag = true;
+      }
+      console.log(this.emailFlag);
+    })
   }
 
-  // firstname : string;
-  // lastname : string;
-  // email : string;
-  // username : string;
-  // password : string;
+  validateUsername(){
+    this.loginService.validateUsername(this.user.username)
+    .subscribe(data => {
+      if(data == null) {
+        this.usernameFlag = false;
+        console.log("username is available");
+      }
+      else{
+        this.usernameFlag = true;
+        console.log("username is taken");
+      }
+      console.log(this.usernameFlag);
+    })
+  }
 
-  // selected : any;  
-  // registerOptions : any[] = [];
 
-  // userRoleTypes : any[] = [];
-
-  // constructor(public ersApp : ERSController, public router: Router) {
-  //   this.ersApp.GetAllRoles()        
-  //     .subscribe(
-  //       (data: any) => {
-  //           _.map(data, (r:any)=>{ this.registerOptions.push({id : r.userRoleId, value : r.userRoleName}); });
-  //           this.selected = this.registerOptions[0].value; 
-  //       },
-  //       (error) => { }
-  //     );
-  //  }
-
-  // ngOnInit() {
-  // }
-
-  // updateFirstName(f : any){
-  //   this.firstname = f;
-  // }
-
-  // updateLastName(l : any){
-  //   this.lastname = l;
-  // }
-
-  // updateEmail(e : any){
-  //   this.email = e;
-  // }
-
-  // updateUsername(u : any){
-  //   this.username = u;
-  // }
-
-  // updatePassword(p : any){
-  //   this.password = p;
-  // }
-
-  // register(){
-
-  //   let $requestBody = <any>{};
-  //   $requestBody.userRoleId = this.selected.id;
-  //   $requestBody.firstName = this.firstname;
-  //   $requestBody.lastName = this.lastname;
-  //   $requestBody.email = this.email;
-  //   $requestBody.username = this.username;
-  //   $requestBody.password = this.password;
-
-  //   _.map(this.registerOptions, (r) => { if(r.value == this.selected) $requestBody.userRoleId = r.id; });
-
-  //   if(($requestBody.userRoleId != null && $requestBody.userRoleId != undefined) && 
-  //     ($requestBody.firstName != null && $requestBody.firstName != undefined) && 
-  //     ($requestBody.lastName != null && $requestBody.lastName != undefined) && 
-  //     ($requestBody.email != null && $requestBody.email != undefined) && 
-  //     ($requestBody.username != null && $requestBody.username != undefined) && 
-  //     ($requestBody.password != null && $requestBody.password != undefined)){
-  //       this.ersApp.addNewUser($requestBody)
-  //       .subscribe(
-  //         (data: any) => { this.router.navigate(["login"]); },
-  //         (error) => { }
-  //       );
-  //   }
-  // }
+  validatePassword(){
+    console.log("Passwords:\n" + this.confirmPass + "\n" + this.user.password);
+    if(this.confirmPass == this.user.password){
+      this.passwordFlag = true;
+      console.log(this.passwordFlag);
+    }
+    else{
+      this.passwordFlag = false;
+    }
+  }
 
   cancel(){
     this.router.navigate(["login"]);

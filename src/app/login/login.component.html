@@ -4,16 +4,6 @@
       <div class="col s12 m6">
         <div class="card white" style="margin-top: 20vh;">
           <div class="card-content black-text">
-            <mat-tab-group class="demo-tab-group" (selectedTabChange)="tabChanged($event)" style="padding-left: 100px; padding-right: 106px;">
-              <mat-tab label="Employee" style="width: 50px;" (click)="setLoginType()">
-                <div class="demo-tab-content">
-                </div>
-              </mat-tab>
-              <mat-tab label="Manager" (click)="setLoginType()">
-                <div class="demo-tab-content">
-                </div>  
-              </mat-tab>
-            </mat-tab-group>
             <span class="card-title" style="font-weight: 400; color: grey;">Login</span>
             <label for="username" style="margin-top: 20px;">Username</label>
             <input [(ngModel)]="username" id="username" type="text" style="color: #524f4f; padding-left: 10px;">
@@ -25,9 +15,13 @@
             <button type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px; float: right;" (click)="login()">
                 Login
             </button>
+            <div *ngIf="!isValid" class="alert alert-danger" style = "margin-left: 180px; text-align: center; width: 200px;">
+              Invalid Credentials  
+            </div>
           </div>
         </div>
       </div>
   </div>
 </div>
+
 
