@@ -35,10 +35,10 @@ export class RegisterComponent implements OnInit {
 
   validatePassword(){
     if(this.confirmPass == this.user.password){
-      this.passwordFlag = true;
+      this.passwordFlag = false;
     }
     else{
-      this.passwordFlag = false;
+      this.passwordFlag = true;
     }
   }
 
@@ -53,7 +53,6 @@ export class RegisterComponent implements OnInit {
       else{
         this.emailFlag = true;
       }
-      console.log(this.emailFlag);
     })
   }
 
@@ -62,13 +61,10 @@ export class RegisterComponent implements OnInit {
     .subscribe(data => {
       if(data == null) {
         this.usernameFlag = false;
-        console.log("username is available");
       }
       else{
         this.usernameFlag = true;
-        console.log("username is taken");
       }
-      console.log(this.usernameFlag);
     })
   }
 

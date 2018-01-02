@@ -22,7 +22,7 @@
 </div>
 
 <div class="container" style="width: 96%; margin-top: 10px;">
-<form>
+<form name="register">
 <div class="row">
   <div class="col s6">
     <div class="form-group">
@@ -58,16 +58,20 @@
     <div class="col s6">
         <div class="form-group">
           <label for="name">Username</label>
-          <input required #username="ngModel" (keyup)="validateUsername()" name="username" [(ngModel)]="user.username" style="border-bottom-style: solid; width: 100%;" placeholder="Username" type="text" class="form-control">
+          <input required minlength="6" #username="ngModel" (keyup)="validateUsername()" name="username" [(ngModel)]="user.username" style="border-bottom-style: solid; width: 100%;" placeholder="Username" type="text" class="form-control">
           <div *ngIf="username.invalid && (username.dirty || username.touched)"
      class="alert alert-danger">
 
   <div *ngIf="username.errors.required">
-     Username is required.
+    Username is required.
   </div>
-  <div>
-    Username is already taken.
+  <div *ngIf="username.errors.minlength">
+    Username must be 6 characters or more.
   </div>
+    <div *ngIf="usernameFlag">
+      The username is taken.
+    </div>
+
 </div>
         </div>
       </div>
@@ -112,16 +116,17 @@
       <div class="col s6">
           <div class="form-group">
             <label for="name">Password</label>
-            <input name="password" required #password="ngModel" [(ngModel)]="user.password" style="border-bottom-style: solid; width: 100%;" placeholder="Password" type="password" class="form-control" required>
+            <input name="password" required minlength="6" #password="ngModel" [(ngModel)]="user.password" style="border-bottom-style: solid; width: 100%;" placeholder="Password" type="password" class="form-control">
             <div *ngIf="password.invalid && (password.dirty || password.touched)"
      class="alert alert-danger">
 
   <div *ngIf="password.errors.required">
     Please enter your password.
   </div>
-    <div *ngIf="passwordFlag">
-      Password does not match.
+  <div *ngIf="password.errors.minlength">
+      Password must be 6 characters or more.
     </div>
+    
 
 </div>
           </div>
@@ -129,18 +134,11 @@
         <div class="col s6">
           <div class="form-group">
             <label for="name">Confirm Password</label>
-            <input name="confirm_password" required #confirmPassword="ngModel" [(ngModel)]="confirmPass" (keyup)="validatePassword()" style="border-bottom-style: solid; width: 100%;" placeholder="Confirm Password" type="password" class="form-control" required>
-            <div *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)"
-     class="alert alert-danger">
+            <input name="confirm_password" [(ngModel)]="confirmPass" (keyup)="validatePassword()" style="border-bottom-style: solid; width: 100%;" placeholder="Confirm Password" type="password" class="form-control">
+            <div *ngIf="passwordFlag" class="alert alert-danger">
+                Password does not match.
+              </div>
 
-  <div *ngIf="confirmPassword.errors.required">
-    Please enter your password again.
-  </div>
-    <div *ngIf="passwordFlag">
-      Password does not match.
-    </div>
-
-</div>
           </div>
         </div>
   </div>
@@ -157,7 +155,7 @@
       border-top-color: #d2d2d2;
       background-color: #f1f1f1;">
 <div class="col s12">
-<button type="submit" style="float: right; margin-left: 10px;" class="btn btn-success" (click)="register()">Submit</button>
+<button ng-disabled="register.$invalid" type="submit" style="float: right; margin-left: 10px;" class="btn btn-success" (click)="register()">Submit</button>
 <button type="submit" style="float: right; background: rgba(140, 140, 140, 0.79);" class="btn btn-success" (click)="cancel()">Cancel</button>
 </div>
 </div>

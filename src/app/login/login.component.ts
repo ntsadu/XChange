@@ -20,15 +20,7 @@ export class LoginComponent implements OnInit {
   username: string = "";
   password: string = "";
 
-  someFormHandle: FormGroup;
-  //someFormHandle: ControlGroup;
-
   ngOnInit() {
-    this.someFormHandle = this.formBuilder.group({
-      someNumber: ['', [<any>Validators.required, <any>Validators.minLength(5)]]
-    });
-    //this.someFormHandle.addControl('someNumber', this.someNumber);
-
     this.loginService.subscribers.subscribe(u => {
       if(u != null) {
        this.router.navigate(["dashboard"]);
@@ -40,26 +32,16 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  constructor(private loginService: LoginService, private router: Router,
-      private formBuilder: FormBuilder) {
+  constructor(private loginService: LoginService, private router: Router) {
   }
 
   login(){
     this.loginService.login(this.username, this.password);
-    
 
+  }
 
-    // this.loginService.login(this.username, this.password);
-    // localStorage.setItem("user", JSON.stringify({
-    //       userID: 1000000000,
-    //       firstname: "Nahom",
-    //       lastname: "Tsadu",
-    //       email: "nahomtsadu@gmail.com",
-    //       username: "ntsadu",
-    //       password: "ntsadu"
-    // }));
-
-    // this.router.navigate(["/dashboard"]);
+  register(){
+    this.router.navigate(["register"]);
   }
 
   // @Output() loginEvent: EventEmitter<any> = new EventEmitter<any>();
@@ -109,10 +91,7 @@ export class LoginComponent implements OnInit {
   //   else if(this.loginType == 1) console.log("Out of service..");
   // }
 
-  // register(){
-  //   this.router.navigate(["register"]);
-  // }
-
+ 
   // updateUsername(u : any){
   //   this.username = u;
   // }

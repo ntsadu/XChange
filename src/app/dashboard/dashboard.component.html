@@ -1,5 +1,6 @@
-<ng-sidebar-container style="height: 100vh !important;">
+<ng-sidebar-container style="height: 100vh !important;background-color:	#F0FFF0">
   <ng-sidebar class="sidebar-style"
+  
     [(opened)]="_opened"
     [mode]="_MODES[_modeNum]"
     [keyClose]="_keyClose"
@@ -37,19 +38,19 @@
 
     <div class="container sidebar-options">
       <div class="row">
-        <p class="sidebar-option">
+        <p class="sidebar-option w3-bar-item w3-button">
           <i class="fa fa-cog"></i>
           <span class="format">Settings</span>
         </p>
       </div>
       <div class="row">
-        <p class="sidebar-option">
+        <p class="sidebar-option w3-bar-item w3-button">
             <i class="fa fa-info-circle"></i>
             <span class="format">Help</span>
         </p>
       </div>
       <div class="row">
-        <p class="sidebar-option">
+        <p class="sidebar-option w3-bar-item w3-button">
             <i class="fa fa-sign-out"></i>
             <span class="format" (click)="logout()">Logout</span>
         </p>
@@ -61,12 +62,13 @@
     <header class="demo-header" style="box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.14), 0 0px 5px 0 rgba(0, 0, 0, 0.12), 0 0px 8px 0px rgba(0, 0, 0, 0.2);">
       <button (click)="_toggleOpened()" class="demo-header__toggle"></button>
       <img src='../../assets/logos/xchange-logo.svg' height="30" width="30" style="width: 72px; margin-left: 0%;">
+      <button (click)="logout()" style="margin-left: 70%" class="btn">Logout</button>
     </header>
 
     <div class="dashboard-container">
       <div class="container" style="height: 100%; width: 100%; max-width: 100%; padding-left: 0px; margin-left: 0px; padding-right: 0px;">
           <div class="row dashboard-content" style="height: 100%; width: 100%;">
-              <div class="col-md-2 col-sm-4" style="padding-left: 0px; padding-right: 0px;     box-shadow: 0 6px 5px 0px rgba(0, 0, 0, 0.14), 0 3px 5px 2px rgba(0, 0, 0, 0.12), 0 5px 8px 1px rgba(0, 0, 0, 0.2);">
+              <div class="col-md-3 col-sm-4" style="padding-left: 0px; padding-right: 0px;     box-shadow: 0 6px 5px 0px rgba(0, 0, 0, 0.14), 0 3px 5px 2px rgba(0, 0, 0, 0.12), 0 5px 8px 1px rgba(0, 0, 0, 0.2);">
                   <div class="dashboard-menu-panel">
                     <div class="dashboard-header">
 
@@ -95,7 +97,7 @@
                           </span>
                         </div> -->
                     </div>
-                    <div class="list-group  dashboard-options">
+                    <div class="list-group dashboard-options">
                         <a *ngIf="newsPage" id="news" class="list-group-item list-group-item-clicked list-group-item-action" (click)="switchPage($event)" style="font-family: 'Arimo', sans-serif;">News Feed<i class="fa fa-chevron-right" style="padding-top: 3px; float: right;" aria-hidden="true"></i></a>
                         <a *ngIf="!newsPage" id="news" class="list-group-item list-group-item-action" (click)="switchPage($event)" style="font-family: 'Arimo', sans-serif;">News Feed</a>
                           
@@ -114,7 +116,7 @@
                     </div>
                   </div>
               </div>
-              <div class="col-md-10 col-sm-8" style="background-color: rgba(78, 76, 76, 0.66); padding-left: 8px; padding-right: 8px; padding-top: 8px;     height: calc(100vh - 55px);">
+              <div class="col-md-9 col-sm-8" style="background-color: rgba(78, 76, 76, 0.66); padding-left: 8px; padding-right: 8px; padding-top: 8px; height: calc(100vh - 55px);">
                 
                   <div *ngIf="newsPage">
                     <app-news></app-news>

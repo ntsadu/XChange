@@ -1,8 +1,24 @@
 @import '~../../variables.scss';
 @import url("https://fonts.googleapis.com/css?family=Arimo:400,700");
+@import url("https://www.w3schools.com/w3css/4/w3.css");
 @font-face {
     font-family: amaranth;
     src: url('/assets/fonts/Amaranth-Bold.otf') format('otf');
+}
+
+@media screen and (max-width: 575px) {
+    #news, #listings, #watchlist, #subscriptions, #search{
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 575px) {
+    #news, #listings, #watchlist, #subscriptions, #search{
+        width: 100%;
+    }
+}
+@media screen and (min-width: 765px) {
+    
 }
 
 app-dashboard{
