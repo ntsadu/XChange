@@ -285,16 +285,16 @@
             </th>
             </tr>
         </thead>
-            <tbody style="margin-right: -8px; height: calc(100% - 49px); max-height: calc(100% - 49px) !important; overflow-y: hidden;">
+            <tbody style="margin-right: -8px; height: calc(100% - 49px); max-height: calc(100% - 49px) !important; overflow-y: auto;">
                 <div *ngIf="loading">
-                    <div class="ui segment" style="height: 75vh;">
+                    <div class="ui segment" style="height: 75vh; width: calc(100% - 8px);">
                         <div class="ui active inverted dimmer">
                             <div class="ui text loader">Loading</div>
                         </div>
                     </div>
                 </div>
                 <div *ngIf="loading == false" style="height: 100%;">
-                    <tbody style="height: 100% !important;">
+                    <tbody style="height: 100% !important; width: calc(100% - 8px);">
                     <tr *ngFor="let c of companyList | paginate: { itemsPerPage: 50, currentPage: p }; let i = index;" class="table-row" style="background-color: rgba(255, 255, 255, 0.611764705882353);; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #c5bdbd; color: #5a5656; font-family: 'Arimo', sans-serif; font-weight: 600;">
                         <td style="width: 17%; padding-left: 16px;">
                             <a class="tooltipped" data-position="bottom" data-delay="20" materialize="tooltip" data-tooltip="Remove from Watch List" 
