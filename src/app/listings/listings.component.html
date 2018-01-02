@@ -4,14 +4,23 @@
         <ng-template let-context let-modal="modal" #modalTemplate>
             
                 <div class="header">{{context.symbol}} &ensp; 
-                    <a class="tooltipped" data-position="bottom" data-delay="20" materialize="tooltip" data-tooltip="fav_tooltip_message" 
+                        <a *ngIf="isFav" class="tooltipped" data-position="bottom" data-delay="20" materialize="tooltip" data-tooltip="Remove from Watch List" 
+                        style="margin-top: -6px;
+                            margin-left: -15px;
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            background-color: rgba(255, 255, 255, 0);
+                            ">
+                            <i class="favorite icon" [style.color]="fav_icon_active_color" (click)="removeFromWatchList()"></i> 
+                        </a> 
+                    <a *ngIf="!isFav" class="tooltipped" data-position="bottom" data-delay="20" materialize="tooltip" data-tooltip="Add to Watch List" 
                     style="margin-top: -6px;
                         margin-left: -15px;
                         padding-left: 10px;
                         padding-right: 10px;
                         background-color: rgba(255, 255, 255, 0);
                         ">
-                        <i class="favorite icon" [style.color]="fav_icon_color" (click)="toggleFavorite()"></i> 
+                        <i class="favorite icon" [style.color]="fav_icon_inactive_color" (click)="addToWatchList()"></i> 
                     </a> 
                     <!-- &ensp; |  &ensp; -->
                     |  &ensp; 

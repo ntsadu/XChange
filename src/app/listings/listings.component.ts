@@ -7,6 +7,7 @@ import { ParsingService } from '../../providers/parsing.service';
 import { Stock } from '../../model/stock.class';
 import * as moment from 'moment';
 import * as _ from 'lodash';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 
 export interface ModalContext {
@@ -14,6 +15,7 @@ export interface ModalContext {
   name:string;
   sector:string;
   industry:string;
+  isFavorite: boolean,
   dataString:string;
 }
 
@@ -60,6 +62,7 @@ export class ListingsComponent implements OnInit {
   tableHeader: string = "Equity Listings";
   options : string[] = [];
   companyList: Company[];
+  favCompanyList: Company[];
 
   selectedFunction = "Daily";
   selectedInterval = " ";
@@ -100,6 +103,7 @@ export class ListingsComponent implements OnInit {
   closing_color_indicator = "black";
   closing_percent = " ";
 
+  isFav = false;
   fav_icon_color = "#dadada";  
   fav_icon_active_color = "#ffff09";
   fav_icon_inactive_color = "#dadada";
@@ -136,13 +140,15 @@ export class ListingsComponent implements OnInit {
     public alphaFetcher: FetchingService, 
     public alphaParser: ParsingService) { 
 
-    this.xchangeApp.httpService
-    .GetAllCompanies()
-    .subscribe(
-      (data) => {
+    forkJoin(
+      this.xchangeApp.httpService.GetAllCompanies(),
+      this.xchangeApp.httpService.GetAllUserFavorites({userId : 1})
+    ).subscribe(
+      (results) => {
           console.log("GET ALL COMPANIES >>");
-          console.log(data);
-          this.companyList = _.orderBy(data, ['symbol'], ['asc']);
+          console.log(results);
+          this.companyList = _.orderBy(results[0], ['symbol'], ['asc']);
+          this.favCompanyList = results[1];
 
           _.map(this.companyList, (c : Company)=>{
             this.options.push(c.symbol + " " + c.name);
@@ -162,19 +168,55 @@ export class ListingsComponent implements OnInit {
   ngOnInit() {
   }
 
-  toggleFavorite(){
-    if(this.fav_icon_color == this.fav_icon_active_color){
-     this.fav_icon_color = this.fav_icon_inactive_color;
-     this.fav_tooltip_message = "Add " + this.currentCompany.name + " to your Watch List";
-    }else if(this.fav_icon_color == this.fav_icon_inactive_color){
-       this.fav_icon_color = this.fav_icon_active_color;
-       this.fav_tooltip_message = "Remove " + this.currentCompany.name + " from your Watch List";
-    }
+  public addToWatchList(){
+
+    this.ngZone.run(()=>{
+      this.isFav = true;
+    });
+
+    this.xchangeApp.httpService
+    .AddUserFavorite({userId: 1, companyId: this.currentCompany.companyId})
+    .subscribe((results)=>{
+      console.log("COMPANY ADDED TO WATCHLIST!");
+      console.log(results);
+
+      this.ngZone.run(()=>{
+        this.isFav = true;
+        this.favCompanyList = results;
+      });
+    });
+  }
+
+  public removeFromWatchList(){
+
+    this.ngZone.run(()=>{
+      this.isFav = false;
+    });
+
+    this.xchangeApp.httpService
+    .RemoveUserFavorite({userId: 1, companyId: this.currentCompany.companyId})
+    .subscribe((results)=>{
+      console.log("COMPANY REMOVED FROM WATCHLIST!");
+      console.log(results);
+
+      this.ngZone.run(()=>{
+        this.isFav = false;
+        this.favCompanyList = _.filter(this.favCompanyList, (c)=>{
+          if(c.name != this.currentCompany.name) return c;
+        });
+      });
+    });
   }
 
   public openModal(company : any) {
 
     this.currentCompany = company;
+
+    // console.log();
+
+    _.map(this.favCompanyList, (c)=>{
+      if(company.name == c.name) this.isFav = true;
+    });
 
     this.clearOHLC();
     this.ngZone.run(()=>{this.loading_chart = true});
@@ -185,7 +227,13 @@ export class ListingsComponent implements OnInit {
     config.closeResult = "closed!";
     // config.transition = "fade up";
     config.mustScroll = true;
-    config.context = { symbol: company.symbol, name: company.name, sector: company.sector, industry: company.industry, dataString: JSON.stringify(company)};
+    config.context = { 
+      symbol: company.symbol, 
+      name: company.name, 
+      sector: company.sector, 
+      industry: company.industry, 
+      isFavorite: this.isFav, 
+      dataString: JSON.stringify(company)};
 
     this.selectedInterval = " "; 
     this.interval_disabled = true;
@@ -215,6 +263,7 @@ export class ListingsComponent implements OnInit {
 
   public dismissed(){
     this.selectedFunction = "Daily";
+    this.isFav = false;
   }
 
   public resultSelected($event : any){
