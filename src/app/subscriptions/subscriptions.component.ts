@@ -1,3 +1,4 @@
+
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui';
 import { Observable } from 'rxjs/Observable';
@@ -17,8 +18,8 @@ import { Subscription } from 'rxjs/Subscription';
   templateUrl: './subscriptions.component.html',
   styleUrls: ['./subscriptions.component.scss']
 })
-export class SubscriptionsComponent implements OnInit {
 
+export class SubscriptionsComponent implements OnInit {
   @ViewChild('modalTemplate')
   public modalTemplate:ModalTemplate<ModalContext, string, string>
 
@@ -178,8 +179,7 @@ export class SubscriptionsComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   toggleFavorite(){
     if(this.fav_icon_color == this.fav_icon_active_color){

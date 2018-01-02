@@ -44,6 +44,7 @@ import { SearchComponent } from './search/search.component';
 import { WatchlistComponent } from './watchlist/watchlist.component';
 import { ListingsComponent } from './listings/listings.component';
 
+
 //Third Party Modules To Enhance UI/UX
 import { SidebarModule } from 'ng-sidebar';
 import { DataTableModule } from "angular2-datatable";
