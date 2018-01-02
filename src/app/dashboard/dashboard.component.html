@@ -132,9 +132,8 @@
   </div>
 
   <!-- USER PROFILE MODAL -->
-
-  <ng-template let-context let-modal="modal" #modalTemplate style="width: 50px;" class="profileModal">
-    <div class="header">User Profile</div>
+  <ng-template let-context let-modal="modal" #modalTemplate style="width: 50px;">
+    <div class="header">Account Information</div>
     <div class="content">
       <div class="row">
         <div class="col-4">
@@ -147,19 +146,16 @@
           </label>
           <br>{{ user.firstName }}
           <hr>
-
           <label>
             <b>Last Name</b>
           </label>
           <br> {{ user.lastName }}
           <hr>
-
           <label>
             <b>Username</b>
           </label>
           <br> {{ user.username }}
           <hr>
-
           <label>
             <b>Email</b>
           </label>
@@ -168,24 +164,52 @@
         </div>
         <ng-template #change>
           <div class="col-8">
-            <input [(ngModel)]="user.firstName" id="firstname" type="text" style="color: #524f4f; padding-left: 10px;">
-            <input [(ngModel)]="user.lastName" id="lastname" type="text" style="color: #524f4f; padding-left: 10px;">
-            <input [(ngModel)]="user.username" id="username" type="text" style="color: #524f4f; padding-left: 10px;">
-            <input [(ngModel)]="user.email" id="email" type="text" style="color: #524f4f; padding-left: 10px;">
-            <input [(ngModel)]="user.password" id="password" type="password" style="color: #524f4f; padding-left: 10px;">
-            <div *ngIf="!isValidEmail" class="alert alert-danger" style = "text-align: center; width: 200px;">
-              Email is already taken
-            </div>
-            <div *ngIf="!isValidUsername" class="alert alert-danger" style = "text-align: center; width: 200px;">
+            <!-- First Name -->
+            <input required name="firstname" #firstname="ngModel" [(ngModel)]="user.firstName" style="color: #524f4f; padding-left: 10px;"
+              placeholder="{{user.firstName}}" type="text" class="form-control" required>
+
+            <!-- Last Name -->
+            <input required name="lastname" #lastname="ngModel" [(ngModel)]="user.lastName" style="color: #524f4f; padding-left: 10px;"
+              placeholder="{{user.lastName}}" type="text" class="form-control">
+
+            <!-- Username -->
+            <input required name="username" #username="ngModel" [(ngModel)]="user.username" (keyup)="validateUsername()" style="color: #524f4f; padding-left: 10px;"
+              placeholder="{{user.username}}" type="text" class="form-control">
+            <div *ngIf="usernameFlag" class="alert alert-danger" style="text-align: center;">
               Username is already taken
             </div>
-            <button class="ui green button" (click)="update()" autofocus>Submit</button>
+
+            <!-- Email -->
+            <input required email #email="ngModel" name="email" (keyup)="validateEmail()" [(ngModel)]="user.email" style="color: #524f4f; padding-left: 10px;"
+              placeholder="{{user.email}}" type="email" class="form-control">
+            <div *ngIf="email.invalid && (email.dirty || email.touched)">
+              <div *ngIf="email.errors.email" class="alert alert-danger" style="text-align: center;">
+                Not a valid email address
+              </div>
+            </div>
+            <div *ngIf="emailFlag" class="alert alert-danger" style="text-align: center;">
+              Email address is already taken
+            </div>
+
+            <!-- Password -->
+            <input required #password="ngModel" name="password" [(ngModel)]="user.password" style="color: #524f4f; padding-left: 10px;"
+              placeholder="{{user.password}}" type="password" class="form-control">
+
+            <!-- Disabling submit button if fields are empty -->
+            <div *ngIf="(user.email.length && user.username.length && user.firstName.length &&
+              user.lastName.length && user.password.length && !emailFlag && !usernameFlag) else disable">
+              <button class="ui green button" (click)="update()" autofocus>Submit</button>
+            </div>
+            <ng-template #disable>
+              <button [disabled]="true" class="ui green button" (click)="update()" autofocus>Submit</button>
+            </ng-template>
           </div>
         </ng-template>
       </div>
     </div>
+    <!-- Disabling action buttons if fields are empty -->
     <div class="actions">
-      <button class="ui red button" (click)="modal.deny('denied')">Close</button>
-      <button class="ui green button" (click)="changeValue()">Edit Info</button>
+      <button id="button" class="ui green button" (click)="changeView()" id="toggle">Edit</button>
+      <button id="button" class="ui red button" (click)="modal.deny('denied')">Close</button>
     </div>
   </ng-template>

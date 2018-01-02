@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 
 
 //const AWS_URL: string = "xchangedb.c2kh4xehvs7x.us-west-2.rds.amazonaws.com";
-const API_URL: string = "http://localhost:8091/";
-
+//const API_URL: string = "http://localhost:8091/";
+const API_URL: string = "http://xchange-backend.us-east-2.elasticbeanstalk.com/";
 
 @Injectable()
 export class LoginService {
@@ -24,12 +24,12 @@ export class LoginService {
 
 /**************** need login url mapping at backend here******************* */
 
-login(username: String, password: String){
-  return this.http.post<User>(API_URL + "users/login", {
-    username: username,
-    password: password
-  });
-}
+  login(username: String, password: String){
+    return this.http.post<User>(API_URL + "users/login", {
+      username: username,
+      password: password
+    });
+  }
 
   subscribeToLogin(f: (value: User)=>void){
     this.subscribers.subscribe(f);
@@ -44,21 +44,15 @@ login(username: String, password: String){
   }
 
   validateUsername(username: String) {
-    this.http.post(API_URL + "users/GetUserByUsername", {
+    return this.http.post(API_URL + "users/GetUserByUsername", {
       username: username
     })
-      .subscribe(data => {
-        console.log("inside validate username");
-      })
   }
 
   validateEmail(email: String) {
-    this.http.post(API_URL + "users/GetUserByEmail", {
+    return this.http.post(API_URL + "users/GetUserByEmail", {
       email: email
     })
-      .subscribe(data => {
-        console.log("inside validate email");
-      })
   }
 
   logout() {
@@ -66,5 +60,4 @@ login(username: String, password: String){
     this.subscribers.next(null);
     console.log("user logged out");
   }
-
 }

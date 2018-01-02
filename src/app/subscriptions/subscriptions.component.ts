@@ -10,16 +10,8 @@ import { User } from 'interfaces/xchange-interfaces/interfaces';
 
 export class SubscriptionsComponent implements OnInit {
 
-  user: User = this.loginService.subscribers.getValue();
-  constructor(private loginService: LoginService) {}
+  constructor() {}
 
-  isValid: boolean = false;
-  
-  changeValue() {
-    this.isValid = !this.isValid;
-  }
+  ngOnInit() {}
 
-  ngOnInit() {
-    this.user = this.loginService.subscribers.getValue();
-  }
 }
