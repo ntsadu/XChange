@@ -11,7 +11,7 @@
                             padding-right: 10px;
                             background-color: rgba(255, 255, 255, 0);
                             ">
-                            <i class="favorite icon" style="color: #ffff09;" (click)="toggleFavorite()"></i> 
+                            <i class="favorite icon" style="color: #ffff09;" (click)="removeFromWatchList()"></i> 
                         </a> 
                         <!-- &ensp; |  &ensp; -->
                         |  &ensp; 
@@ -263,24 +263,24 @@
         <thead style="color: rgba(224, 224, 224, 0.94); background-color: rgba(76, 76, 76, 0.7607843137254902);">
             <tr>
                 <th style="width: 17%;" 
-                [style.padding-left]="symbol_left" [style.padding-top]="symbol_top">
+                [style.padding-left]="this.sorter.symbol_left" [style.padding-top]="this.sorter.symbol_top">
                 <mfDefaultSorter id="symbol" by="name" (click)="sort('symbol')">SYMBOL
-                    <i *ngIf="symbol_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
-                    <i *ngIf="symbol_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
+                    <i *ngIf="this.sorter.symbol_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
+                    <i *ngIf="this.sorter.symbol_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
                 </mfDefaultSorter>
             </th>
             <th style="width: 25%;"
-                [style.padding-left]="exchange_left" [style.padding-top]="exchange_top">
+                [style.padding-left]="this.sorter.exchange_left" [style.padding-top]="this.sorter.exchange_top">
                 <mfDefaultSorter by="name" (click)="sort('exchange')">EXCHANGE
-                    <i *ngIf="exchange_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
-                    <i *ngIf="exchange_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
+                    <i *ngIf="this.sorter.exchange_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
+                    <i *ngIf="this.sorter.exchange_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
                 </mfDefaultSorter>
             </th>
             <th style="width: 60%"
-                [style.padding-left]="name_left" [style.padding-top]="name_top">
+                [style.padding-left]="this.sorter.name_left" [style.padding-top]="this.sorter.name_top">
                 <mfDefaultSorter by="email" (click)="sort('name')">NAME
-                    <i *ngIf="name_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
-                    <i *ngIf="name_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
+                    <i *ngIf="this.sorter.name_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
+                    <i *ngIf="this.sorter.name_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
                 </mfDefaultSorter>
             </th>
             </tr>
@@ -297,9 +297,9 @@
                     <tbody style="height: 100% !important;">
                     <tr *ngFor="let c of companyList | paginate: { itemsPerPage: 50, currentPage: p }; let i = index;" class="table-row" style="background-color: rgba(255, 255, 255, 0.611764705882353);; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #c5bdbd; color: #5a5656; font-family: 'Arimo', sans-serif; font-weight: 600;">
                         <td style="width: 17%; padding-left: 16px;">
-                            <a class="tooltipped" data-position="left" data-delay="20" materialize="tooltip" data-tooltip="Remove from Watch List" 
+                            <a class="tooltipped" data-position="bottom" data-delay="20" materialize="tooltip" data-tooltip="Remove from Watch List" 
                                 style="background-color: rgba(255, 255, 255, 0);">
-                                <i class="favorite icon" style="color: #ffff09; margin-left: -4px;" (click)="toggleFavorite()"></i> 
+                                <i class="favorite icon" style="color: #ffff09; margin-left: -4px;" (click)="removeFromWatchListWithArgs(c)"></i> 
                             </a> 
                             <a (click)="openModal(c)">
                              {{c.symbol}}
@@ -343,21 +343,26 @@
         border-left: 1px solid #c3c3c3;
         color: #737474;
         ">
+
+        <span *ngIf="!loading_chart">
           {{currentCompany.symbol}} &ensp; 
-            <a class="tooltipped" data-position="bottom" data-delay="20" materialize="tooltip" data-tooltip="fav_tooltip_message" 
+
+          
+            <a class="tooltipped" data-position="bottom" data-delay="20" materialize="tooltip" data-tooltip="Remove from Watch List" 
             style="margin-top: -6px;
                 margin-left: -15px;
                 padding-left: 10px;
                 padding-right: 10px;
                 background-color: rgba(255, 255, 255, 0);
                 ">
-                <i class="favorite icon" style="color: #ffff09;" (click)="toggleFavorite()"></i> 
+                <i class="favorite icon" style="color: #ffff09;" (click)="removeFromWatchList()"></i> 
             </a> 
             <!-- &ensp; |  &ensp; -->
             |  &ensp; 
+        
             <!-- <div style="background:red; height:5px; width:5px;">yoo</div> -->
             {{currentCompany.name}}
-
+        </span>
              <button style="background-color:transparent;
              border: none; float: right;" 
              (click)="refreshModal()">

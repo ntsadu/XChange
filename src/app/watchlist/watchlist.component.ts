@@ -4,6 +4,8 @@ import { Observable } from 'rxjs/Observable';
 import { forkJoin } from "rxjs/observable/forkJoin";
 import { XChangeController } from '../../providers/ers-controller/xchange-controller';
 import { Company } from '../../interfaces/xchange-interfaces/interfaces';
+
+import { AlphaVantageService } from '../../providers/alpha-vantage-service.service';
 import { FetchingService } from '../../providers/fetching.service';
 import { ParsingService } from '../../providers/parsing.service';
 import { Stock } from '../../model/stock.class';
@@ -11,6 +13,8 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 import { ModalContext } from '../listings/listings.component';
 import { Subscription } from 'rxjs/Subscription';
+
+import { WatchListSorter } from './watchlist-sorter.service';
 
 @Component({
   selector: 'app-watchlist',
@@ -28,34 +32,25 @@ export class WatchlistComponent implements OnInit {
   loading = true;
   loading_chart = true;
 
-  symbol_asc = true;
-  symbol_desc = false;
-  symbol_left = "15px";
-  symbol_top = "20px";
-
-  exchange_asc = false;
-  exchange_desc = false;
-  exchange_left = "20px";
-  exchange_top = "25px";
-
-  name_asc = false;
-  name_desc = false;
-  name_left = "10px";
-  name_top = "25px";
-
-  sector_asc = false;
-  sector_desc = false;
-  sector_left = "10px";
-  sector_top = "25px";
-
-  industry_asc = false;
-  industry_desc = false;
-  industry_left = "10px";
-  industry_top = "25px";
-
   tableHeader: string = "Watch List";
   options : string[] = [];
-  companyList: Company[];
+  companyList: Company[] = [];
+
+  apiFunction: string = '';
+  apiSymbol: string = '';
+  apiInterval: string = '';
+  apiParser: string[] = [];
+
+  ohlc_outlook = {open: " ", high: " ", low: " ", close: " ", volume: " "};
+  ohlc_outlook_type = " ";
+  closing_icon_class = "fa fa-arrow-up";
+  closing_color_indicator = "black";
+  closing_percent = " ";
+
+  fav_icon_color = "#dadada";  
+  fav_icon_active_color = "#ffff09";
+  fav_icon_inactive_color = "#dadada";
+  fav_tooltip_message = " ";
 
   selectedFunction = "Daily";
   selectedInterval = " ";
@@ -81,24 +76,6 @@ export class WatchlistComponent implements OnInit {
     { name: "30 minute", apiCall: "interval=30min", forParsing: "Time Series (30min)" },
     { name: "60 minute", apiCall: "interval=60min", forParsing: "Time Series (60min)" }
   ];
-
-  apiFunction: string = '';
-  apiSymbol: string = '';
-  apiInterval: string = '';
-  apiParser: string[] = [];
-
-  stock: Stock = new Stock();
-
-  ohlc_outlook = {open: " ", high: " ", low: " ", close: " ", volume: " "};
-  ohlc_outlook_type = " ";
-  closing_icon_class = "fa fa-arrow-up";
-  closing_color_indicator = "black";
-  closing_percent = " ";
-
-  fav_icon_color = "#dadada";  
-  fav_icon_active_color = "#ffff09";
-  fav_icon_inactive_color = "#dadada";
-  fav_tooltip_message = " ";
 
   public lineChartData:Array<any> = [
     {data: [65, 59, 80, 81, 56, 55, 40], label: 'Time Series (Daily)'}
@@ -127,48 +104,35 @@ export class WatchlistComponent implements OnInit {
   constructor(
     public xchangeApp : XChangeController, 
     public ngZone : NgZone, 
-    public modalService: SuiModalService, 
+    public modalService: SuiModalService,
+    public alphaVantage: AlphaVantageService, 
     public alphaFetcher: FetchingService, 
-    public alphaParser: ParsingService) { 
-
-    this.companyList = [];
+    public alphaParser: ParsingService,
+    public sorter: WatchListSorter) { 
 
     forkJoin([
-        this.xchangeApp.httpService.GetAllUserFavorites(), 
+        this.xchangeApp.httpService.GetAllUserFavorites({userId: 1}), 
         this.xchangeApp.httpService.GetAllCompanies()
     ]).subscribe(results => {
 
-      let userFavs:any[] = _.filter(results[0], (f:any)=>{if(f.userID == 1000000000) return f});
+      console.log(results);
+     
+      // let userFavs:any[] = _.filter(results[0], (f:any)=>{if(f.userId == 1) return f});
 
       _.map(results[1], (c:any)=>{
-        _.map(userFavs, (uf:any)=>{
-          if(c.companyID == uf.company) this.companyList.push(c);
+        _.map(results[0], (uf:any)=>{
+          if(c.companyId == uf.companyId) this.companyList.push(c);
         });
       });
 
+      this.companyList = _.orderBy(results[0], ["symbol"], ["asc"]);
       this.currentCompany = this.companyList[0];
 
       _.map(this.companyList, (c : Company)=>{
         this.options.push(c.symbol + " " + c.name);
       });
 
-      console.log(this.companyList);
-
-      this.selectedInterval = " "; 
-      this.interval_disabled = true;
-      this.apiFunction = _.filter(this.functions, (f)=>{if(f.name == this.selectedFunction) return f;})[0].apiCall;
-      this.apiInterval = null;
-      this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval); 
-
-      this.alphaFetcher.getStockData(this.apiFunction, this.currentCompany.symbol, this.apiParser, this.apiInterval)
-      .subscribe((results)=>{
-        console.log(this.apiParser[1]);
-        console.log(results.json()[this.apiParser[0]]);
-  
-        if(results.json()[this.apiParser[0]][this.apiParser[1]]) this.apiParser[1] = moment(this.apiParser[1]).subtract(1, 'days').format("YYYY-MM-DD");
-        
-        this.daily(results);
-      });
+      this.selectedFunctionEvent("Daily");
 
       if(!_.isNil(this.companyList)) {
         this.ngZone.run(()=>{
@@ -181,30 +145,64 @@ export class WatchlistComponent implements OnInit {
   ngOnInit() {
   }
 
-  toggleFavorite(){
-    if(this.fav_icon_color == this.fav_icon_active_color){
-     this.fav_icon_color = this.fav_icon_inactive_color;
-     this.fav_tooltip_message = "Add " + this.currentCompany.name + " to your Watch List";
-    }else if(this.fav_icon_color == this.fav_icon_inactive_color){
-       this.fav_icon_color = this.fav_icon_active_color;
-       this.fav_tooltip_message = "Remove " + this.currentCompany.name + " from your Watch List";
-    }
+  public removeFromWatchList(){
+
+    this.ngZone.run(()=>{
+      this.loading = true;
+      this.loading_chart = true;
+    });
+
+    this.xchangeApp.httpService
+    .RemoveUserFavorite({userId: 1, companyId: this.currentCompany.companyId})
+    .subscribe((results)=>{
+      console.log("COMPANY REMOVED FROM WATCHLIST!");
+      console.log(results);
+
+      this.ngZone.run(()=>{
+        this.loading = false;
+        this.loading_chart = false;
+        this.companyList = _.filter(this.companyList, (c)=>{
+          if(c.name != this.currentCompany.name) return c;
+        });
+        this.currentCompany = this.companyList[0];
+      });
+    });
+  }
+
+  public removeFromWatchListWithArgs(company:any){
+
+    this.ngZone.run(()=>{
+      this.loading = true;
+      this.loading_chart = true;
+    });
+
+    this.xchangeApp.httpService
+    .RemoveUserFavorite({userId: 1, companyId: company.companyId})
+    .subscribe((results)=>{
+      console.log("COMPANY REMOVED FROM WATCHLIST!");
+      console.log(results);
+
+      this.ngZone.run(()=>{
+        this.loading = false;
+        this.loading_chart = false;
+        this.companyList = _.filter(this.companyList, (c)=>{
+          if(c.name != company.name) return c;
+        });
+        this.currentCompany = this.companyList[0];
+      });
+    });
   }
 
   public openModal(company : any) {
-
-    this.currentCompany = company;
-
-    this.clearOHLC();
     this.ngZone.run(()=>{this.loading_chart = true});
-    // this.alphaFetcher.getStockData(this.apiFunction, this.apiSymbol, this.apiParser, this.apiInterval);
+    this.currentCompany = company;
     this.apiSymbol = company.symbol;
+
     const config = new TemplateModalConfig<ModalContext, string, string>(this.modalTemplate);
 
     config.closeResult = "closed!";
-    // config.transition = "fade up";
     config.mustScroll = true;
-    config.context = { symbol: company.symbol, name: company.name, sector: company.sector, industry: company.industry, dataString: JSON.stringify(company)};
+    config.context = { symbol: company.symbol, name: company.name, sector: company.sector, industry: company.industry, isFavorite: true, dataString: JSON.stringify(company)};
 
     this.selectedInterval = " "; 
     this.interval_disabled = true;
@@ -212,39 +210,29 @@ export class WatchlistComponent implements OnInit {
     this.apiInterval = null;
     this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval);      
     
+    //Unsubcribes to previous observables that haven't finished loading
     if(!_.isNil(this.click_subscription)) this.click_subscription.unsubscribe();
-    console.log("LMAO");
-    console.log(this.apiFunction);
-    this.click_subscription = this.alphaFetcher.getStockData(this.apiFunction, this.apiSymbol, this.apiParser, this.apiInterval)
+
+    this.click_subscription = this.alphaFetcher.getStockData(this.apiFunction, this.currentCompany.symbol, this.apiParser, this.apiInterval)
     .subscribe((results)=>{
-      console.log(this.apiParser[1]);
-      console.log(results.json()[this.apiParser[0]]);
 
-      if(results.json()[this.apiParser[0]][this.apiParser[1]]) this.apiParser[1] = moment(this.apiParser[1]).subtract(1, 'days').format("YYYY-MM-DD");
+      if(results.json()[this.apiParser[0]][this.apiParser[1]]){
+        this.apiParser[1] = moment(this.apiParser[1]).subtract(1, 'days').format("YYYY-MM-DD");
+      }
       
-      if(this.selectedFunction == "Daily") this.daily(results);
-      else if(this.selectedFunction == "Weekly") this.weekly(results);
-      else if(this.selectedFunction == "Monthly") this.monthly(results);
-      
+      switch(this.selectedFunction){
+        case "Daily": this.daily(results); break;
+        case "Weekly": this.weekly(results); break;
+        case "Monthly": this.monthly(results); break;
+      }
     });
-
-    // this.modalService
-    //     .open(config)
-    //     .onApprove(result => { /* approve callback */ })
-    //     .onDeny(result => { this.dismissed()});
   }
 
   refreshModal(){
-    // this.ngZone.run(()=>{this.loading_chart = true});
     this.selectedFunctionEvent(this.selectedFunction);
   }
 
-  public dismissed(){
-    this.selectedFunction = "Daily";
-  }
-
   public resultSelected($event : any){
-    this.clearOHLC();
     console.log($event.substring(0, $event.indexOf(" ")));
     
     let company = _.filter(this.companyList, (c)=>{
@@ -253,7 +241,6 @@ export class WatchlistComponent implements OnInit {
 
     // this.dismissed();
     this.openModal(company);
-  
   }
 
   getCurrentDate(){
@@ -265,26 +252,24 @@ export class WatchlistComponent implements OnInit {
   }
 
   public daily(results : any){
-    this.clearOHLC();
-    let time_series : any[] = [];
-    Object.getOwnPropertyNames(results.json()["Time Series (Daily)"])
-    .map((key: string) => {time_series.push({
-      key: key, 
-      open: parseFloat(results.json()["Time Series (Daily)"][key]["1. open"]).toFixed(2),
-      high: parseFloat(results.json()["Time Series (Daily)"][key]["2. high"]).toFixed(2),
-      low: parseFloat(results.json()["Time Series (Daily)"][key]["3. low"]).toFixed(2),
-      close: parseFloat(results.json()["Time Series (Daily)"][key]["4. close"]).toFixed(2),
-      volume: results.json()["Time Series (Daily)"][key]["5. volume"]});});
-    
-    let labels:any[] = [];
-    let data:any[] = [];
+    this.alphaVantage.processDailyTimeSeries(results, (time_series:any[], chartLabels:any, chartData:any)=>{
+      this.avCallBack(time_series, chartLabels, chartData);
+    });
+  }
 
-    for(let i = 6; i >= 0; i--){
-      labels.push(moment(time_series[i].key).format("ddd"));
-      console.log(parseFloat(time_series[i].close).toFixed(2));
-      data.push(parseFloat(time_series[i].close));
-    }
+  public weekly(results : any){
+    this.alphaVantage.processWeeklyTimeSeries(results, (time_series:any[], chartLabels:any, chartData:any)=>{
+      this.avCallBack(time_series, chartLabels, chartData);
+    });
+  }
 
+  public monthly(results : any){
+    this.alphaVantage.processMonthlyTimeSeries(results, (time_series:any[], chartLabels:any, chartData:any)=>{
+      this.avCallBack(time_series, chartLabels, chartData);
+    });
+  }
+
+  public avCallBack(time_series:any[], chartLabels:any, chartData:any){
     this.ngZone.run(()=>{
       this.ohlc_outlook.open = time_series[0].open;
       this.ohlc_outlook.high = time_series[0].high;
@@ -303,61 +288,8 @@ export class WatchlistComponent implements OnInit {
         this.closing_color_indicator = "rgb(212, 27, 27)";
       }
 
-      this.lineChartLabels = labels;
-      this.lineChartData[0].data = data;
-      this.loading_chart = false;
-    });
-  }
-
-  public weekly(results : any){
-    this.clearOHLC();
-    let time_series : any[] = [];
-    Object.getOwnPropertyNames(results.json()["Weekly Time Series"])
-    .map((key: string) => {time_series.push({
-      key: key, 
-      open: parseFloat(results.json()["Weekly Time Series"][key]["1. open"]).toFixed(2),
-      high: parseFloat(results.json()["Weekly Time Series"][key]["2. high"]).toFixed(2),
-      low: parseFloat(results.json()["Weekly Time Series"][key]["3. low"]).toFixed(2),
-      close: parseFloat(results.json()["Weekly Time Series"][key]["4. close"]).toFixed(2)});});
-    
-    let labels:any[] = [];
-    let data:any[] = [];
-
-    for(let i = 7; i >= 0; i--){
-      labels.push(moment(time_series[i].key).format("MM/DD"));
-      data.push(parseFloat(time_series[i].close));
-    }
-
-    this.ngZone.run(()=>{
-      this.lineChartLabels = labels;
-      this.lineChartData[0].data = data;
-      this.loading_chart = false;
-    });
-  }
-
-  public monthly(results : any){
-    this.ngZone.run(()=> this.clearOHLC());
-
-    let time_series : any[] = [];
-    Object.getOwnPropertyNames(results.json()["Monthly Time Series"])
-    .map((key: string) => {time_series.push({
-      key: key, 
-      open: parseFloat(results.json()["Monthly Time Series"][key]["1. open"]).toFixed(2),
-      high: parseFloat(results.json()["Monthly Time Series"][key]["2. high"]).toFixed(2),
-      low: parseFloat(results.json()["Monthly Time Series"][key]["3. low"]).toFixed(2),
-      close: parseFloat(results.json()["Monthly Time Series"][key]["4. close"]).toFixed(2)});});
-    
-    let labels:any[] = [];
-    let data:any[] = [];
-
-    for(let i = 11; i >= 0; i--){
-      labels.push(moment(time_series[i].key).format("MMM/YYYY"));
-      data.push(parseFloat(time_series[i].close));
-    }
-
-    this.ngZone.run(()=>{
-      this.lineChartLabels = labels;
-      this.lineChartData[0].data = data;
+      this.lineChartLabels = chartLabels;
+      this.lineChartData[0].data = chartData;
       this.loading_chart = false;
     });
   }
@@ -365,7 +297,6 @@ export class WatchlistComponent implements OnInit {
   public selectedFunctionEvent($event : any){
     if($event == "Intraday") {this.ngZone.run(()=>{this.interval_disabled = false});}
     else if($event != "Intraday"){
-      this.ngZone.run(()=> {this.clearOHLC();});
       this.ngZone.run(()=>{this.loading_chart = true});
       this.selectedInterval = " "; 
       this.interval_disabled = true;
@@ -401,328 +332,11 @@ export class WatchlistComponent implements OnInit {
     console.log(this.selectedInterval);
   }
 
-  //This is disgusting
-  sort(op? : any){
-    console.log(op);
-    if(op == "symbol"){
-      if(this.symbol_asc == true 
-         || (this.symbol_asc == false 
-          && this.symbol_desc == false)){
-        this.ngZone.run(()=>{
-          this.symbol_asc = false;
-          this.symbol_desc = true;
-          this.exchange_asc = false;
-          this.exchange_desc = false;
-          this.name_asc = false;
-          this.name_desc = false;
-          this.sector_asc = false;
-          this.sector_desc = false;
-          this.industry_asc = false;
-          this.industry_desc = false;
-
-          this.symbol_left = "15px";
-          this.symbol_top = "20px";
-          this.exchange_left = "20px";
-          this.exchange_top = "25px";
-          this.name_left = "10px";
-          this.name_top = "25px";
-          this.sector_left = "10px";
-          this.sector_top = "25px";
-          this.industry_left = "10px";
-          this.industry_top = "25px";
-
-          this.doSort(op, "desc");
-        });
-      }else if(this.symbol_desc == true || (this.symbol_asc == false && this.symbol_desc == false)){
-        this.ngZone.run(()=>{
-          this.symbol_asc = true;
-          this.symbol_desc = false;
-          this.exchange_asc = false;
-          this.exchange_desc = false;
-          this.name_asc = false;
-          this.name_desc = false;
-          this.sector_asc = false;
-          this.sector_desc = false;
-          this.industry_asc = false;
-          this.industry_desc = false;
-
-          this.symbol_left = "15px";
-          this.symbol_top = "20px";
-          this.exchange_left = "20px";
-          this.exchange_top = "25px";
-          this.name_left = "10px";
-          this.name_top = "25px";
-          this.sector_left = "10px";
-          this.sector_top = "25px";
-          this.industry_left = "10px";
-          this.industry_top = "25px";
-
-          this.doSort(op, "asc");           
-
-        });
-      }
-    }else if(op == "exchange"){
-      if(this.exchange_asc == true || (this.exchange_asc == false && this.exchange_desc == false)){
-        this.ngZone.run(()=>{
-          this.symbol_asc = false;
-          this.symbol_desc = false;
-          this.exchange_asc = false;
-          this.exchange_desc = true;
-          this.name_asc = false;
-          this.name_desc = false;
-          this.sector_asc = false;
-          this.sector_desc = false;
-          this.industry_asc = false;
-          this.industry_desc = false;
-
-          this.symbol_left = "15px";
-          this.symbol_top = "25px";
-          this.exchange_left = "20px";
-          this.exchange_top = "20px";
-          this.name_left = "10px";
-          this.name_top = "25px";
-          this.sector_left = "10px";
-          this.sector_top = "25px";
-          this.industry_left = "10px";
-          this.industry_top = "25px";
-
-          this.doSort(op, "desc");           
-
-        });
-      }else if(this.exchange_desc == true || (this.exchange_asc == false && this.exchange_desc == false)){
-        this.ngZone.run(()=>{
-          this.symbol_asc = false;
-          this.symbol_desc = false;
-          this.exchange_asc = true;
-          this.exchange_desc = false;
-          this.name_asc = false;
-          this.name_desc = false;
-          this.sector_asc = false;
-          this.sector_desc = false;
-          this.industry_asc = false;
-          this.industry_desc = false;
-
-          this.symbol_left = "15px";
-          this.symbol_top = "25px";
-          this.exchange_left = "20px";
-          this.exchange_top = "20px";
-          this.name_left = "10px";
-          this.name_top = "25px";
-          this.sector_left = "10px";
-          this.sector_top = "25px";
-          this.industry_left = "10px";
-          this.industry_top = "25px";
-
-          this.doSort(op, "asc");           
-
-        });
-      }
-    }else if(op == "name"){
-      if(this.name_asc == true || (this.name_asc == false && this.name_desc == false)){
-        this.ngZone.run(()=>{
-          this.symbol_asc = false;
-          this.symbol_desc = false;
-          this.exchange_asc = false;
-          this.exchange_desc = false;
-          this.name_asc = false;
-          this.name_desc = true;
-          this.sector_asc = false;
-          this.sector_desc = false;
-          this.industry_asc = false;
-          this.industry_desc = false;
-
-          this.symbol_left = "15px";
-          this.symbol_top = "25px";
-          this.exchange_left = "20px";
-          this.exchange_top = "25px";
-          this.name_left = "10px";
-          this.name_top = "20px";
-          this.sector_left = "10px";
-          this.sector_top = "25px";
-          this.industry_left = "10px";
-          this.industry_top = "25px";
-
-          this.doSort(op, "desc");           
-
-        });
-      }else if(this.name_desc == true || (this.name_asc == false && this.name_desc == false)){
-        this.ngZone.run(()=>{
-          this.symbol_asc = false;
-          this.symbol_desc = false;
-          this.exchange_asc = false;
-          this.exchange_desc = false;
-          this.name_asc = true;
-          this.name_desc = false;
-          this.sector_asc = false;
-          this.sector_desc = false;
-          this.industry_asc = false;
-          this.industry_desc = false;
-
-          this.symbol_left = "15px";
-          this.symbol_top = "25px";
-          this.exchange_left = "20px";
-          this.exchange_top = "25px";
-          this.name_left = "10px";
-          this.name_top = "20px";
-          this.sector_left = "10px";
-          this.sector_top = "25px";
-          this.industry_left = "10px";
-          this.industry_top = "25px";
-
-          this.doSort(op, "asc");           
-
-        });
-      }
-    }else if(op == "sector"){
-      if(this.sector_asc == true || (this.sector_asc == false && this.sector_desc == false)){
-        this.ngZone.run(()=>{
-          this.symbol_asc = false;
-          this.symbol_desc = false;
-          this.exchange_asc = false;
-          this.exchange_desc = false;
-          this.name_asc = false;
-          this.name_desc = false;
-          this.sector_asc = false;
-          this.sector_desc = true;
-          this.industry_asc = false;
-          this.industry_desc = false;
-
-          this.symbol_left = "15px";
-          this.symbol_top = "25px";
-          this.exchange_left = "20px";
-          this.exchange_top = "25px";
-          this.name_left = "10px";
-          this.name_top = "25px";
-          this.sector_left = "10px";
-          this.sector_top = "20px";
-          this.industry_left = "10px";
-          this.industry_top = "25px";
-
-          this.doSort(op, "desc");           
-
-        });
-      }else if(this.sector_desc == true || (this.sector_asc == false && this.sector_desc == false)){
-        this.ngZone.run(()=>{
-          this.symbol_asc = false;
-          this.symbol_desc = false;
-          this.exchange_asc = false;
-          this.exchange_desc = false;
-          this.name_asc = false;
-          this.name_desc = false;
-          this.sector_asc = true;
-          this.sector_desc = false;
-          this.industry_asc = false;
-          this.industry_desc = false;
-
-          this.symbol_left = "15px";
-          this.symbol_top = "25px";
-          this.exchange_left = "20px";
-          this.exchange_top = "25px";
-          this.name_left = "10px";
-          this.name_top = "25px";
-          this.sector_left = "10px";
-          this.sector_top = "20px";
-          this.industry_left = "10px";
-          this.industry_top = "25px";
-
-          this.doSort(op, "asc");           
-
-        });
-      }
-    }else if(op == "industry"){
-      if(this.industry_asc == true || (this.industry_asc == false && this.industry_desc == false)){
-        this.ngZone.run(()=>{
-          this.symbol_asc = false;
-          this.symbol_desc = false;
-          this.exchange_asc = false;
-          this.exchange_desc = false;
-          this.name_asc = false;
-          this.name_desc = false;
-          this.sector_asc = false;
-          this.sector_desc = false;
-          this.industry_asc = false;
-          this.industry_desc = true;
-
-          this.symbol_left = "15px";
-          this.symbol_top = "25px";
-          this.exchange_left = "20px";
-          this.exchange_top = "25px";
-          this.name_left = "10px";
-          this.name_top = "25px";
-          this.sector_left = "10px";
-          this.sector_top = "25px";
-          this.industry_left = "10px";
-          this.industry_top = "20px";
-
-          this.doSort(op, "desc");           
-
-        });
-      }else if(this.industry_desc == true || (this.industry_asc == false && this.industry_desc == false)){
-        this.ngZone.run(()=>{
-          this.symbol_asc = false;
-          this.symbol_desc = false;
-          this.exchange_asc = false;
-          this.exchange_desc = false;
-          this.name_asc = false;
-          this.name_desc = false;
-          this.sector_asc = false;
-          this.sector_desc = false;
-          this.industry_asc = true;
-          this.industry_desc = false;
-
-          this.symbol_left = "15px";
-          this.symbol_top = "25px";
-          this.exchange_left = "20px";
-          this.exchange_top = "25px";
-          this.name_left = "10px";
-          this.name_top = "25px";
-          this.sector_left = "10px";
-          this.sector_top = "25px";
-          this.industry_left = "10px";
-          this.industry_top = "20px";
-
-          this.doSort(op, "asc");           
-
-        });
-      }
-    }
-  }
-
-  doSort(column : string, order : string){
-    this.ngZone.run(()=>{
-      this.companyList = _.orderBy(this.companyList, [column], [order]);
+  sort(op?:any){
+    this.sorter.sort(op, (column:string, order:string)=>{
+      this.ngZone.run(()=>{
+            this.companyList = _.orderBy(this.companyList, [column], [order]);
+          });
     });
   }
-
-  alert(a : any){
-    console.log(a);
-  }
-
-  public randomize():void {
-    let _lineChartData:Array<any> = new Array(this.lineChartData.length);
-    for (let i = 0; i < this.lineChartData.length; i++) {
-      _lineChartData[i] = {data: new Array(this.lineChartData[i].data.length), label: this.lineChartData[i].label};
-      for (let j = 0; j < this.lineChartData[i].data.length; j++) {
-        _lineChartData[i].data[j] = Math.floor((Math.random() * 100) + 1);
-      }
-    }
-    this.lineChartData = _lineChartData;
-  }
- 
-  // events
-  public chartClicked(e:any):void {
-    console.log(e);
-  }
- 
-  public chartHovered(e:any):void {
-    console.log(e);
-  }
-
-  public clearOHLC(){
-    // this.ohlc_outlook.open = "N/A";
-    // this.ohlc_outlook.high = "N/A";
-    // this.ohlc_outlook.low = "N/A";
-    // this.ohlc_outlook.close = "N/A";
-  }
-
 }

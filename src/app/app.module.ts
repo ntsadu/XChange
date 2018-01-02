@@ -18,10 +18,15 @@ import { appRoutes } from './app.routes';
 //App Services.. 
 import { ERSController } from '../providers/ers-controller/ers-controller';
 import { XChangeController } from '../providers/ers-controller/xchange-controller';
+
+import { AlphaVantageService } from '../providers/alpha-vantage-service.service';
 import { FetchingService } from '../providers/fetching.service';
 import { ParsingService } from '../providers/parsing.service';
+
 import { LoginService } from '../app/login.service';
 import { NewsService } from './news.service';
+
+import { WatchListSorter } from './watchlist/watchlist-sorter.service';
 
 //Root Component
 import { AppComponent } from './app.component';
@@ -116,10 +121,12 @@ const routes: Routes = [
   providers: [
     ERSController, 
     XChangeController,
+    AlphaVantageService,
     FetchingService,
     ParsingService,
     NewsService,
-    LoginService
+    LoginService,
+    WatchListSorter
   ],
   bootstrap: [AppComponent]
 })

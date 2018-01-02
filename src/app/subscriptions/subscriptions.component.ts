@@ -22,6 +22,8 @@ export class SubscriptionsComponent implements OnInit {
   @ViewChild('modalTemplate')
   public modalTemplate:ModalTemplate<ModalContext, string, string>
 
+  users:any[];
+
   currentCompany : any = {};
   click_subscription : Subscription;
 
@@ -134,9 +136,15 @@ export class SubscriptionsComponent implements OnInit {
     this.companyList = [];
 
     forkJoin([
-        this.xchangeApp.httpService.GetAllUserFavorites(), 
+        this.xchangeApp.httpService.GetAllUsers(), 
         this.xchangeApp.httpService.GetAllCompanies()
     ]).subscribe(results => {
+
+      this.users = results[0];
+
+      _.map(this.users, (u)=>{
+        this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")");
+      });
 
       let userFavs:any[] = _.filter(results[0], (f:any)=>{if(f.userID == 1000000000) return f});
 
@@ -146,11 +154,10 @@ export class SubscriptionsComponent implements OnInit {
         });
       });
 
-      this.currentCompany = this.companyList[0];
+      console.log(results);
+      this.currentCompany = results[1][0];
 
-      _.map(this.companyList, (c : Company)=>{
-        this.options.push(c.symbol + " " + c.name);
-      });
+
 
       console.log(this.companyList);
 
@@ -193,7 +200,14 @@ export class SubscriptionsComponent implements OnInit {
 
   public openModal(company : any) {
 
-    this.currentCompany = company;
+    this.currentCompany =     {
+      "companyID": 1000006382,
+      "exchange": "AMEX",
+      "symbol": "CRVP",
+      "name": "Crystal Rock Holdings, Inc.",
+      "sector": "Consumer Non-Durables",
+      "industry": "Food Distributors"
+    };
 
     this.clearOHLC();
     this.ngZone.run(()=>{this.loading_chart = true});
@@ -214,7 +228,7 @@ export class SubscriptionsComponent implements OnInit {
     
     if(!_.isNil(this.click_subscription)) this.click_subscription.unsubscribe();
     
-    this.click_subscription = this.alphaFetcher.getStockData(this.apiFunction, this.apiSymbol, this.apiParser, this.apiInterval)
+    this.click_subscription = this.alphaFetcher.getStockData(this.apiFunction, this.currentCompany.symbol, this.apiParser, this.apiInterval)
     .subscribe((results)=>{
       console.log(this.apiParser[1]);
       console.log(results.json()[this.apiParser[0]]);
