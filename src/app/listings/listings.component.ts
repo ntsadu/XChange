@@ -7,11 +7,15 @@ import { ParsingService } from '../../providers/parsing.service';
 import { Stock } from '../../model/stock.class';
 import * as moment from 'moment';
 import * as _ from 'lodash';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 
 export interface ModalContext {
   symbol:string;
   name:string;
+  sector:string;
+  industry:string;
+  isFavorite: boolean,
   dataString:string;
 }
 
@@ -24,6 +28,8 @@ export class ListingsComponent implements OnInit {
 
   @ViewChild('modalTemplate')
   public modalTemplate:ModalTemplate<ModalContext, string, string>
+
+  currentCompany : any = {};
 
   loading = true;
   loading_chart = true;
@@ -56,6 +62,7 @@ export class ListingsComponent implements OnInit {
   tableHeader: string = "Equity Listings";
   options : string[] = [];
   companyList: Company[];
+  favCompanyList: Company[];
 
   selectedFunction = "Daily";
   selectedInterval = " ";
@@ -89,7 +96,18 @@ export class ListingsComponent implements OnInit {
 
   stock: Stock = new Stock();
 
-  ohlc_outlook = {open: " ", high: " ", low: " ", close: " "};
+
+  ohlc_outlook = {open: " ", high: " ", low: " ", close: " ", volume: " "};
+  ohlc_outlook_type = " ";
+  closing_icon_class = "fa fa-arrow-up";
+  closing_color_indicator = "black";
+  closing_percent = " ";
+
+  isFav = false;
+  fav_icon_color = "#dadada";  
+  fav_icon_active_color = "#ffff09";
+  fav_icon_inactive_color = "#dadada";
+  fav_tooltip_message = " ";
 
   public lineChartData:Array<any> = [
     {data: [65, 59, 80, 81, 56, 55, 40], label: 'Time Series (Daily)'}
@@ -105,24 +123,8 @@ export class ListingsComponent implements OnInit {
     { // grey
       backgroundColor: 'rgba(2, 194, 2, 0.432)',
       borderColor: '#02c202',
-      pointBackgroundColor: 'rgba(148,159,177,1)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-    },
-    { // dark grey
-      backgroundColor: 'rgba(77,83,96,0.2)',
-      borderColor: 'rgba(77,83,96,1)',
-      pointBackgroundColor: 'rgba(77,83,96,1)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(77,83,96,1)'
-    },
-    { // grey
-      backgroundColor: 'black',
-      borderColor: 'rgba(148,159,177,1)',
-      pointBackgroundColor: 'rgba(148,159,177,1)',
-      pointBorderColor: '#fff',
+      pointBackgroundColor: 'white',
+      pointBorderColor: '#02c202',
       pointHoverBackgroundColor: '#fff',
       pointHoverBorderColor: 'rgba(148,159,177,0.8)'
     }
@@ -138,13 +140,15 @@ export class ListingsComponent implements OnInit {
     public alphaFetcher: FetchingService, 
     public alphaParser: ParsingService) { 
 
-    this.xchangeApp.httpService
-    .GetAllCompanies()
-    .subscribe(
-      (data) => {
+    forkJoin(
+      this.xchangeApp.httpService.GetAllCompanies(),
+      this.xchangeApp.httpService.GetAllUserFavorites({userId : 1})
+    ).subscribe(
+      (results) => {
           console.log("GET ALL COMPANIES >>");
-          console.log(data);
-          this.companyList = _.orderBy(data, ['symbol'], ['asc']);
+          console.log(results);
+          this.companyList = _.orderBy(results[0], ['symbol'], ['asc']);
+          this.favCompanyList = results[1];
 
           _.map(this.companyList, (c : Company)=>{
             this.options.push(c.symbol + " " + c.name);
@@ -164,7 +168,56 @@ export class ListingsComponent implements OnInit {
   ngOnInit() {
   }
 
+  public addToWatchList(){
+
+    this.ngZone.run(()=>{
+      this.isFav = true;
+    });
+
+    this.xchangeApp.httpService
+    .AddUserFavorite({userId: 1, companyId: this.currentCompany.companyId})
+    .subscribe((results)=>{
+      console.log("COMPANY ADDED TO WATCHLIST!");
+      console.log(results);
+
+      this.ngZone.run(()=>{
+        this.isFav = true;
+        this.favCompanyList = results;
+      });
+    });
+  }
+
+  public removeFromWatchList(){
+
+    this.ngZone.run(()=>{
+      this.isFav = false;
+    });
+
+    this.xchangeApp.httpService
+    .RemoveUserFavorite({userId: 1, companyId: this.currentCompany.companyId})
+    .subscribe((results)=>{
+      console.log("COMPANY REMOVED FROM WATCHLIST!");
+      console.log(results);
+
+      this.ngZone.run(()=>{
+        this.isFav = false;
+        this.favCompanyList = _.filter(this.favCompanyList, (c)=>{
+          if(c.name != this.currentCompany.name) return c;
+        });
+      });
+    });
+  }
+
   public openModal(company : any) {
+
+    this.currentCompany = company;
+
+    // console.log();
+
+    _.map(this.favCompanyList, (c)=>{
+      if(company.name == c.name) this.isFav = true;
+    });
+
     this.clearOHLC();
     this.ngZone.run(()=>{this.loading_chart = true});
     // this.alphaFetcher.getStockData(this.apiFunction, this.apiSymbol, this.apiParser, this.apiInterval);
@@ -174,7 +227,13 @@ export class ListingsComponent implements OnInit {
     config.closeResult = "closed!";
     // config.transition = "fade up";
     config.mustScroll = true;
-    config.context = { symbol: company.symbol, name: company.name, dataString: JSON.stringify(company)};
+    config.context = { 
+      symbol: company.symbol, 
+      name: company.name, 
+      sector: company.sector, 
+      industry: company.industry, 
+      isFavorite: this.isFav, 
+      dataString: JSON.stringify(company)};
 
     this.selectedInterval = " "; 
     this.interval_disabled = true;
@@ -183,18 +242,12 @@ export class ListingsComponent implements OnInit {
     this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval);      
     this.alphaFetcher.getStockData(this.apiFunction, this.apiSymbol, this.apiParser, this.apiInterval)
     .subscribe((results)=>{
-      console.log(results.json());
-      // results = results.json();
-      this.stock.open = results.json()[this.apiParser[0]][this.apiParser[1]]["1. open"];
-      this.stock.high = results.json()[this.apiParser[0]][this.apiParser[1]]["2. high"];
-      this.stock.low = results.json()[this.apiParser[0]][this.apiParser[1]]["3. low"];
-      this.stock.close = results.json()[this.apiParser[0]][this.apiParser[1]]["4. close"];
-      this.stock.volume = results.json()[this.apiParser[0]][this.apiParser[1]]["5. volume"];
+      console.log(this.apiParser[1]);
+      console.log(results.json()[this.apiParser[0]]);
 
+      if(results.json()[this.apiParser[0]][this.apiParser[1]]) this.apiParser[1] = moment(this.apiParser[1]).subtract(1, 'days').format("YYYY-MM-DD");
+      
       this.daily(results);
-
-      // console.log(time_series);
-
     });
 
     this.modalService
@@ -203,8 +256,14 @@ export class ListingsComponent implements OnInit {
         .onDeny(result => { this.dismissed()});
   }
 
+  refreshModal(){
+    // this.ngZone.run(()=>{this.loading_chart = true});
+    this.selectedFunctionEvent(this.selectedFunction);
+  }
+
   public dismissed(){
     this.selectedFunction = "Daily";
+    this.isFav = false;
   }
 
   public resultSelected($event : any){
@@ -218,16 +277,25 @@ export class ListingsComponent implements OnInit {
     this.openModal(company);
   }
 
+  getCurrentDate(){
+    return moment().format('MMM Do, YYYY');
+  }
+
+  getCurrentTime(){
+    return moment().format('hh:mm');
+  }
+
   public daily(results : any){
     this.clearOHLC();
     let time_series : any[] = [];
     Object.getOwnPropertyNames(results.json()["Time Series (Daily)"])
     .map((key: string) => {time_series.push({
       key: key, 
-      open: results.json()["Time Series (Daily)"][key]["1. open"],
-      high: results.json()["Time Series (Daily)"][key]["2. high"],
-      low: results.json()["Time Series (Daily)"][key]["3. low"],
-      close: results.json()["Time Series (Daily)"][key]["4. close"]});});
+      open: parseFloat(results.json()["Time Series (Daily)"][key]["1. open"]).toFixed(2),
+      high: parseFloat(results.json()["Time Series (Daily)"][key]["2. high"]).toFixed(2),
+      low: parseFloat(results.json()["Time Series (Daily)"][key]["3. low"]).toFixed(2),
+      close: parseFloat(results.json()["Time Series (Daily)"][key]["4. close"]).toFixed(2),
+      volume: results.json()["Time Series (Daily)"][key]["5. volume"]});});
     
     let labels:any[] = [];
     let data:any[] = [];
@@ -242,6 +310,18 @@ export class ListingsComponent implements OnInit {
       this.ohlc_outlook.high = time_series[0].high;
       this.ohlc_outlook.low = time_series[0].low;
       this.ohlc_outlook.close = time_series[0].close;
+      this.ohlc_outlook.volume = time_series[0].volume;
+
+      this.ohlc_outlook_type = " for the day of " + moment(time_series[0].key).format("MMM Do, YYYY");
+      this.closing_percent = "(" + (((parseFloat(time_series[1].close) - parseFloat(time_series[0].close)) / parseFloat(time_series[1].close)) * -100).toFixed(2) + "%)";
+
+      if(this.ohlc_outlook.close > this.ohlc_outlook.open){
+        this.closing_icon_class = "fa fa-arrow-up";
+        this.closing_color_indicator = "rgb(2, 194, 2)";
+      }else{
+        this.closing_icon_class = "fa fa-arrow-down";
+        this.closing_color_indicator = "rgb(212, 27, 27)";
+      }
       this.lineChartLabels = labels;
       this.lineChartData[0].data = data;
       this.loading_chart = false;
@@ -262,16 +342,12 @@ export class ListingsComponent implements OnInit {
     let labels:any[] = [];
     let data:any[] = [];
 
-    for(let i = 11; i >= 0; i--){
-      labels.push(moment(time_series[i].key).format("MM/DD/YYYY"));
+    for(let i = 7; i >= 0; i--){
+      labels.push(moment(time_series[i].key).format("MM/DD"));
       data.push(parseFloat(time_series[i].close));
     }
 
     this.ngZone.run(()=>{
-      this.ohlc_outlook.open = time_series[0].open;
-      this.ohlc_outlook.high = time_series[0].high;
-      this.ohlc_outlook.low = time_series[0].low;
-      this.ohlc_outlook.close = time_series[0].close;
       this.lineChartLabels = labels;
       this.lineChartData[0].data = data;
       this.loading_chart = false;
@@ -293,16 +369,12 @@ export class ListingsComponent implements OnInit {
     let labels:any[] = [];
     let data:any[] = [];
 
-    for(let i = 7; i >= 0; i--){
+    for(let i = 11; i >= 0; i--){
       labels.push(moment(time_series[i].key).format("MMM/YYYY"));
       data.push(parseFloat(time_series[i].close));
     }
 
     this.ngZone.run(()=>{
-      this.ohlc_outlook.open = time_series[0].open;
-      this.ohlc_outlook.high = time_series[0].high;
-      this.ohlc_outlook.low = time_series[0].low;
-      this.ohlc_outlook.close = time_series[0].close;
       this.lineChartLabels = labels;
       this.lineChartData[0].data = data;
       this.loading_chart = false;
@@ -323,20 +395,13 @@ export class ListingsComponent implements OnInit {
       .subscribe((results)=>{
         console.log(results.json());
         // results = results.json();
-        this.stock.open = results.json()[this.apiParser[0]][this.apiParser[1]]["1. open"];
-        this.stock.high = results.json()[this.apiParser[0]][this.apiParser[1]]["2. high"];
-        this.stock.low = results.json()[this.apiParser[0]][this.apiParser[1]]["3. low"];
-        this.stock.close = results.json()[this.apiParser[0]][this.apiParser[1]]["4. close"];
-        this.stock.volume = results.json()[this.apiParser[0]][this.apiParser[1]]["5. volume"];
+        if(results.json()[this.apiParser[0]][this.apiParser[1]]) this.apiParser[1] = moment(this.apiParser[1]).subtract(1, 'days').format("YYYY-MM-DD");
 
         console.log("$event: " + $event);
         console.log($event == "Weekly");
         if($event == "Daily"){this.daily(results);}
         else if($event == "Weekly"){ this.weekly(results);}
         else if($event == "Monthly"){ console.log("YOOO"); this.monthly(results);}
-        
-        // console.log(time_series);
-
       });
     }
 
@@ -351,14 +416,6 @@ export class ListingsComponent implements OnInit {
     this.apiFunction = _.filter(this.functions, (f)=>{if(f.name == this.selectedFunction) return f;})[0].apiCall;
     this.apiInterval = _.filter(this.intervals, (i)=>{if(i.name == _.lowerCase(this.selectedFunction)) return i;})[0].apiCall;
     this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval);      
-    
-    // this.alphaFetcher.getStockData(this.apiFunction, this.apiSymbol, this.apiParser, this.apiInterval)
-    // .subscribe((results)=>{
-    //   console.log(results);
-    //   // this.results = results.json().results;
-    //   // console.log(this.results["Meta Data"]["1. Information"]);
-    //   // resolve();
-    // });
 
     console.log(this.selectedInterval);
   }

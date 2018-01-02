@@ -18,8 +18,15 @@ import { appRoutes } from './app.routes';
 //App Services.. 
 import { ERSController } from '../providers/ers-controller/ers-controller';
 import { XChangeController } from '../providers/ers-controller/xchange-controller';
+
+import { AlphaVantageService } from '../providers/alpha-vantage-service.service';
 import { FetchingService } from '../providers/fetching.service';
 import { ParsingService } from '../providers/parsing.service';
+
+import { LoginService } from '../app/login.service';
+import { NewsService } from './news.service';
+
+import { WatchListSorter } from './watchlist/watchlist-sorter.service';
 
 //Root Component
 import { AppComponent } from './app.component';
@@ -27,6 +34,7 @@ import { AppComponent } from './app.component';
 //Supplement View Components
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component'; 
+import { ProfileComponent } from './profile/profile.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
 import { NewRequestPage } from '../pages/employee-page/new-request/new-request';
@@ -57,18 +65,14 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { DialogOverviewExampleDialog } from '../pages/manager-page/pending-requests/pending-requests-manager';
 import { SuiModule } from 'ng2-semantic-ui';
 import { MatCardModule } from '@angular/material/card';
-
-import { NewsService } from './news.service';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { ChartsModule } from 'ng2-charts';
-import { ProfileComponent } from './profile/profile.component';
-import { LoginService } from '../app/login.service';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent},
   { path: "dashboard", component: DashboardComponent},
   { path: "news", component: NewsComponent}
 ]
-
 
 @NgModule({
   declarations: [
@@ -109,6 +113,7 @@ const routes: Routes = [
     MatDialogModule,
     MatCardModule,
     SuiModule,
+    InfiniteScrollModule,
     ChartsModule,
     SidebarModule.forRoot(),
     RouterModule.forRoot(appRoutes),
@@ -117,10 +122,12 @@ const routes: Routes = [
   providers: [
     ERSController, 
     XChangeController,
+    AlphaVantageService,
     FetchingService,
     ParsingService,
     NewsService,
-    LoginService
+    LoginService,
+    WatchListSorter
   ],
   bootstrap: [AppComponent]
 })

@@ -20,19 +20,19 @@
     <hr>
 
     <div class="container sidebar-options">
-      <div class="row">
+      <div class="row" style="height: 28px;">
         <p class="sidebar-option">
           <i class="fa fa-cog"></i>
           <span class="format">Settings</span>
         </p>
       </div>
-      <div class="row">
+      <div class="row" style="height: 28px;">
         <p class="sidebar-option">
           <i class="fa fa-info-circle"></i>
           <span class="format">Help</span>
         </p>
       </div>
-      <div class="row">
+      <div class="row" style="height: 28px;">
         <p class="sidebar-option">
           <i class="fa fa-sign-out"></i>
           <span class="format" (click)="logout()">Logout</span>
@@ -67,16 +67,10 @@
                   <div class="col-md-8 col-sm-6" style="font-size: small; padding-left: 0px; margin-left: -8px; margin-top: -4px;">
                     {{ user.username }}
                     <br>
-                    <span style="font-size: x-small;">My Profile</span>
+                    <span style="font-size: x-small;">View Profile</span>
                   </div>
                 </div>
-                <!-- Jon Doe -->
-                <!-- <div class="input-group">
-                          <input style="height: 2.5rem;" type="text" class="form-control">
-                          <span class="input-group-addon" style="width: 40px; height: 2.65rem;">
-                              <i class="fa fa-search"></i>
-                          </span>
-                        </div> -->
+
               </div>
               <div class="list-group  dashboard-options">
                 <a *ngIf="newsPage" id="news" class="list-group-item list-group-item-clicked list-group-item-action" (click)="switchPage($event)"
