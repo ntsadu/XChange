@@ -218,7 +218,8 @@ export class SubscriptionsComponent implements OnInit {
     config.closeResult = "closed!";
     // config.transition = "fade up";
     config.mustScroll = true;
-    config.context = { symbol: company.symbol, name: company.name, sector: company.sector, industry: company.industry, dataString: JSON.stringify(company)};
+    
+    config.context = { isFavorite: false, symbol: company.symbol, name: company.name, sector: company.sector, industry: company.industry, dataString: JSON.stringify(company)};
 
     this.selectedInterval = " "; 
     this.interval_disabled = true;
