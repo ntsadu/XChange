@@ -1,5 +1,5 @@
 
-<div class="inner-view">
+<div class="inner-view" style="background-color: grey;"> 
     <div *ngIf="loading">
         <div class="ui segment" style="height: 90.7vh; background: #23232340; border: none;">
             <div class="ui active dimmer">
@@ -8,7 +8,12 @@
         </div>
     </div>
 
-  <div style="overflow-y: scroll; height: 87vh; margin-right: 3px; margin-left: 5px;">
+  <div infiniteScroll
+       [infiniteScrollDistance]="2"
+       [infiniteScrollThrottle]="50"
+       (scrolled)="onScroll()" 
+       [scrollWindow]="false"
+      style="overflow-y: scroll; height: 87vh; margin-right: 3px; margin-left: 5px;">
     <div *ngFor="let a of Articles">
       <mat-card class="card">
         <a target="_blank" href= "{{ a.urlToImage }}"><img mat-card-image id = "image" title="View Image" src = "{{ a.urlToImage }}"></a>

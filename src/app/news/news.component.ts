@@ -27,15 +27,45 @@ export class NewsComponent implements OnInit {
   Url: string[];
   UrlToImage: string[];
 
-  constructor(private NewsService: NewsService, public ngZone: NgZone) { }
+  pageNumber: number = 1;
+
+  constructor(private NewsService: NewsService, public ngZone: NgZone){ 
+
+  }
 
   ngOnInit() {
     this.getNews();
   }
 
+  onScroll() {
+    console.log('scrolled!!');
+
+    this.NewsService
+    .getNews(this.pageNumber + 1)
+    .subscribe((news) => {
+      this.News = <any>news;
+
+      // this.Articles.push(this.News["articles"]);
+      // console.log()
+      console.log(this.Articles);
+
+      if(!_.isNil(this.Articles)){
+        this.ngZone.run(()=>{
+          this.pageNumber++;
+          _.map(this.News["articles"], (a : any) => {
+            this.Articles.push(a);
+          });
+          console.log(this.Articles);
+          this.Articles = _.uniqBy(this.Articles, "urlToImage");
+          this.loading = false;
+        });
+      }
+    })
+  }
+
   getNews() {
     this.NewsService
-    .getNews()
+    .getNews(this.pageNumber)
     .subscribe((news) => {
       this.News = <any>news;
       this.Articles = this.News["articles"];
