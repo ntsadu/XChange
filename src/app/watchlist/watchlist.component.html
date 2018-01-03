@@ -296,7 +296,7 @@
                 <div *ngIf="loading == false" style="height: 100%;">
                     <tbody style="height: 100% !important; width: calc(100% - 8px);">
                     <tr *ngFor="let c of companyList | paginate: { itemsPerPage: 50, currentPage: p }; let i = index;" class="table-row" style="background-color: rgba(255, 255, 255, 0.611764705882353);; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #c5bdbd; color: #5a5656; font-family: 'Arimo', sans-serif; font-weight: 600;">
-                        <td style="width: 17%; padding-left: 16px;">
+                        <td style="width: 18%; padding-left: 16px;">
                             <a class="tooltipped" data-position="bottom" data-delay="20" materialize="tooltip" data-tooltip="Remove from Watch List" 
                                 style="background-color: rgba(255, 255, 255, 0);">
                                 <i class="favorite icon" style="color: #ffff09; margin-left: -4px;" (click)="removeFromWatchListWithArgs(c)"></i> 

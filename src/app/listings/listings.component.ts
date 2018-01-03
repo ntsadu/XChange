@@ -313,6 +313,13 @@ export class ListingsComponent implements OnInit {
       this.ohlc_outlook.volume = time_series[0].volume;
 
       this.ohlc_outlook_type = " for the day of " + moment(time_series[0].key).format("MMM Do, YYYY");
+
+      console.log(time_series);
+      console.log(time_series[1].close);
+      console.log(time_series[0].close);
+      console.log();
+      console.log();
+
       this.closing_percent = "(" + (((parseFloat(time_series[1].close) - parseFloat(time_series[0].close)) / parseFloat(time_series[1].close)) * -100).toFixed(2) + "%)";
 
       if(this.ohlc_outlook.close > this.ohlc_outlook.open){

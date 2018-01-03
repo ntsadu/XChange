@@ -9,7 +9,8 @@ import { xchange_endpoints } from '../../constants/endpoints';
 import * as _ from 'lodash';
 
 const API_HOST  = " http://localhost:3000";
-const EB_API_HOST = "http://default-environment.wbpuprfx4t.us-east-2.elasticbeanstalk.com";
+// const EB_API_HOST = "http://default-environment.wbpuprfx4t.us-east-2.elasticbeanstalk.com";
+const EB_API_HOST = "http://xchange-backend.us-east-2.elasticbeanstalk.com/";
 
 export class HttpService {
 
@@ -23,10 +24,13 @@ public GetAllUsers() {
     return this.get("/users/GetAllUsers");
 }
 
-public GetAllUserSubscriptions() {
-    return this.post(xchange_endpoints.usersubscriptions);
+public GetAllUserSubscriptions($requestBody:{userId:number}) {
+    return this.post("/users/GetAllUserSubscriptions", $requestBody);
 }
 
+public GetAllUserSubscribers($requestBody:{userId:number}) {
+    return this.post("/users/GetUserSubscribers", $requestBody);
+}
 
 public AddUserFavorite($requestBody:{userId:number, companyId:number}) {
     return this.post("/users/AddUserFavorite", $requestBody);

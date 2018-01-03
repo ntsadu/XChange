@@ -11,7 +11,9 @@ import { Stock } from '../../model/stock.class';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import { ModalContext } from '../listings/listings.component';
+import { MatTabChangeEvent } from '@angular/material';
 import { Subscription } from 'rxjs/Subscription';
+import { LoginService } from '../login.service';
 
 @Component({
   selector: 'app-subscriptions',
@@ -24,6 +26,8 @@ export class SubscriptionsComponent implements OnInit {
   public modalTemplate:ModalTemplate<ModalContext, string, string>
 
   users:any[];
+  subscriptions:any[];
+  subscribers:any[];
 
   currentCompany : any = {};
   click_subscription : Subscription;
@@ -132,7 +136,8 @@ export class SubscriptionsComponent implements OnInit {
     public ngZone : NgZone, 
     public modalService: SuiModalService, 
     public alphaFetcher: FetchingService, 
-    public alphaParser: ParsingService) { 
+    public alphaParser: ParsingService,
+    public loginService: LoginService) { 
 
     this.companyList = [];
 
@@ -143,9 +148,9 @@ export class SubscriptionsComponent implements OnInit {
 
       this.users = results[0];
 
-      _.map(this.users, (u)=>{
-        this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")");
-      });
+      // _.map(this.users, (u)=>{
+      //   this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")");
+      // });
 
       let userFavs:any[] = _.filter(results[0], (f:any)=>{if(f.userID == 1000000000) return f});
 
@@ -157,8 +162,6 @@ export class SubscriptionsComponent implements OnInit {
 
       console.log(results);
       this.currentCompany = results[1][0];
-
-
 
       console.log(this.companyList);
 
@@ -188,6 +191,54 @@ export class SubscriptionsComponent implements OnInit {
 
   ngOnInit() {}
 
+  tabChanged(tabChangeEvent: MatTabChangeEvent){
+    console.log(tabChangeEvent.index);
+    switch(tabChangeEvent.index){
+      case 1: this.initSubscriptions(); break;
+      case 2: this.initSubscribers(); break;
+    }
+  }
+
+  initSubscriptions(){
+
+    this.ngZone.run(()=>{
+      this.loading = true;
+    });
+
+    this.xchangeApp.httpService
+    .GetAllUserSubscriptions({userId: this.loginService.subscribers.getValue().userId})
+    .subscribe((results)=>{
+      console.log(results);
+      this.ngZone.run(()=>{
+        this.subscriptions = _.orderBy(results, ["username"], ["asc"]);
+        _.map(this.subscriptions, (u)=>{
+          this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")");
+        });
+        this.loading = false;
+      });
+    });
+  }
+
+  initSubscribers(){
+
+    this.ngZone.run(()=>{
+      this.loading = true;
+    });
+
+    this.xchangeApp.httpService
+    .GetAllUserSubscribers({userId: this.loginService.subscribers.getValue().userId})
+    .subscribe((results)=>{
+      console.log(results);
+      this.ngZone.run(()=>{
+        this.subscribers = _.orderBy(results, ["username"], ["asc"]);
+        _.map(this.subscriptions, (u)=>{
+          this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")");
+        });
+        this.loading = false;
+      });
+    });
+  }
+
   toggleFavorite(){
     if(this.fav_icon_color == this.fav_icon_active_color){
      this.fav_icon_color = this.fav_icon_inactive_color;
@@ -200,7 +251,7 @@ export class SubscriptionsComponent implements OnInit {
 
   public openModal(company : any) {
 
-    this.currentCompany =     {
+    this.currentCompany =  {
       "companyID": 1000006382,
       "exchange": "AMEX",
       "symbol": "CRVP",

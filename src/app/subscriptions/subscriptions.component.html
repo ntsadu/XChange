@@ -259,8 +259,8 @@
             <div class="row" style="width: 100%; margin-left: 0px;">
               <div class="col-md-5" style="padding-right: 0px; padding-left:0px;">
     
-                    <mat-tab-group class="demo-tab-group" style="border-right: 1px solid grey;">
-                            <mat-tab label="Feed">
+                    <mat-tab-group class="demo-tab-group" (selectedTabChange)="tabChanged($event)" style="border-right: 1px solid grey;">
+                            <mat-tab label="Feed" disabled>
                               <div class="demo-tab-content">
                                     <div style="
                                     padding-top: 10px;
@@ -300,7 +300,7 @@
                                     overflow-y: scroll;">
 
                                     <div class="ui relaxed divided list">
-                                            <div *ngFor="let u of users" class="item">
+                                            <div *ngFor="let u of subscriptions" class="item">
                                               <i class="large github middle aligned icon"></i>
                                               <div class="content">
                                                 <a class="header">{{u.firstName}} {{u.lastName}}</a>
@@ -309,28 +309,52 @@
                                             </div>
                                       </div>
                                                 
-                                      
+
                                 </div>
                               </div>  
                             </mat-tab>
                             <mat-tab label="My Subscribers">
-                              No content  
+                                <div class="demo-tab-content">
+                                    <div class="row" style="
+                                    margin-left: 0px;
+                                    margin-right: 0px;
+                                    padding-top: 7px;
+                                    padding-left: 5px;
+                                    height: 44px;
+                                    background-color: #efeff4;">
+                                    <sui-search placeholder="Search Listings..."
+                                        hasIcon="true"
+                                        [options]="options"
+                                        [searchDelay]="0"
+                                        (resultSelected)="resultSelected($event)"
+                                        style="width: 100%; margin-right: 6px !important;">
+                                    </sui-search>
+                                </div>
+                    
+                                <div style="
+                                    padding-top: 10px;
+                                    padding-left: 10px;
+                                    background-color: white;
+                                    height: calc(100vh - 234px);
+                                    overflow: hidden;
+                                    overflow-y: scroll;">
+      
+                                    <div class="ui relaxed divided list">
+                                            <div *ngFor="let u of subscribers" class="item">
+                                              <i class="large github middle aligned icon"></i>
+                                              <div class="content">
+                                                <a class="header">{{u.firstName}} {{u.lastName}}</a>
+                                                <div class="description">@{{u.username}}</div>
+                                              </div>
+                                            </div>
+                                      </div>
+                                                
+      
+                                </div>
+                                    </div>  
                             </mat-tab>
                             <mat-tab label="Messages">
-                             <div class="demo-tab-content">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue.
-                                Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus.
-                                In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec,
-                                feugiat ultricies mi. Aliquam erat volutpat. Nam placerat, tortor in ultrices porttitor,
-                                orci enim rutrum enim, vel tempor sapien arcu a tellus.
-                                <br />
-                                <br />
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue.
-                                Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus.
-                                In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec,
-                                feugiat ultricies mi. Aliquam erat volutpat. Nam placerat, tortor in ultrices porttitor,
-                                orci enim rutrum enim, vel tempor sapien arcu a tellus.
-                              </div>  
+                              UNDER CONSTRUCTION
                             </mat-tab>
                             <mat-tab label="Likes">
                                 <div class="demo-tab-content">
