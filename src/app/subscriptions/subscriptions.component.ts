@@ -12,6 +12,7 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 import { ModalContext } from '../listings/listings.component';
 import { Subscription } from 'rxjs/Subscription';
+import { LoginService } from 'app/login.service';
 
 @Component({
   selector: 'app-subscriptions',
@@ -132,7 +133,8 @@ export class SubscriptionsComponent implements OnInit {
     public ngZone : NgZone, 
     public modalService: SuiModalService, 
     public alphaFetcher: FetchingService, 
-    public alphaParser: ParsingService) { 
+    public alphaParser: ParsingService,
+    private loginService: LoginService) { 
 
     this.companyList = [];
 
@@ -147,7 +149,7 @@ export class SubscriptionsComponent implements OnInit {
         this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")");
       });
 
-      let userFavs:any[] = _.filter(results[0], (f:any)=>{if(f.userID == 1000000000) return f});
+      let userFavs:any[] = _.filter(results[0], (f:any)=>{if(f.userID == this.loginService.subscribers.getValue().userId) return f});
 
       _.map(results[1], (c:any)=>{
         _.map(userFavs, (uf:any)=>{
