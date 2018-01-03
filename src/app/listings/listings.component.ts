@@ -344,7 +344,9 @@ export class ListingsComponent implements OnInit {
       open: results.json()["Weekly Time Series"][key]["1. open"],
       high: results.json()["Weekly Time Series"][key]["2. high"],
       low: results.json()["Weekly Time Series"][key]["3. low"],
-      close: results.json()["Weekly Time Series"][key]["4. close"]});});
+      close: results.json()["Weekly Time Series"][key]["4. close"],
+      volume: results.json()["Weekly Time Series"][key]["5. volume"]});});
+      
     
     let labels:any[] = [];
     let data:any[] = [];
@@ -355,6 +357,31 @@ export class ListingsComponent implements OnInit {
     }
 
     this.ngZone.run(()=>{
+
+      this.ohlc_outlook.open = time_series[0].open;
+      this.ohlc_outlook.high = time_series[0].high;
+      this.ohlc_outlook.low = time_series[0].low;
+      this.ohlc_outlook.close = time_series[0].close;
+      this.ohlc_outlook.volume = time_series[0].volume;
+
+      this.ohlc_outlook_type = " for the day of " + moment(time_series[0].key).format("MMM Do, YYYY");
+
+      console.log(time_series);
+      console.log(time_series[1].close);
+      console.log(time_series[0].close);
+      console.log();
+      console.log();
+
+      this.closing_percent = "(" + (((parseFloat(time_series[1].close) - parseFloat(time_series[0].close)) / parseFloat(time_series[1].close)) * -100).toFixed(2) + "%)";
+
+      if(this.ohlc_outlook.close > this.ohlc_outlook.open){
+        this.closing_icon_class = "fa fa-arrow-up";
+        this.closing_color_indicator = "rgb(2, 194, 2)";
+      }else{
+        this.closing_icon_class = "fa fa-arrow-down";
+        this.closing_color_indicator = "rgb(212, 27, 27)";
+      }
+
       this.lineChartLabels = labels;
       this.lineChartData[0].data = data;
       this.loading_chart = false;
@@ -371,7 +398,8 @@ export class ListingsComponent implements OnInit {
       open: results.json()["Monthly Time Series"][key]["1. open"],
       high: results.json()["Monthly Time Series"][key]["2. high"],
       low: results.json()["Monthly Time Series"][key]["3. low"],
-      close: results.json()["Monthly Time Series"][key]["4. close"]});});
+      close: results.json()["Monthly Time Series"][key]["4. close"],
+      volume: results.json()["Monthly Time Series"][key]["5. volume"]});});
     
     let labels:any[] = [];
     let data:any[] = [];
@@ -382,6 +410,31 @@ export class ListingsComponent implements OnInit {
     }
 
     this.ngZone.run(()=>{
+
+      this.ohlc_outlook.open = time_series[0].open;
+      this.ohlc_outlook.high = time_series[0].high;
+      this.ohlc_outlook.low = time_series[0].low;
+      this.ohlc_outlook.close = time_series[0].close;
+      this.ohlc_outlook.volume = time_series[0].volume;
+
+      this.ohlc_outlook_type = " for the day of " + moment(time_series[0].key).format("MMM Do, YYYY");
+
+      console.log(time_series);
+      console.log(time_series[1].close);
+      console.log(time_series[0].close);
+      console.log();
+      console.log();
+
+      this.closing_percent = "(" + (((parseFloat(time_series[1].close) - parseFloat(time_series[0].close)) / parseFloat(time_series[1].close)) * -100).toFixed(2) + "%)";
+
+      if(this.ohlc_outlook.close > this.ohlc_outlook.open){
+        this.closing_icon_class = "fa fa-arrow-up";
+        this.closing_color_indicator = "rgb(2, 194, 2)";
+      }else{
+        this.closing_icon_class = "fa fa-arrow-down";
+        this.closing_color_indicator = "rgb(212, 27, 27)";
+      }
+
       this.lineChartLabels = labels;
       this.lineChartData[0].data = data;
       this.loading_chart = false;

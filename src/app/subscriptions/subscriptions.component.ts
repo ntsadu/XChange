@@ -192,6 +192,10 @@ export class SubscriptionsComponent implements OnInit {
   ngOnInit() {}
 
   tabChanged(tabChangeEvent: MatTabChangeEvent){
+    this.ngZone.run(()=>{
+      this.loading = true;
+    });
+
     console.log(tabChangeEvent.index);
     switch(tabChangeEvent.index){
       case 1: this.initSubscriptions(); break;
@@ -200,17 +204,13 @@ export class SubscriptionsComponent implements OnInit {
   }
 
   initSubscriptions(){
-
-    this.ngZone.run(()=>{
-      this.loading = true;
-    });
-
     this.xchangeApp.httpService
     .GetAllUserSubscriptions({userId: this.loginService.subscribers.getValue().userId})
     .subscribe((results)=>{
       console.log(results);
       this.ngZone.run(()=>{
         this.subscriptions = _.orderBy(results, ["username"], ["asc"]);
+        this.options = [];        
         _.map(this.subscriptions, (u)=>{
           this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")");
         });
@@ -220,18 +220,14 @@ export class SubscriptionsComponent implements OnInit {
   }
 
   initSubscribers(){
-
-    this.ngZone.run(()=>{
-      this.loading = true;
-    });
-
     this.xchangeApp.httpService
     .GetAllUserSubscribers({userId: this.loginService.subscribers.getValue().userId})
     .subscribe((results)=>{
       console.log(results);
       this.ngZone.run(()=>{
         this.subscribers = _.orderBy(results, ["username"], ["asc"]);
-        _.map(this.subscriptions, (u)=>{
+        this.options = [];
+        _.map(this.subscribers, (u)=>{
           this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")");
         });
         this.loading = false;

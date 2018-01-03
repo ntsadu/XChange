@@ -32,14 +32,14 @@ export class XChangeController {
         )
     }
 
-    public getAllUserSubscriptions(){
-        this.httpService.GetAllUserSubscriptions().subscribe(
-            (data) => {
-                console.log("GET ALL SUBSCRIPTIONS >>");
-                console.log(data);
-            }, () => {console.log("ERROR: COULD NOT GET SUBSCRIPTIONS");}
-        )
-    }
+    // public getAllUserSubscriptions(){
+    //     this.httpService.GetAllUserSubscriptions().subscribe(
+    //         (data) => {
+    //             console.log("GET ALL SUBSCRIPTIONS >>");
+    //             console.log(data);
+    //         }, () => {console.log("ERROR: COULD NOT GET SUBSCRIPTIONS");}
+    //     )
+    // }
 
     public getAllUserFavorites(){
         console.log(this.loginService.subscribers.getValue().userId);
