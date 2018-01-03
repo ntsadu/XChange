@@ -8,6 +8,7 @@ import { Stock } from '../../model/stock.class';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import { forkJoin } from 'rxjs/observable/forkJoin';
+import { LoginService } from 'app/login.service';
 
 
 export interface ModalContext {
@@ -138,11 +139,13 @@ export class ListingsComponent implements OnInit {
     public ngZone : NgZone, 
     public modalService: SuiModalService, 
     public alphaFetcher: FetchingService, 
-    public alphaParser: ParsingService) { 
+    public alphaParser: ParsingService,
+    private loginService: LoginService  
+  ) { 
 
     forkJoin(
       this.xchangeApp.httpService.GetAllCompanies(),
-      this.xchangeApp.httpService.GetAllUserFavorites({userId : 1})
+      this.xchangeApp.httpService.GetAllUserFavorites({userId : this.loginService.subscribers.getValue().userId})
     ).subscribe(
       (results) => {
           console.log("GET ALL COMPANIES >>");
@@ -161,7 +164,7 @@ export class ListingsComponent implements OnInit {
               this.loading = false;
             });
           }
-      }, () => {console.log("ERROR: COULD NOT GET COMPANIES");}
+      }, (err) => {console.log(err);}
     );
   }
 
@@ -175,7 +178,7 @@ export class ListingsComponent implements OnInit {
     });
 
     this.xchangeApp.httpService
-    .AddUserFavorite({userId: 1, companyId: this.currentCompany.companyId})
+    .AddUserFavorite({userId:  this.loginService.subscribers.getValue().userId, companyId: this.currentCompany.companyId})
     .subscribe((results)=>{
       console.log("COMPANY ADDED TO WATCHLIST!");
       console.log(results);
@@ -193,8 +196,9 @@ export class ListingsComponent implements OnInit {
       this.isFav = false;
     });
 
+
     this.xchangeApp.httpService
-    .RemoveUserFavorite({userId: 1, companyId: this.currentCompany.companyId})
+    .RemoveUserFavorite({userId: this.loginService.subscribers.getValue().userId, companyId: this.currentCompany.companyId})
     .subscribe((results)=>{
       console.log("COMPANY REMOVED FROM WATCHLIST!");
       console.log(results);

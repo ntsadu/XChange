@@ -7,8 +7,7 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Router } from "@angular/router";
 import { MatSnackBar } from '@angular/material';
-import { LoginService } from 'app/login.service';
-import { User } from 'interfaces/xchange-interfaces/interfaces';
+import { LoginService } from '../../app/login.service';
 
 @Injectable()
 export class XChangeController {
@@ -16,7 +15,7 @@ export class XChangeController {
     public httpService: HttpService;
     public currentUser : any;
 
-    constructor(public http: Http, public router: Router, public snackBar: MatSnackBar, private loginService: LoginService){
+    constructor(public http: Http, public router: Router, public snackBar: MatSnackBar, public loginService: LoginService){
         this.initProviders();
     }
 
@@ -41,8 +40,9 @@ export class XChangeController {
             }, () => {console.log("ERROR: COULD NOT GET SUBSCRIPTIONS");}
         )
     }
-    
-    public getAllUserFavorite(){
+
+    public getAllUserFavorites(){
+        console.log(this.loginService.subscribers.getValue().userId);
         this.httpService.GetAllUserFavorites({userId: this.loginService.subscribers.getValue().userId}).subscribe(
             (data) => {
                 console.log("GET ALL FAVORITES >>");

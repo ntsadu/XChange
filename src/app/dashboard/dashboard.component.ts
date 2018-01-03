@@ -158,7 +158,7 @@ export class DashboardComponent implements OnInit {
   public openProfileModal() {
     const config = new TemplateModalConfig<ModalContext, string, string>(this.modalTemplate);
     config.closeResult = "closed!";
-    config.mustScroll = true;
+    config.mustScroll = false;
     config.isClosable = false;
     config.context = {
       firstName: this.user.firstName,
