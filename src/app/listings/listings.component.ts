@@ -215,9 +215,6 @@ export class ListingsComponent implements OnInit {
   public openModal(company : any) {
 
     this.currentCompany = company;
-
-    // console.log();
-
     _.map(this.favCompanyList, (c)=>{
       if(company.name == c.name) this.isFav = true;
     });
