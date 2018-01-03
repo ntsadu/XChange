@@ -122,26 +122,32 @@ export class WatchlistComponent implements OnInit {
       console.log(results);
      
       // let userFavs:any[] = _.filter(results[0], (f:any)=>{if(f.userId == 1) return f});
+      console.log();
+      console.log();
 
-      _.map(results[1], (c:any)=>{
-        _.map(results[0], (uf:any)=>{
-          if(c.companyId == uf.companyId) this.companyList.push(c);
+      if(!_.isNil(results[0]) && results[0].length > 0){
+
+        _.map(results[1], (c:any)=>{
+          _.map(results[0], (uf:any)=>{
+            if(c.companyId == uf.companyId) this.companyList.push(c);
+          });
         });
-      });
 
-      this.companyList = _.orderBy(results[0], ["symbol"], ["asc"]);
-      this.currentCompany = this.companyList[0];
+        this.companyList = _.orderBy(results[0], ["symbol"], ["asc"]);
+        this.currentCompany = this.companyList[0];
 
-      _.map(this.companyList, (c : Company)=>{
-        this.options.push(c.symbol + " " + c.name);
-      });
-
-      this.selectedFunctionEvent("Daily");
-
-      if(!_.isNil(this.companyList)) {
-        this.ngZone.run(()=>{
-          this.loading = false;
+        _.map(this.companyList, (c : Company)=>{
+          this.options.push(c.symbol + " " + c.name);
         });
+
+        this.selectedFunctionEvent("Daily");
+
+        if(!_.isNil(this.companyList)) {
+          this.ngZone.run(()=>{
+            this.loading = false;
+          });
+        }
+
       }
     });
   }

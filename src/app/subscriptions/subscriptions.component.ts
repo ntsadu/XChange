@@ -29,6 +29,8 @@ export class SubscriptionsComponent implements OnInit {
   subscriptions:any[];
   subscribers:any[];
 
+  currentUser:any = {};
+
   currentCompany : any = {};
   click_subscription : Subscription;
 
@@ -210,6 +212,7 @@ export class SubscriptionsComponent implements OnInit {
       console.log(results);
       this.ngZone.run(()=>{
         this.subscriptions = _.orderBy(results, ["username"], ["asc"]);
+        this.currentUser = this.subscriptions[0];
         this.options = [];        
         _.map(this.subscriptions, (u)=>{
           this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")");
@@ -226,6 +229,7 @@ export class SubscriptionsComponent implements OnInit {
       console.log(results);
       this.ngZone.run(()=>{
         this.subscribers = _.orderBy(results, ["username"], ["asc"]);
+        this.currentUser = this.subscribers[0];        
         this.options = [];
         _.map(this.subscribers, (u)=>{
           this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")");
