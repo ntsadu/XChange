@@ -386,7 +386,42 @@
                 <div class="content" style="height: 100%; overflow-y:auto; overflow-x: hidden; border-left: 1px solid #c3c3c3;">
                     <!-- <p>{{context.dataString}}</p> -->
     
-                <div class="row">
+                    <div class="row">
+                            <div class="col-md-12">
+                                
+                            <div class="ui segment" style="
+                                background-color: rgba(169, 169, 211, 0.541);
+                                width: 46.6vw;
+                                height: 48vh;
+                                padding-top: 4vh;
+                                margin-top: 5px;
+                                margin-left: 2px;">
+                                <div style="display: block;">
+                              <div *ngIf="loading_chart">
+                                  <div class="ui segment" style="height: 46.6vh; border: none;">
+                                      <div class="ui active inverted dimmer">
+                                          <div class="ui text loader">Loading</div>
+                                      </div>
+                                  </div>
+                              </div>
+      
+                              <div *ngIf="!loading_chart" style="
+                                    background: #f1f1f1;
+                                    height: 180px;
+                                    width: 180px;
+                                    border: 8px solid #afafaf;
+                                    border-radius: 25px;
+                                    margin-left: 16vw;
+                                    margin-top: 20px;">
+                                        hello
+                                </div>
+                                
+                                </div>
+                              </div>
+                              </div>
+                      </div>
+
+                <!-- <div class="row">
                         <div class="ui segment" style="
                         width: 46.6vw;
                         margin-top: 5px;
@@ -422,47 +457,8 @@
                                 <span style="font-weight: bold; margin-left: 10px;">Last Updated:</span> &ensp; {{getCurrentDate()}} at {{getCurrentTime()}} 
                             </div>
                     </div>
-    
-                    <div class="row">
-                          <div class="col-md-12">
-                          <div class="ui segment" style="
-                            width: 46.6vw; 
-                            height: 83vh; 
-                            padding-top: 4vh; 
-                            margin-top: 5px;
-                                margin-left: 2px;">
-                              <div style="display: block;">
-                            <div *ngIf="loading_chart">
-                                <div class="ui segment" style="height: 585px; border: none;">
-                                    <div class="ui active inverted dimmer">
-                                        <div class="ui text loader">Loading</div>
-                                    </div>
-                                </div>
-                            </div>
-    
-                              <canvas class="side-menu-chart" *ngIf="loading_chart == false" baseChart
-                                          [datasets]="lineChartData"
-                                          [labels]="lineChartLabels"
-                                          [options]="lineChartOptions"
-                                          [colors]="lineChartColors"
-                                          [legend]="lineChartLegend"
-                                          [chartType]="lineChartType"
-                                          (chartHover)="chartHovered($event)"
-                                          (chartClick)="chartClicked($event)"
-                                          
-                                          style="
-                                            display: block;
-                                            width: 40vw !important;
-                                            height: 70vh !important;
-                                            margin-top: 18px;
-                                            margin-left: 38px !important;
-                                          ">
-                                </canvas>
-                              </div>
-                            </div>
-                            </div>
-                    </div>
-                    <div class="row" style="margin-top: 4px; margin-left: -10px;">
+     -->
+                    <!-- <div class="row" style="margin-top: 4px; margin-left: -10px;">
                             <div class="col-md-6" style="margin-bottom: 10px">
                                 <div class="ui segment" style="width: 46.65vw; height: 37.4vh; padding-top: 16px; margin-top: 1px;">
                                 <table class="ui celled table" style="margin-left: 0px; width: 350px;">
@@ -474,7 +470,6 @@
                                             <td style="width: 110px;">
                                               <div class="ui ribbon label" style="width: 110px; height: 29px; padding-left: 37px;">Open</div>
                                             </td>
-                                            <!-- <td *ngIf="loading_chart"><div class="ui active inline loader"></div></td> -->
                                             <td style="background: white;">
                                                 <div>
                                                     <div class="ui segment" style="height: 20px;">
@@ -572,7 +567,7 @@
                                   </div>
                                   </div>
                             </div>
-                          </div>
+                          </div> -->
                 </div>
               
             </div>
