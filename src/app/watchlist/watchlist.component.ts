@@ -32,6 +32,7 @@ export class WatchlistComponent implements OnInit {
 
   loading = true;
   loading_chart = true;
+  theres_nothing_here = false;
 
   tableHeader: string = "Watch List";
   options : string[] = [];
@@ -59,6 +60,8 @@ export class WatchlistComponent implements OnInit {
   interval_options:Array<string> = ["1 Minute", "5 Minute", "15 Minute", "30 Minute", "60 Minute"];
   interval_disabled = true;
   option = "hello";
+
+  p:any;
 
   functions = [
     { name: "Intraday", apiCall: "function=TIME_SERIES_INTRADAY"},
@@ -120,32 +123,45 @@ export class WatchlistComponent implements OnInit {
     ]).subscribe(results => {
 
       console.log(results);
-     
-      // let userFavs:any[] = _.filter(results[0], (f:any)=>{if(f.userId == 1) return f});
       console.log();
       console.log();
 
-      if(!_.isNil(results[0]) && results[0].length > 0){
-
-        _.map(results[1], (c:any)=>{
-          _.map(results[0], (uf:any)=>{
-            if(c.companyId == uf.companyId) this.companyList.push(c);
-          });
+      if(results[0].length == 0){
+        this.ngZone.run(()=>{
+          this.loading = false;
+          this.loading_chart = false;
+          this.theres_nothing_here = true;          
         });
+      }else if(!_.isNil(results[0]) && results[0].length > 0){
 
-        this.companyList = _.orderBy(results[0], ["symbol"], ["asc"]);
-        this.currentCompany = this.companyList[0];
-
-        _.map(this.companyList, (c : Company)=>{
-          this.options.push(c.symbol + " " + c.name);
-        });
-
-        this.selectedFunctionEvent("Daily");
-
-        if(!_.isNil(this.companyList)) {
+        if(results[0].length == 0){
           this.ngZone.run(()=>{
             this.loading = false;
+            this.loading_chart = false;
+            this.theres_nothing_here = true;
           });
+        }else if(!_.isNil(results[0]) && results[0].length > 0){
+          _.map(results[1], (c:any)=>{
+            _.map(results[0], (uf:any)=>{
+              if(c.companyId == uf.companyId) this.companyList.push(c);
+            });
+          });
+
+          this.companyList = _.orderBy(results[0], ["symbol"], ["asc"]);
+          this.currentCompany = this.companyList[0];
+  
+          _.map(this.companyList, (c : Company)=>{
+            this.options.push(c.symbol + " " + c.name);
+          });
+  
+          this.selectedFunctionEvent("Daily");
+  
+          // if(!_.isNil(this.companyList)) {
+          //   this.ngZone.run(()=>{
+          //     this.loading_chart = false;
+          //     this.loading_chart = false;
+          //   });
+          // }
         }
 
       }
@@ -164,18 +180,25 @@ export class WatchlistComponent implements OnInit {
 
     this.xchangeApp.httpService
     .RemoveUserFavorite({userId: this.loginService.subscribers.getValue().userId, companyId: this.currentCompany.companyId})
-    .subscribe((results)=>{
-      console.log("COMPANY REMOVED FROM WATCHLIST!");
+    .subscribe((results:any)=>{
       console.log(results);
 
-      this.ngZone.run(()=>{
+      this.companyList = _.filter(this.companyList, (c)=>{
+        if(c.name != this.currentCompany.name) return c;
+      });
+
+      if(!_.isNil(this.companyList[0])){
+        this.ngZone.run(()=>{
+          this.currentCompany = this.companyList[0];
+          this.loading = false;
+          this.loading_chart = false;
+          this.theres_nothing_here = false;
+        });
+      }else{
         this.loading = false;
         this.loading_chart = false;
-        this.companyList = _.filter(this.companyList, (c)=>{
-          if(c.name != this.currentCompany.name) return c;
-        });
-        this.currentCompany = this.companyList[0];
-      });
+        this.theres_nothing_here = true;
+      }
     });
   }
 
@@ -188,20 +211,28 @@ export class WatchlistComponent implements OnInit {
 
     this.xchangeApp.httpService
     .RemoveUserFavorite({userId: this.loginService.subscribers.getValue().userId, companyId: company.companyId})
-    .subscribe((results)=>{
-      console.log("COMPANY REMOVED FROM WATCHLIST!");
-      console.log(results);
+    .subscribe((results:any)=>{
+    console.log(results);
 
-      this.ngZone.run(()=>{
-        this.loading = false;
-        this.loading_chart = false;
-        this.companyList = _.filter(this.companyList, (c)=>{
-          if(c.name != company.name) return c;
-        });
-        this.currentCompany = this.companyList[0];
-      });
+          this.companyList = _.filter(this.companyList, (c)=>{
+            if(c.name != company.name) return c;
+          });
+
+          if(!_.isNil(this.companyList[0])){
+            this.ngZone.run(()=>{
+              this.currentCompany = this.companyList[0];
+              this.loading = false;
+              this.loading_chart = false;
+              this.theres_nothing_here = false;
+            });
+          }else{
+            this.loading = false;
+            this.loading_chart = false;
+            this.theres_nothing_here = true;
+          }
     });
   }
+  
 
   public openModal(company : any) {
     this.ngZone.run(()=>{this.loading_chart = true});
@@ -239,10 +270,12 @@ export class WatchlistComponent implements OnInit {
   }
 
   refreshModal(){
+    // this.ngZone.run(()=>{this.loading = true});
     this.selectedFunctionEvent(this.selectedFunction);
   }
 
   public resultSelected($event : any){
+    this.ngZone.run(()=>{this.loading_chart = true});
     console.log($event.substring(0, $event.indexOf(" ")));
     
     let company = _.filter(this.companyList, (c)=>{
@@ -300,6 +333,7 @@ export class WatchlistComponent implements OnInit {
 
       this.lineChartLabels = chartLabels;
       this.lineChartData[0].data = chartData;
+      this.loading = false;
       this.loading_chart = false;
     });
   }
@@ -343,10 +377,12 @@ export class WatchlistComponent implements OnInit {
   }
 
   sort(op?:any){
-    this.sorter.sort(op, (column:string, order:string)=>{
-      this.ngZone.run(()=>{
-            this.companyList = _.orderBy(this.companyList, [column], [order]);
-          });
-    });
+    if(!this.theres_nothing_here){
+      this.sorter.sort(op, (column:string, order:string)=>{
+        this.ngZone.run(()=>{
+              this.companyList = _.orderBy(this.companyList, [column], [order]);
+            });
+      });
+    }
   }
 }

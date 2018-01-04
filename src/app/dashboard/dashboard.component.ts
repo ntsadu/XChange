@@ -52,21 +52,21 @@ export class DashboardComponent implements OnInit {
 
   public logo = '../../assets/logos/ers-logo.svg';
 
-  private _opened: boolean = false;
-  private _modeNum: number = 2;
-  private _positionNum: number = 0;
-  private _dock: boolean = false;
-  private _closeOnClickOutside: boolean = true;
-  private _closeOnClickBackdrop: boolean = false;
-  private _showBackdrop: boolean = false;
-  private _animate: boolean = true;
-  private _trapFocus: boolean = true;
-  private _autoFocus: boolean = true;
-  private _keyClose: boolean = false;
-  private _autoCollapseHeight: number = null;
-  private _autoCollapseWidth: number = null;
-  private _MODES: Array<string> = ['over', 'push', 'slide'];
-  private _POSITIONS: Array<string> = ['left', 'right', 'top', 'bottom'];
+  public _opened: boolean = false;
+  public _modeNum: number = 2;
+  public _positionNum: number = 0;
+  public _dock: boolean = false;
+  public _closeOnClickOutside: boolean = true;
+  public _closeOnClickBackdrop: boolean = false;
+  public _showBackdrop: boolean = false;
+  public _animate: boolean = true;
+  public _trapFocus: boolean = true;
+  public _autoFocus: boolean = true;
+  public _keyClose: boolean = false;
+  public _autoCollapseHeight: number = null;
+  public _autoCollapseWidth: number = null;
+  public _MODES: Array<string> = ['over', 'push', 'slide'];
+  public _POSITIONS: Array<string> = ['left', 'right', 'top', 'bottom'];
 
   constructor(public ngZone: NgZone, private loginService: LoginService,
     private router: Router, public modalService: SuiModalService) { }
@@ -279,11 +279,11 @@ export class DashboardComponent implements OnInit {
     this.modalActions.emit({ action: "modal", params: ['close'] });
   }
 
-  private _toggleOpened(): void {
+  public _toggleOpened(): void {
     this._opened = !this._opened;
   }
 
-  private _toggleMode(): void {
+  public _toggleMode(): void {
     this._modeNum++;
 
     if (this._modeNum === this._MODES.length) {
@@ -291,15 +291,15 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  private _toggleAutoCollapseHeight(): void {
+  public _toggleAutoCollapseHeight(): void {
     this._autoCollapseHeight = this._autoCollapseHeight ? null : 500;
   }
 
-  private _toggleAutoCollapseWidth(): void {
+  public _toggleAutoCollapseWidth(): void {
     this._autoCollapseWidth = this._autoCollapseWidth ? null : 500;
   }
 
-  private _togglePosition(): void {
+  public _togglePosition(): void {
     this._positionNum++;
 
     if (this._positionNum === this._POSITIONS.length) {
@@ -307,51 +307,51 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  private _toggleDock(): void {
+  public _toggleDock(): void {
     this._dock = !this._dock;
   }
 
-  private _toggleCloseOnClickOutside(): void {
+  public _toggleCloseOnClickOutside(): void {
     this._closeOnClickOutside = !this._closeOnClickOutside;
   }
 
-  private _toggleCloseOnClickBackdrop(): void {
+  public _toggleCloseOnClickBackdrop(): void {
     this._closeOnClickBackdrop = !this._closeOnClickBackdrop;
   }
 
-  private _toggleShowBackdrop(): void {
+  public _toggleShowBackdrop(): void {
     this._showBackdrop = !this._showBackdrop;
   }
 
-  private _toggleAnimate(): void {
+  public _toggleAnimate(): void {
     this._animate = !this._animate;
   }
 
-  private _toggleTrapFocus(): void {
+  public _toggleTrapFocus(): void {
     this._trapFocus = !this._trapFocus;
   }
 
-  private _toggleAutoFocus(): void {
+  public _toggleAutoFocus(): void {
     this._autoFocus = !this._autoFocus;
   }
 
-  private _toggleKeyClose(): void {
+  public _toggleKeyClose(): void {
     this._keyClose = !this._keyClose;
   }
 
-  private _onOpenStart(): void {
+  public _onOpenStart(): void {
     console.info('Sidebar opening');
   }
 
-  private _onOpened(): void {
+  public _onOpened(): void {
     console.info('Sidebar opened');
   }
 
-  private _onCloseStart(): void {
+  public _onCloseStart(): void {
     console.info('Sidebar closing');
   }
 
-  private _onClosed(): void {
+  public _onClosed(): void {
     console.info('Sidebar closed');
   }
 

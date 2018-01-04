@@ -30,6 +30,14 @@ mat-dialog-container{
     // margin-top: 132px !important;
 }
 
+.btn:focus, .btn-large:focus, .btn-floating:focus {
+    background-color: #127d14;
+}
+
+.btn-primary.focus, .btn-primary:focus {
+    box-shadow: 0 0 0 0.2rem rgba(42, 206, 31, 0.5);
+}
+
 // .ui.modal {
 //     display: none;
 //     position: fixed;

@@ -15,6 +15,13 @@ import { MatTabChangeEvent } from '@angular/material';
 import { Subscription } from 'rxjs/Subscription';
 import { LoginService } from '../login.service';
 
+export interface UserProfile{
+  user:any;
+  favorites:any[];
+  subscriptions:any[];
+  subscribers:any[];
+}
+
 @Component({
   selector: 'app-subscriptions',
   templateUrl: './subscriptions.component.html',
@@ -29,7 +36,12 @@ export class SubscriptionsComponent implements OnInit {
   subscriptions:any[];
   subscribers:any[];
 
-  currentUser:any = {};
+  currentSubscription: UserProfile;
+  currentSubscriber:any = {};
+
+  subscriptions_page:boolean = false;
+  subscribers_page:boolean = false;
+  theres_nothing_here = false;
 
   currentCompany : any = {};
   click_subscription : Subscription;
@@ -145,63 +157,69 @@ export class SubscriptionsComponent implements OnInit {
 
     forkJoin([
         this.xchangeApp.httpService.GetAllUsers(), 
-        this.xchangeApp.httpService.GetAllCompanies()
+        this.xchangeApp.httpService.GetAllUserSubscriptions({userId: this.loginService.subscribers.getValue().userId})
     ]).subscribe(results => {
 
       this.users = results[0];
 
+      // this.tabChanged({index: 0});
+
+      this.subscriptions = _.orderBy(results[1], ["username"], ["asc"]);
+      this.options = [];        
+      _.map(this.subscriptions, (u)=>{ this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")"); });
+
+      console.log(this.subscriptions);
+     
+
+      if(this.subscriptions.length > 0){
+        this.subscriptionSelected(this.subscriptions[0]);
+      }else{
+        console.log("THERE ARE NO SUBSCRIPTIONS");
+        this.ngZone.run(()=>{
+          this.loading = false;
+          this.subscriptions_page = false;
+          this.theres_nothing_here = true;
+        });
+      }
+
       // _.map(this.users, (u)=>{
       //   this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")");
       // });
-
-      let userFavs:any[] = _.filter(results[0], (f:any)=>{if(f.userID == 1000000000) return f});
-
-      _.map(results[1], (c:any)=>{
-        _.map(userFavs, (uf:any)=>{
-          if(c.companyID == uf.company) this.companyList.push(c);
-        });
-      });
-
-      console.log(results);
-      this.currentCompany = results[1][0];
-
-      console.log(this.companyList);
-
-      this.selectedInterval = " "; 
-      this.interval_disabled = true;
-      this.apiFunction = _.filter(this.functions, (f)=>{if(f.name == this.selectedFunction) return f;})[0].apiCall;
-      this.apiInterval = null;
-      this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval); 
-
-      this.alphaFetcher.getStockData(this.apiFunction, this.currentCompany.symbol, this.apiParser, this.apiInterval)
-      .subscribe((results)=>{
-        console.log(this.apiParser[1]);
-        console.log(results.json()[this.apiParser[0]]);
-  
-        if(results.json()[this.apiParser[0]][this.apiParser[1]]) this.apiParser[1] = moment(this.apiParser[1]).subtract(1, 'days').format("YYYY-MM-DD");
-        
-        this.daily(results);
-      });
-
-      if(!_.isNil(this.companyList)) {
-        this.ngZone.run(()=>{
-          this.loading = false;
-        });
-      }
     });
   }
 
   ngOnInit() {}
 
-  tabChanged(tabChangeEvent: MatTabChangeEvent){
+  tabChanged(tabChangeEvent: any){
     this.ngZone.run(()=>{
       this.loading = true;
+      this.subscribers_page = false;        
+      this.subscriptions_page = false; 
     });
 
     console.log(tabChangeEvent.index);
+
+    this.ngZone.run(()=>{
+      this.loading = true;
+      this.subscriptions_page = false;
+      this.theres_nothing_here = false;
+    });
+
     switch(tabChangeEvent.index){
-      case 1: this.initSubscriptions(); break;
-      case 2: this.initSubscribers(); break;
+      case 0: this.initSubscriptions(); break;
+      case 1: this.initSubscribers(); break;
+    }
+  }
+
+  resultSelected($event: any, user?: any){
+
+    if(_.isNil(user)){
+      let $username = _.split(_.split($event, "@", 2)[1], ")", 2)[0];
+      let $user = _.filter(this.users, (u)=>{ if(u.username == $username) return u; })[0];
+
+      if(this.subscriptions_page) this.subscriptionSelected($user);
+    }else{
+      if(this.subscriptions_page) this.subscriptionSelected(user);
     }
   }
 
@@ -210,14 +228,44 @@ export class SubscriptionsComponent implements OnInit {
     .GetAllUserSubscriptions({userId: this.loginService.subscribers.getValue().userId})
     .subscribe((results)=>{
       console.log(results);
-      this.ngZone.run(()=>{
+
         this.subscriptions = _.orderBy(results, ["username"], ["asc"]);
-        this.currentUser = this.subscriptions[0];
         this.options = [];        
-        _.map(this.subscriptions, (u)=>{
-          this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")");
-        });
+
+        if(this.subscriptions.length > 0){
+          _.map(this.subscriptions, (u)=>{ this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")"); });
+          this.subscriptionSelected(this.subscriptions[0]);
+        }else{
+          console.log("THERE ARE NO SUBSCRIPTIONS");
+          this.ngZone.run(()=>{
+            this.loading = false;
+            this.subscriptions_page = false;
+            this.theres_nothing_here = true;
+          });
+        }
+    });
+  }
+
+  subscriptionSelected($event:any){
+    this.ngZone.run(()=>{
+      this.loading = true;
+    });
+    forkJoin(
+      this.xchangeApp.httpService.GetAllUserFavorites({userId: $event.userId}),
+      this.xchangeApp.httpService.GetAllUserSubscriptions({userId: $event.userId}),
+      this.xchangeApp.httpService.GetAllUserSubscribers({userId: $event.userId}),
+    ).subscribe((results)=>{
+      console.log(results);
+      this.ngZone.run(()=>{
+        this.currentSubscription = {
+          user: $event,
+          favorites: results[0],
+          subscriptions: results[1],
+          subscribers: results[2],
+        };
         this.loading = false;
+        this.subscribers_page = false;        
+        this.subscriptions_page = true;        
       });
     });
   }
@@ -229,12 +277,14 @@ export class SubscriptionsComponent implements OnInit {
       console.log(results);
       this.ngZone.run(()=>{
         this.subscribers = _.orderBy(results, ["username"], ["asc"]);
-        this.currentUser = this.subscribers[0];        
+        this.currentSubscriber = this.subscribers[0];        
         this.options = [];
         _.map(this.subscribers, (u)=>{
           this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")");
         });
         this.loading = false;
+        this.subscribers_page = true;
+        this.subscriptions_page = false;                
       });
     });
   }
@@ -302,17 +352,6 @@ export class SubscriptionsComponent implements OnInit {
 
   public dismissed(){
     this.selectedFunction = "Daily";
-  }
-
-  public resultSelected($event : any){
-    this.clearOHLC();
-    console.log($event.substring(0, $event.indexOf(" ")));
-    
-    let company = _.filter(this.companyList, (c)=>{
-      if(c.symbol == ($event.substring(0, $event.indexOf(" ")))) return c;
-    })[0];
-
-    this.openModal(company);
   }
 
   getCurrentDate(){

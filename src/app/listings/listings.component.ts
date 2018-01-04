@@ -8,6 +8,7 @@ import { Stock } from '../../model/stock.class';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import { forkJoin } from 'rxjs/observable/forkJoin';
+import { LoginService } from '../login.service';
 
 
 export interface ModalContext {
@@ -109,6 +110,8 @@ export class ListingsComponent implements OnInit {
   fav_icon_inactive_color = "#dadada";
   fav_tooltip_message = " ";
 
+  p:any;
+  
   public lineChartData:Array<any> = [
     {data: [65, 59, 80, 81, 56, 55, 40], label: 'Time Series (Daily)'}
   ];
@@ -138,15 +141,18 @@ export class ListingsComponent implements OnInit {
     public ngZone : NgZone, 
     public modalService: SuiModalService, 
     public alphaFetcher: FetchingService, 
-    public alphaParser: ParsingService) { 
+    public alphaParser: ParsingService,
+    public loginService: LoginService) { 
 
     forkJoin(
       this.xchangeApp.httpService.GetAllCompanies(),
-      this.xchangeApp.httpService.GetAllUserFavorites({userId : 1})
+      this.xchangeApp.httpService.GetAllUserFavorites({userId : this.loginService.subscribers.getValue().userId})
     ).subscribe(
       (results) => {
           console.log("GET ALL COMPANIES >>");
           console.log(results);
+
+          
           this.companyList = _.orderBy(results[0], ['symbol'], ['asc']);
           this.favCompanyList = results[1];
 
@@ -175,7 +181,7 @@ export class ListingsComponent implements OnInit {
     });
 
     this.xchangeApp.httpService
-    .AddUserFavorite({userId: 1, companyId: this.currentCompany.companyId})
+    .AddUserFavorite({userId: this.loginService.subscribers.getValue().userId, companyId: this.currentCompany.companyId})
     .subscribe((results)=>{
       console.log("COMPANY ADDED TO WATCHLIST!");
       console.log(results);
@@ -194,7 +200,7 @@ export class ListingsComponent implements OnInit {
     });
 
     this.xchangeApp.httpService
-    .RemoveUserFavorite({userId: 1, companyId: this.currentCompany.companyId})
+    .RemoveUserFavorite({userId: this.loginService.subscribers.getValue().userId, companyId: this.currentCompany.companyId})
     .subscribe((results)=>{
       console.log("COMPANY REMOVED FROM WATCHLIST!");
       console.log(results);

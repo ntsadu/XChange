@@ -41,8 +41,8 @@ public RemoveUserFavorite($requestBody:{userId:number, companyId: number}) {
     return this.http
             .post(EB_API_HOST + "/users/RemoveUserFavorite",
                 JSON.stringify($requestBody),
-                this.headers);
-            // .timeout(3000);
+                this.headers)
+            .timeout(3000);
 }
 
 public GetAllUserFavorites($requestBody:{userId:number}) {
@@ -57,9 +57,8 @@ private get(where: string): Observable<any> {
     return this.http
                .get(EB_API_HOST + where,
                      this.headers)
-            //    .timeout(3000)
+               .timeout(3000)
                .map(res => {return res.json()});
-
 }
 
 private post(where: string, what?: {}): Observable<any> {
@@ -70,10 +69,8 @@ private post(where: string, what?: {}): Observable<any> {
                .post(EB_API_HOST + where,
                     JSON.stringify(what),
                      this.headers)
-            //    .timeout(3000)
+               .timeout(3000)
                .map(res => {return res.json()});
-            //    .catch();
-
 }
 
 }
