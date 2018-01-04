@@ -38,9 +38,11 @@ export class SubscriptionsComponent implements OnInit {
 
   currentSubscription: UserProfile;
   currentSubscriber:any = {};
+  currentSearchUser:any = {};
 
   subscriptions_page:boolean = false;
   subscribers_page:boolean = false;
+  search_page:boolean = false;
   theres_nothing_here = false;
 
   currentCompany : any = {};
@@ -160,7 +162,7 @@ export class SubscriptionsComponent implements OnInit {
         this.xchangeApp.httpService.GetAllUserSubscriptions({userId: this.loginService.subscribers.getValue().userId})
     ]).subscribe(results => {
 
-      this.users = results[0];
+      this.users = _.orderBy(results[0], ["firstName"], ["asc"]);
 
       // this.tabChanged({index: 0});
 
@@ -195,19 +197,16 @@ export class SubscriptionsComponent implements OnInit {
       this.loading = true;
       this.subscribers_page = false;        
       this.subscriptions_page = false; 
+      this.search_page = false;
+      this.theres_nothing_here = false;
     });
 
     console.log(tabChangeEvent.index);
 
-    this.ngZone.run(()=>{
-      this.loading = true;
-      this.subscriptions_page = false;
-      this.theres_nothing_here = false;
-    });
-
     switch(tabChangeEvent.index){
       case 0: this.initSubscriptions(); break;
       case 1: this.initSubscribers(); break;
+      case 3: this.initSearch(); break;
     }
   }
 
@@ -240,6 +239,8 @@ export class SubscriptionsComponent implements OnInit {
           this.ngZone.run(()=>{
             this.loading = false;
             this.subscriptions_page = false;
+            this.subscribers_page = false;
+            this.search_page = false;
             this.theres_nothing_here = true;
           });
         }
@@ -253,7 +254,7 @@ export class SubscriptionsComponent implements OnInit {
     forkJoin(
       this.xchangeApp.httpService.GetAllUserFavorites({userId: $event.userId}),
       this.xchangeApp.httpService.GetAllUserSubscriptions({userId: $event.userId}),
-      this.xchangeApp.httpService.GetAllUserSubscribers({userId: $event.userId}),
+      this.xchangeApp.httpService.GetAllUserSubscribers({userId: $event.userId})
     ).subscribe((results)=>{
       console.log(results);
       this.ngZone.run(()=>{
@@ -265,7 +266,8 @@ export class SubscriptionsComponent implements OnInit {
         };
         this.loading = false;
         this.subscribers_page = false;        
-        this.subscriptions_page = true;        
+        this.subscriptions_page = true;   
+        this.search_page = false;     
       });
     });
   }
@@ -284,10 +286,62 @@ export class SubscriptionsComponent implements OnInit {
         });
         this.loading = false;
         this.subscribers_page = true;
-        this.subscriptions_page = false;                
+        this.subscriptions_page = false;    
+        this.search_page = false;            
       });
     });
   }
+
+
+  initSearch(){
+
+    this.options = [];   
+
+      if(this.users.length > 0){
+        _.map(this.users, (u)=>{ this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")"); });
+        this.searchSelected(this.users[0]);
+      }else{
+        console.log("THERE ARE NO SEARCH THINGS");
+        this.ngZone.run(()=>{
+          this.loading = false;
+          this.subscribers_page = false;
+          this.subscriptions_page = false;  
+          this.search_page = true;
+          this.theres_nothing_here = false;
+        });
+      }
+  }
+
+  searchSelected($event:any){
+    this.ngZone.run(()=>{
+      this.loading = true;
+    });
+console.log("YOOO");
+    forkJoin(
+      this.xchangeApp.httpService.GetAllUserFavorites({userId: $event.userId}),
+      this.xchangeApp.httpService.GetAllUserSubscriptions({userId: $event.userId}),
+      this.xchangeApp.httpService.GetAllUserSubscribers({userId: $event.userId})
+    ).subscribe((results)=>{
+      console.log(results);
+      this.ngZone.run(()=>{
+        this.currentSearchUser = {
+          user: $event,
+          favorites: results[0],
+          subscriptions: results[1],
+          subscribers: results[2],
+        };
+        console.log(this.loading);
+        this.loading = false;
+        this.subscribers_page = false;        
+        this.subscriptions_page = false;   
+        this.search_page = true;     
+        this.theres_nothing_here = false;
+        console.log(this.loading);
+        
+      });
+    });
+  }
+
 
   toggleFavorite(){
     if(this.fav_icon_color == this.fav_icon_active_color){
