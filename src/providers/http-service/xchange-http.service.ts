@@ -28,6 +28,19 @@ public GetAllUserSubscriptions($requestBody:{userId:number}) {
     return this.post("/users/GetAllUserSubscriptions", $requestBody);
 }
 
+public AddUserSubscription($requestBody:[{userId: number}, {userId: number}]){
+    return this.post("/users/AddUserSubscription", $requestBody);
+}
+
+public RemoveUserSubscription($requestBody:[{userId: number}, {userId: number}]){
+    // return this.post("/users/RemoveUserSubscription", $requestBody);
+    return this.http
+            .post(EB_API_HOST + "/users/RemoveUserSubscription",
+                JSON.stringify($requestBody),
+                this.headers)
+            .timeout(3000);
+}
+
 public GetAllUserSubscribers($requestBody:{userId:number}) {
     return this.post("/users/GetUserSubscribers", $requestBody);
 }

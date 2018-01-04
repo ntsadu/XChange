@@ -1,4 +1,4 @@
-
+<!--
 <div style="height: 100vh; background: rgba(230, 230, 230, 0.22);">
   <div class="row" style="width: 600px;">
       <div class="col s12 m6">
@@ -23,5 +23,41 @@
       </div>
   </div>
 </div>
+-->
 
+<div id = "body">
+  <div style="height: 100vh; background: rgba(230, 230, 230, 0.22);">
+   <div style="height: 100vh; background: rgba(68, 68, 68, 0.5);">
+   <div class="row" style="margin-top: 0px; width: 600px;">
+       <div class="col s12 m6">
+         <div class="card" style="margin-top: 20vh;">
+           <div class="card-content black-text">
+               <img src='../../assets/logos/xchange-logo.svg' style="width: 100px; margin-left: 0%; float: right;">
+             <!-- <span class="card-title" style="
+                 font-weight: 400;    
+                 font-weight: 500;
+                 letter-spacing: 1px;
+                 color: rgb(32, 195, 32); ">
+                 Login
+             </span> -->
+             <label for="username" style="margin-top: 20px;">Username</label>
+             <input [(ngModel)]="username" id="username" type="text" style="color: #524f4f ; padding-left: 10px;">
+             <label for="password">Password</label>
+             <input [(ngModel)]="password" id="password" type="password" style="color: #524f4f ; padding-left: 10px;">
+             <p><a href="register">Register</a></p>
+           </div>
+           <div class="card-action">
+             <button type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px; float: right; background: rgba(10, 217, 10, 0.6196078431372549) !important;" (click)="login()">
+                 Login
+             </button>
+             <div *ngIf="!isValid" class="alert alert-danger" style = "margin-left: 165px; text-align: center; width: 200px;">
+               Invalid Credentials  
+             </div>
+           </div>
+         </div>
+       </div>
+   </div>
+  </div>
+  </div>
+  </div>
 

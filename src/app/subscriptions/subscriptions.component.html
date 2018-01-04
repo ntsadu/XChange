@@ -415,7 +415,7 @@
                                                         font-weight: 100;
                                                         text-align: center;
                                                         margin-top: calc(100vh - 495px);">
-                                    You currently have no subscriptions
+                                    You currently have no {{whats_empty}}
                                 </div>
                             </div>
 
@@ -571,158 +571,315 @@
                                 </div>
                             </div>
 
+                            <div *ngIf="!loading && subscribers_page" class="row">
+                                <div class="col-md-12">
+
+                                    <div class="ui segment" style="
+                                background-color: rgb(127, 127, 128);
+                                width: calc(100% - 3px);
+                                height: 390px;
+                                padding-top: 4vh;
+                                margin-top: 5px;
+                                margin-left: 2px;">
+                                        <div style="display: block;">
+
+                                            <div class="row" style="padding-left: calc(50% - 94px);">
+                                                <div class="col-md-12">
+                                                    <div style="
+                                            background: #f1f1f1;
+                                            height: 180px;
+                                            width: 180px;
+                                            border: 8px solid #afafaf;
+                                            border-radius: 25px;
+                                            margin-top: 20px;">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row" style="
+                                    margin-top: 10px;
+                                    color: white;
+                                    font-size: 25px;
+                                    text-align: center;
+                                    font-weight: 500;">
+                                                <div class="col-md-12">
+                                                    {{this.currentSubscriber.user.firstName}} {{this.currentSubscriber.user.lastName}}
+                                                </div>
+                                            </div>
+                                            <div class="row" style="
+                                    margin-top: 2px;
+                                    color: whitesmoke;
+                                    font-size: 15px;
+                                    text-align: center;
+                                    font-weight: 400;">
+                                                <div class="col-md-12">
+                                                    @{{this.currentSubscriber.user.username}}
+                                                </div>
+                                            </div>
+                                            <div class="row" style="
+                                    color: whitesmoke;
+                                    font-size: 15px;
+                                    text-align: center;
+                                    font-weight: 400;">
+                                                <div class="col-md-12">
+                                                    {{this.currentSubscriber.user.email}}
+                                                </div>
+                                            </div>
+
+                                            <div class="row" style="
+                                    color: whitesmoke;
+                                    font-size: 15px;
+                                    text-align: center;
+                                    font-weight: 400;
+                                    margin-top: 10px;
+                                    float: right;">
+                                                <div class="col-md-12">
+                                                    <button *ngIf="this.currentSubscriber.isSubscription" (click)="unSubscribe(this.currentSubscriber.user, 'subscribers')" type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px;">
+                                                        Unsubscribe
+                                                    </button>
+                                                    <button *ngIf="!this.currentSubscriber.isSubscription" (click)="subscribe(this.currentSubscriber.user, 'subscribers')" type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px;">
+                                                        Subscribe
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px; margin-left: 3px;">
+                                                        <i class="fa fa-envelope"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <sui-accordion [closeOthers]="false">
+                                        <sui-accordion-panel [isOpen]="false" [isDisabled]="currentSubscriber.subscriptions.length == 0">
+                                            <div title style="font-size: 19px;
+                                                        font-weight: 600;
+                                                        color: #545454;
+                                                        padding-bottom: 5px;
+                                                        border-bottom: 1px solid #9e9e9e;
+                                                        margin-left: 4px;
+                                                        margin-right: 4px;">
+                                                <i class="dropdown icon"></i>
+                                                Subscriptions &ensp; ({{currentSubscriber.subscriptions.length}})
+                                            </div>
+                                            <div content>
+                                                <div class="ui relaxed divided list" style="padding-left: 20px; padding-right: 4px;">
+                                                    <div *ngFor="let s of currentSubscriber.subscriptions" class="item">
+                                                        <i class="user middle aligned icon"></i>
+                                                        <div class="content">
+                                                            <a class="header" style="color: #5c5c5d !important;">{{s.firstName}} {{s.lastName}}</a>
+                                                            <div class="description" style="font-size: 12px;">@{{s.username}}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </sui-accordion-panel>
+                                        <sui-accordion-panel [isOpen]="false" [isDisabled]="currentSubscriber.subscribers.length == 0">
+                                            <div title style="font-size: 19px;
+                                                        font-weight: 600;
+                                                        color: #545454;
+                                                        padding-bottom: 5px;
+                                                        border-bottom: 1px solid #9e9e9e;
+                                                        margin-left: 4px;
+                                                        margin-right: 4px;">
+                                                <i class="dropdown icon"></i>
+                                                Subscribers &ensp; ({{currentSubscriber.subscribers.length}})
+                                            </div>
+                                            <div content>
+                                                <div class="ui relaxed divided list" style="padding-left: 20px; padding-right: 4px;">
+                                                    <div *ngFor="let s of currentSubscriber.subscribers" class="item">
+                                                        <i class="user middle aligned icon"></i>
+                                                        <div class="content">
+                                                            <a class="header" style="color: #5c5c5d !important;">{{s.firstName}} {{s.lastName}}</a>
+                                                            <div class="description" style="font-size: 12px;">@{{s.username}}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </sui-accordion-panel>
+                                        <sui-accordion-panel [isOpen]="false" [isDisabled]="currentSubscriber.favorites.length == 0">
+                                            <div title style="font-size: 19px;
+                                                      font-weight: 600;
+                                                      color: #545454;
+                                                      padding-bottom: 5px;
+                                                      border-bottom: 1px solid #9e9e9e;
+                                                      margin-left: 4px;
+                                                      margin-right: 4px;">
+                                                <i class="dropdown icon"></i>
+                                                Favorites &ensp; ({{currentSubscriber.favorites.length}})
+                                            </div>
+                                            <div content>
+                                                <div class="ui relaxed divided list" style="padding-left: 20px; padding-right: 4px;">
+                                                    <div *ngFor="let f of currentSubscriber.favorites" class="item">
+                                                        <i class="star middle aligned icon"></i>
+                                                        <div class="content">
+                                                            <a class="header" style="color: #5c5c5d !important;">{{f.name}}</a>
+                                                            <div class="description" style="font-size: 10px;">{{f.symbol}} | {{f.exchange}}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </sui-accordion-panel>
+                                    </sui-accordion>
+
+
+                                </div>
+                            </div>
 
                             <div *ngIf="!loading && search_page" class="row">
-                                    <div class="col-md-12">
-    
-                                        <div class="ui segment" style="
+                                <div class="col-md-12">
+
+                                    <div class="ui segment" style="
                                     background-color: rgb(127, 127, 128);
                                     width: calc(100% - 3px);
                                     height: 390px;
                                     padding-top: 4vh;
                                     margin-top: 5px;
                                     margin-left: 2px;">
-                                            <div style="display: block;">
-    
-                                                <div class="row" style="padding-left: calc(50% - 94px);">
-                                                    <div class="col-md-12">
-                                                        <div style="
+                                        <div style="display: block;">
+
+                                            <div class="row" style="padding-left: calc(50% - 94px);">
+                                                <div class="col-md-12">
+                                                    <div style="
                                                 background: #f1f1f1;
                                                 height: 180px;
                                                 width: 180px;
                                                 border: 8px solid #afafaf;
                                                 border-radius: 25px;
                                                 margin-top: 20px;">
-    
-                                                        </div>
+
                                                     </div>
                                                 </div>
-    
-                                                <div class="row" style="
+                                            </div>
+
+                                            <div class="row" style="
                                         margin-top: 10px;
                                         color: white;
                                         font-size: 25px;
                                         text-align: center;
                                         font-weight: 500;">
-                                                    <div class="col-md-12">
-                                                        {{this.currentSearchUser.user.firstName}} {{this.currentSearchUser.user.lastName}}
-                                                    </div>
+                                                <div class="col-md-12">
+                                                    {{this.currentSearchUser.user.firstName}} {{this.currentSearchUser.user.lastName}}
                                                 </div>
-                                                <div class="row" style="
+                                            </div>
+                                            <div class="row" style="
                                         margin-top: 2px;
                                         color: whitesmoke;
                                         font-size: 15px;
                                         text-align: center;
                                         font-weight: 400;">
-                                                    <div class="col-md-12">
-                                                        @{{this.currentSearchUser.user.username}}
-                                                    </div>
+                                                <div class="col-md-12">
+                                                    @{{this.currentSearchUser.user.username}}
                                                 </div>
-                                                <div class="row" style="
+                                            </div>
+                                            <div class="row" style="
                                         color: whitesmoke;
                                         font-size: 15px;
                                         text-align: center;
                                         font-weight: 400;">
-                                                    <div class="col-md-12">
-                                                        {{this.currentSearchUser.user.email}}
-                                                    </div>
+                                                <div class="col-md-12">
+                                                    {{this.currentSearchUser.user.email}}
                                                 </div>
-    
-                                                <div class="row" style="
+                                            </div>
+
+                                            <div class="row" style="
                                         color: whitesmoke;
                                         font-size: 15px;
                                         text-align: center;
                                         font-weight: 400;
                                         margin-top: 10px;
                                         float: right;">
-                                                    <div class="col-md-12">
-                                                        <button type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px;">
-                                                            Unsubscribe
-                                                        </button>
-                                                        <button type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px; margin-left: 3px;">
-                                                            <i class="fa fa-envelope"></i>
-                                                        </button>
-                                                    </div>
+                                                <div class="col-md-12">
+                                                    <button *ngIf="this.currentSearchUser.isSubscription" (click)="unSubscribe(this.currentSearchUser.user, 'search')" type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px;">
+                                                        Unsubscribe
+                                                    </button>
+                                                    <button *ngIf="!this.currentSearchUser.isSubscription" (click)="subscribe(this.currentSearchUser.user, 'search')" type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px;">
+                                                        Subscribe
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px; margin-left: 3px;">
+                                                        <i class="fa fa-envelope"></i>
+                                                    </button>
                                                 </div>
-    
                                             </div>
+
                                         </div>
-    
-                                        <sui-accordion [closeOthers]="false">
-                                            <sui-accordion-panel [isOpen]="false" [isDisabled]="currentSearchUser.subscriptions.length == 0">
-                                                <div title style="font-size: 19px;
+                                    </div>
+
+                                    <sui-accordion [closeOthers]="false">
+                                        <sui-accordion-panel [isOpen]="false" [isDisabled]="currentSearchUser.subscriptions.length == 0">
+                                            <div title style="font-size: 19px;
                                                             font-weight: 600;
                                                             color: #545454;
                                                             padding-bottom: 5px;
                                                             border-bottom: 1px solid #9e9e9e;
                                                             margin-left: 4px;
                                                             margin-right: 4px;">
-                                                    <i class="dropdown icon"></i>
-                                                    Subscriptions &ensp; ({{this.currentSearchUser.subscriptions.length}})
-                                                </div>
-                                                <div content>
-                                                    <div class="ui relaxed divided list" style="padding-left: 20px; padding-right: 4px;">
-                                                        <div *ngFor="let s of currentSearchUser.subscriptions" class="item">
-                                                            <i class="user middle aligned icon"></i>
-                                                            <div class="content">
-                                                                <a class="header" style="color: #5c5c5d !important;">{{s.firstName}} {{s.lastName}}</a>
-                                                                <div class="description" style="font-size: 12px;">@{{s.username}}</div>
-                                                            </div>
+                                                <i class="dropdown icon"></i>
+                                                Subscriptions &ensp; ({{this.currentSearchUser.subscriptions.length}})
+                                            </div>
+                                            <div content>
+                                                <div class="ui relaxed divided list" style="padding-left: 20px; padding-right: 4px;">
+                                                    <div *ngFor="let s of currentSearchUser.subscriptions" class="item">
+                                                        <i class="user middle aligned icon"></i>
+                                                        <div class="content">
+                                                            <a class="header" style="color: #5c5c5d !important;">{{s.firstName}} {{s.lastName}}</a>
+                                                            <div class="description" style="font-size: 12px;">@{{s.username}}</div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </sui-accordion-panel>
-                                            <sui-accordion-panel [isOpen]="false" [isDisabled]="currentSearchUser.subscribers.length == 0">
-                                                <div title style="font-size: 19px;
+                                            </div>
+                                        </sui-accordion-panel>
+                                        <sui-accordion-panel [isOpen]="false" [isDisabled]="currentSearchUser.subscribers.length == 0">
+                                            <div title style="font-size: 19px;
                                                             font-weight: 600;
                                                             color: #545454;
                                                             padding-bottom: 5px;
                                                             border-bottom: 1px solid #9e9e9e;
                                                             margin-left: 4px;
                                                             margin-right: 4px;">
-                                                    <i class="dropdown icon"></i>
-                                                    Subscribers &ensp; ({{currentSearchUser.subscribers.length}})
-                                                </div>
-                                                <div content>
-                                                    <div class="ui relaxed divided list" style="padding-left: 20px; padding-right: 4px;">
-                                                        <div *ngFor="let s of currentSearchUser.subscribers" class="item">
-                                                            <i class="user middle aligned icon"></i>
-                                                            <div class="content">
-                                                                <a class="header" style="color: #5c5c5d !important;">{{s.firstName}} {{s.lastName}}</a>
-                                                                <div class="description" style="font-size: 12px;">@{{s.username}}</div>
-                                                            </div>
+                                                <i class="dropdown icon"></i>
+                                                Subscribers &ensp; ({{currentSearchUser.subscribers.length}})
+                                            </div>
+                                            <div content>
+                                                <div class="ui relaxed divided list" style="padding-left: 20px; padding-right: 4px;">
+                                                    <div *ngFor="let s of currentSearchUser.subscribers" class="item">
+                                                        <i class="user middle aligned icon"></i>
+                                                        <div class="content">
+                                                            <a class="header" style="color: #5c5c5d !important;">{{s.firstName}} {{s.lastName}}</a>
+                                                            <div class="description" style="font-size: 12px;">@{{s.username}}</div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </sui-accordion-panel>
-                                            <sui-accordion-panel [isOpen]="false" [isDisabled]="currentSearchUser.favorites.length == 0">
-                                                <div title style="font-size: 19px;
+                                            </div>
+                                        </sui-accordion-panel>
+                                        <sui-accordion-panel [isOpen]="false" [isDisabled]="currentSearchUser.favorites.length == 0">
+                                            <div title style="font-size: 19px;
                                                           font-weight: 600;
                                                           color: #545454;
                                                           padding-bottom: 5px;
                                                           border-bottom: 1px solid #9e9e9e;
                                                           margin-left: 4px;
                                                           margin-right: 4px;">
-                                                    <i class="dropdown icon"></i>
-                                                    Favorites &ensp; ({{currentSearchUser.favorites.length}})
-                                                </div>
-                                                <div content>
-                                                    <div class="ui relaxed divided list" style="padding-left: 20px; padding-right: 4px;">
-                                                        <div *ngFor="let f of currentSearchUser.favorites" class="item">
-                                                            <i class="star middle aligned icon"></i>
-                                                            <div class="content">
-                                                                <a class="header" style="color: #5c5c5d !important;">{{f.name}}</a>
-                                                                <div class="description" style="font-size: 10px;">{{f.symbol}} | {{f.exchange}}</div>
-                                                            </div>
+                                                <i class="dropdown icon"></i>
+                                                Favorites &ensp; ({{currentSearchUser.favorites.length}})
+                                            </div>
+                                            <div content>
+                                                <div class="ui relaxed divided list" style="padding-left: 20px; padding-right: 4px;">
+                                                    <div *ngFor="let f of currentSearchUser.favorites" class="item">
+                                                        <i class="star middle aligned icon"></i>
+                                                        <div class="content">
+                                                            <a class="header" style="color: #5c5c5d !important;">{{f.name}}</a>
+                                                            <div class="description" style="font-size: 10px;">{{f.symbol}} | {{f.exchange}}</div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </sui-accordion-panel>
-                                        </sui-accordion>
-    
-    
-                                    </div>
+                                            </div>
+                                        </sui-accordion-panel>
+                                    </sui-accordion>
+
+
                                 </div>
+                            </div>
 
                             <!-- <div class="row">
                         <div class="ui segment" style="
