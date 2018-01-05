@@ -29,8 +29,11 @@ export interface UserProfile {
 })
 
 export class SubscriptionsComponent implements OnInit {
+
   @ViewChild('modalTemplate')
   public modalTemplate: ModalTemplate<ModalContext, string, string>
+
+  // observables:[{name: string, observable: Observable<any>}];
 
   users: any[];
   subscriptions: any[];
@@ -160,7 +163,6 @@ export class SubscriptionsComponent implements OnInit {
       console.log("HELLO");
       console.log(this.loginService.subscribers.getValue().userId);
 
-
     forkJoin([
       this.xchangeApp.httpService.GetAllUsers(),
       this.xchangeApp.httpService.GetAllUserSubscriptions({ userId: this.loginService.subscribers.getValue().userId })
@@ -169,15 +171,12 @@ export class SubscriptionsComponent implements OnInit {
       console.log("HELLO 2");
       
       this.users = _.orderBy(results[0], ["firstName"], ["asc"]);
-
-      // this.tabChanged({index: 0});
-
       this.subscriptions = _.orderBy(results[1], ["username"], ["asc"]);
       this.options = [];
+
       _.map(this.subscriptions, (u) => { this.options.push(u.firstName + " " + u.lastName + " (@" + u.username + ")"); });
 
       console.log(this.subscriptions);
-
 
       if (this.subscriptions.length > 0) {
         this.subscriptionSelected(this.subscriptions[0]);
@@ -200,6 +199,9 @@ export class SubscriptionsComponent implements OnInit {
   ngOnInit() { }
 
   tabChanged(tabChangeEvent: any) {
+
+    if(!_.isNil(this.click_subscription)) this.click_subscription.unsubscribe();
+    
     this.ngZone.run(() => {
       this.loading = true;
       this.subscribers_page = false;
@@ -235,6 +237,8 @@ export class SubscriptionsComponent implements OnInit {
   }
 
   initSubscriptions() {
+
+    this.click_subscription = 
     this.xchangeApp.httpService
       .GetAllUserSubscriptions({ userId: this.loginService.subscribers.getValue().userId })
       .subscribe((results) => {
@@ -264,6 +268,8 @@ export class SubscriptionsComponent implements OnInit {
     this.ngZone.run(() => {
       this.loading = true;
     });
+
+    this.click_subscription = 
     forkJoin(
       this.xchangeApp.httpService.GetAllUserFavorites({ userId: $event.userId }),
       this.xchangeApp.httpService.GetAllUserSubscriptions({ userId: $event.userId }),
@@ -286,6 +292,8 @@ export class SubscriptionsComponent implements OnInit {
   }
 
   initSubscribers() {
+
+    this.click_subscription = 
     this.xchangeApp.httpService
       .GetAllUserSubscribers({ userId: this.loginService.subscribers.getValue().userId })
       .subscribe((results) => {
@@ -313,6 +321,8 @@ export class SubscriptionsComponent implements OnInit {
     this.ngZone.run(() => {
       this.loading = true;
     });
+
+    this.click_subscription = 
     forkJoin(
       this.xchangeApp.httpService.GetAllUserFavorites({ userId: $event.userId }),
       this.xchangeApp.httpService.GetAllUserSubscriptions({ userId: $event.userId }),
@@ -365,6 +375,7 @@ export class SubscriptionsComponent implements OnInit {
       this.loading = true;
     });
 
+    this.click_subscription = 
     forkJoin(
       this.xchangeApp.httpService.GetAllUserFavorites({ userId: $event.userId }),
       this.xchangeApp.httpService.GetAllUserSubscriptions({ userId: $event.userId }),
@@ -400,6 +411,7 @@ export class SubscriptionsComponent implements OnInit {
   subscribe($event:any, from:any){
     console.log($event);
 
+    this.click_subscription = 
     this.xchangeApp.httpService.AddUserSubscription([{userId: this.loginService.subscribers.getValue().userId}, {userId: $event.userId}])
     .subscribe((results)=>{
       if(from == "subscribers") this.initSubscribers();
@@ -410,6 +422,7 @@ export class SubscriptionsComponent implements OnInit {
   unSubscribe($event:any, from:any){
     console.log($event);
 
+    this.click_subscription = 
     this.xchangeApp.httpService.RemoveUserSubscription([{userId: this.loginService.subscribers.getValue().userId}, {userId: $event.userId}])
     .subscribe((results)=>{
       if(from == "subscribers") this.initSubscribers();
