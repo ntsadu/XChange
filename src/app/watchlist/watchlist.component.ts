@@ -243,7 +243,7 @@ export class WatchlistComponent implements OnInit {
 
     config.closeResult = "closed!";
     config.mustScroll = true;
-    config.context = { symbol: company.symbol, name: company.name, sector: company.sector, industry: company.industry, isFavorite: true, dataString: JSON.stringify(company)};
+    config.context = { symbol: company.symbol, name: company.name, exchange: company.exchange, sector: company.sector, industry: company.industry, isFavorite: true, dataString: JSON.stringify(company)};
 
     this.selectedInterval = " "; 
     this.interval_disabled = true;

@@ -14,6 +14,7 @@ import { LoginService } from '../login.service';
 export interface ModalContext {
   symbol:string;
   name:string;
+  exchange:string;
   sector:string;
   industry:string;
   isFavorite: boolean,
@@ -236,6 +237,7 @@ export class ListingsComponent implements OnInit {
     config.context = { 
       symbol: company.symbol, 
       name: company.name, 
+      exchange: company.exchange,
       sector: company.sector, 
       industry: company.industry, 
       isFavorite: this.isFav, 

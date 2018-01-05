@@ -157,12 +157,17 @@ export class SubscriptionsComponent implements OnInit {
     public loginService: LoginService) {
 
     this.companyList = [];
+      console.log("HELLO");
+      console.log(this.loginService.subscribers.getValue().userId);
+
 
     forkJoin([
       this.xchangeApp.httpService.GetAllUsers(),
       this.xchangeApp.httpService.GetAllUserSubscriptions({ userId: this.loginService.subscribers.getValue().userId })
     ]).subscribe(results => {
 
+      console.log("HELLO 2");
+      
       this.users = _.orderBy(results[0], ["firstName"], ["asc"]);
 
       // this.tabChanged({index: 0});
@@ -359,7 +364,7 @@ export class SubscriptionsComponent implements OnInit {
     this.ngZone.run(() => {
       this.loading = true;
     });
-    console.log("YOOO");
+
     forkJoin(
       this.xchangeApp.httpService.GetAllUserFavorites({ userId: $event.userId }),
       this.xchangeApp.httpService.GetAllUserSubscriptions({ userId: $event.userId }),
@@ -442,7 +447,7 @@ export class SubscriptionsComponent implements OnInit {
     config.closeResult = "closed!";
     // config.transition = "fade up";
     config.mustScroll = true;
-    config.context = { symbol: company.symbol, name: company.name, sector: company.sector, industry: company.industry, isFavorite: false, dataString: JSON.stringify(company) };
+    config.context = { symbol: company.symbol, name: company.name, exchange: company.exchange, sector: company.sector, industry: company.industry, isFavorite: false, dataString: JSON.stringify(company) };
 
     this.selectedInterval = " ";
     this.interval_disabled = true;

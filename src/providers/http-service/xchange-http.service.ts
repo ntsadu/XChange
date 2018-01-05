@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 
 const API_HOST  = " http://localhost:3000";
 // const EB_API_HOST = "http://default-environment.wbpuprfx4t.us-east-2.elasticbeanstalk.com";
-const EB_API_HOST = "http://xchange-backend.us-east-2.elasticbeanstalk.com/";
+const EB_API_HOST = "http://xchange-backend.us-east-2.elasticbeanstalk.com";
 
 export class HttpService {
 
@@ -37,8 +37,8 @@ public RemoveUserSubscription($requestBody:[{userId: number}, {userId: number}])
     return this.http
             .post(EB_API_HOST + "/users/RemoveUserSubscription",
                 JSON.stringify($requestBody),
-                this.headers)
-            .timeout(3000);
+                this.headers);
+            // .timeout(3000);
 }
 
 public GetAllUserSubscribers($requestBody:{userId:number}) {
@@ -54,8 +54,8 @@ public RemoveUserFavorite($requestBody:{userId:number, companyId: number}) {
     return this.http
             .post(EB_API_HOST + "/users/RemoveUserFavorite",
                 JSON.stringify($requestBody),
-                this.headers)
-            .timeout(3000);
+                this.headers);
+            // .timeout(3000);
 }
 
 public GetAllUserFavorites($requestBody:{userId:number}) {
@@ -70,19 +70,21 @@ private get(where: string): Observable<any> {
     return this.http
                .get(EB_API_HOST + where,
                      this.headers)
-               .timeout(3000)
+            //    .timeout(3000)
                .map(res => {return res.json()});
 }
 
 private post(where: string, what?: {}): Observable<any> {
 
+    console.log(EB_API_HOST + where);
     console.log(what);
+    // console.log(what);
 
     return this.http
                .post(EB_API_HOST + where,
                     JSON.stringify(what),
                      this.headers)
-               .timeout(3000)
+            //    .timeout(3000)
                .map(res => {return res.json()});
 }
 

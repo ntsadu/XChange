@@ -3,7 +3,7 @@
         <!-- <div style="margin-left: -34vw; width: 70vw;"> -->
         <ng-template let-context let-modal="modal" #modalTemplate>
             
-                <div class="header">{{context.symbol}} &ensp; 
+                <div class="header">{{context.exchange}}:{{context.symbol}} &ensp; 
                         <a *ngIf="isFav" class="tooltipped" data-position="bottom" data-delay="20" materialize="tooltip" data-tooltip="Remove from Watch List" 
                         style="margin-top: -6px;
                             margin-left: -15px;
