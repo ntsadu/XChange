@@ -261,7 +261,7 @@
         <div class="row" style="width: 100%; margin-left: 0px;">
           <div class="col-md-5" style="padding-right: 0px; padding-left:0px;">
 
-    <table class="table table-striped" [mfData]="companyList" [mfActivePage] = "1" [mfRowsOnPage]="5" style="width: 100%; height: calc(100vh - 143px);">
+    <table class="table table-striped" [mfData]="companyList" [mfActivePage] = "1" [mfRowsOnPage]="5" style="width: 100%; height: calc(100%);">
         <thead style="color: rgba(224, 224, 224, 0.94); background-color: rgba(76, 76, 76, 0.7607843137254902);">
             <tr>
                 <th style="width: 17%;" 
@@ -287,9 +287,10 @@
             </th>
             </tr>
         </thead>
+
             <tbody style="margin-right: -8px; height: calc(100% - 49px); max-height: calc(100% - 49px) !important; overflow-y: auto;">
                 <div *ngIf="loading">
-                    <div class="ui segment" style="height: 75vh; width: calc(100% - 8px);">
+                    <div class="ui segment" style="height: calc(100vh - 206px); width: calc(98%);">
                         <div class="ui active inverted dimmer">
                             <div class="ui text loader">Loading</div>
                         </div>
@@ -333,7 +334,7 @@
 
   <div class="col-md-7" style="padding-left: 0px; padding-right:0px;">
         <div *ngIf="loading">
-                <div class="ui segment" style="height: calc(100vh - 143px); border: none; border-radius: 0px !important;">
+                <div class="ui segment" style="height: calc(100vh - 157px); border: none; border-radius: 0px !important;">
                     <div class="ui active inverted dimmer">
                         <div class="ui text loader">Loading</div>
                     </div>
@@ -396,7 +397,7 @@
               </i>
             </button>
         </div>
-        <div style="height: calc(100vh - 191px); background-color:rgb(239, 239, 244);">
+        <div style="height: calc(100vh - 205px); background-color:rgb(239, 239, 244);">
             <div class="content" style="height: 100%; overflow-y:auto; overflow-x: hidden; border-left: 1px solid #c3c3c3;">
 
             <div class="row">

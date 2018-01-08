@@ -95,7 +95,8 @@ app-dashboard{
     }
 
     .dashboard-container{
-        height: calc(100vh - 56px);
+        // height: calc(100vh - 56px);
+        height: calc(100vh - 73px);
 
         .dashboard-content{
             margin-left: 0px;
@@ -485,7 +486,8 @@ app-dashboard{
     .inner-view{
         box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14), 0 1px 7px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -1px rgba(0, 0, 0, 0.2);
         // height: 90.7vh;
-        height: calc(100vh - 74px);
+        // height: calc(100vh - 74px);
+        height: calc(100vh - 88px);
         // background: rgba(0, 0, 0, 0.19);
         background: grey;   
     }
