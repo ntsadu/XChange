@@ -47,10 +47,15 @@
 
   <div ng-sidebar-content style="height: 100vh;">
     <header class="demo-header" style="box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.14), 0 0px 5px 0 rgba(0, 0, 0, 0.12), 0 0px 8px 0px rgba(0, 0, 0, 0.2);">
-      <button (click)="_toggleOpened()" class="demo-header__toggle"></button>
-      <img src='../../assets/logos/xchange-logo.svg' height="30" width="30" style="width: 72px; margin-left: 0%;">
-    <iframe scrolling="no" allowtransparency="true" frameborder="0" width="100%" height="40" src="https://s.tradingview.com/tickerswidgetembed/#%7B%22symbols%22%3A%5B%7B%22proName%22%3A%22INDEX%3ASPX%22%2C%22title%22%3A%22S%26P%20500%22%7D%2C%7B%22proName%22%3A%22INDEX%3AIUXX%22%2C%22title%22%3A%22Nasdaq%20100%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AEURUSD%22%2C%22title%22%3A%22EUR%2FUSD%22%7D%2C%7B%22proName%22%3A%22NYMEX%3ACL1!%22%2C%22title%22%3A%22Crude%20Oil%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AXAUUSD%22%2C%22title%22%3A%22Gold%22%7D%5D%2C%22locale%22%3A%22en%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A104%2C%22utm_source%22%3A%22www.tradingview.com%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22tickers%22%7D" style="box-sizing: border-box; padding-bottom: 0px; height: 73px; margin-left: 141px; margin-bottom: -1px;"></iframe>
-    
+      <div class="row" style="width: 100vw; height: 72px;">
+        <div class="col-md-2 col-sm-4" style="padding: 0px; padding-top: 25px; padding-left: 17px;">
+            <button (click)="_toggleOpened()" class="demo-header__toggle"></button>
+            <img src='../../assets/logos/xchange-logo.svg' height="30" width="30" style="width: 72px; margin-left: 0%;">
+        </div>
+        <div class="col-md-10 col-sm-8" style="padding: 0px; background: #dedede;">
+            <iframe scrolling="yes" allowtransparency="true" frameborder="0" style="background: #afaeae !important;" width="100%" height="40" src="https://s.tradingview.com/tickerswidgetembed/#%7B%22symbols%22%3A%5B%7B%22proName%22%3A%22INDEX%3ASPX%22%2C%22title%22%3A%22S%26P%20500%22%7D%2C%7B%22proName%22%3A%22INDEX%3AIUXX%22%2C%22title%22%3A%22Nasdaq%20100%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AEURUSD%22%2C%22title%22%3A%22EUR%2FUSD%22%7D%2C%7B%22proName%22%3A%22NYMEX%3ACL1!%22%2C%22title%22%3A%22Crude%20Oil%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AXAUUSD%22%2C%22title%22%3A%22Gold%22%7D%5D%2C%22locale%22%3A%22en%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A104%2C%22utm_source%22%3A%22www.tradingview.com%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22tickers%22%7D" style="box-sizing: border-box; padding-bottom: 0px; height: 73px; margin-bottom: -1px;"></iframe>            
+        </div>
+      </div>    
     </header>
 
     <!-- <div class="ticker-wrap">
