@@ -1,4 +1,4 @@
-import { Component, AnimationTransitionEvent, ViewEncapsulation, Output, EventEmitter, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Component, AnimationTransitionEvent, ViewEncapsulation, Output, EventEmitter, NgZone, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { TransitionController, Transition, TransitionDirection } from "ng2-semantic-ui";
 import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui';
 import { SidebarModule } from 'ng-sidebar';
@@ -9,6 +9,8 @@ import * as _ from 'lodash';
 import { Router } from '@angular/router';
 import { LoginService } from 'app/login.service';
 import { User } from 'interfaces/xchange-interfaces/interfaces';
+import postscribe from 'postscribe';
+import { XChangeController } from 'providers/ers-controller/xchange-controller';
 
 
 export interface ModalContext {
@@ -25,7 +27,7 @@ export interface ModalContext {
   encapsulation: ViewEncapsulation.None
 })
 
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit {
 
   @ViewChild('modalTemplate')
   public modalTemplate: ModalTemplate<ModalContext, string, string>
@@ -38,11 +40,13 @@ export class DashboardComponent implements OnInit {
   currentUserRoleId: number;
   modalActions = new EventEmitter<string | MaterializeAction>();
 
+  companies:any[];
+
   newsPage: any = true;
-  listingsPage: any = false;
-  watchlistPage: any = false;
-  subscriptionsPage: any = false;
-  searchPage: any = false;
+  listingsPage: any = true;
+  watchlistPage: any = true;
+  subscriptionsPage: any = true;
+  searchPage: any = true;
 
   public data;
   public filterQuery = "";
@@ -69,7 +73,20 @@ export class DashboardComponent implements OnInit {
   public _POSITIONS: Array<string> = ['left', 'right', 'top', 'bottom'];
 
   constructor(public ngZone: NgZone, private loginService: LoginService,
-    private router: Router, public modalService: SuiModalService) { }
+    private router: Router, public modalService: SuiModalService, public xchangeApp: XChangeController) { 
+
+      this.newsPage = true;
+      this.listingsPage = false;
+      this.watchlistPage = false;
+      this.subscriptionsPage = false;
+      this.searchPage = false;
+
+      this.xchangeApp.httpService
+      .GetAllCompanies()
+      .subscribe((results)=>{
+        this.companies = results;
+      });
+    }
 
   // Get User Information from local storage
   oldEmail: string;
@@ -92,6 +109,8 @@ export class DashboardComponent implements OnInit {
 
   user: User = this.loginService.subscribers.getValue();
 
+  itslit:any = false;
+
   ngOnInit() {
     this.user = this.loginService.subscribers.getValue();
     this.oldEmail = this.user.email;
@@ -100,6 +119,81 @@ export class DashboardComponent implements OnInit {
     this.oldLastName = this.user.lastName;
     this.oldEmail = this.user.email;
     this.oldPassword = this.user.password;
+
+    this.itslit = true;
+
+    
+  }
+
+  ngAfterViewInit(){
+
+    console.log("ehem");
+    console.log(document.getElementById('litty'));
+    
+    // postscribe('#tv-container', '<script> new TradingView.widget({ "autosize": true, "symbol": "COINBASE:BTCUSD", "interval": "D", "timezone": "Etc/UTC", "theme": "Black", "style": "1", "locale": "en", "toolbar_bg": "rgba(0, 0, 0, 1)", "hide_top_toolbar": true, "save_image": false, "hideideas": true});</script>');    
+    // this.ngZone.run(()=>{
+
+    //   postscribe('#ticker', 
+    //   `<script src="https://s3.tradingview.com/external-embedding/embed-widget-tickers.js">{
+    //     "symbols": [
+    //       {
+    //         "proName": "INDEX:SPX",
+    //         "title": "S&P 500"
+    //       },
+    //       {
+    //         "proName": "INDEX:IUXX",
+    //         "title": "Nasdaq 100"
+    //       },
+    //       {
+    //         "proName": "FX_IDC:EURUSD",
+    //         "title": "EUR/USD"
+    //       },
+    //       {
+    //         "proName": "NYMEX:CL1!",
+    //         "title": "Crude Oil"
+    //       },
+    //       {
+    //         "proName": "FX_IDC:XAUUSD",
+    //         "title": "Gold"
+    //       }
+    //     ],
+    //     "locale": "en"
+    //   }</script>`
+    //   );     
+    // });
+
+    console.log(document.getElementById("ticker"));
+
+    // postscribe('#tv-container', 
+    // `<script type="text/javascript">
+    //   new TradingView.MediumWidget({
+    //     "container_id": "tv-medium-widget-13429",
+    //     "symbols": [
+    //       [
+    //         "Apple",
+    //         "AAPL "
+    //       ],
+    //       [
+    //         "Google",
+    //         "GOOGL"
+    //       ],
+    //       [
+    //         "Microsoft",
+    //         "MSFT"
+    //       ]
+    //     ],
+    //     "greyText": "Quotes by",
+    //     "gridLineColor": "#e9e9ea",
+    //     "fontColor": "#83888D",
+    //     "underLineColor": "#dbeffb",
+    //     "trendLineColor": "#4bafe9",
+    //     "width": 500,
+    //     "height": 400,
+    //     "locale": "en"
+    //   });
+    // </script>`
+    // );   
+
   }
 
   validateEmail() {

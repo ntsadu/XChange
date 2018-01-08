@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui';
 import { Observable } from 'rxjs/Observable';
 import { forkJoin } from "rxjs/observable/forkJoin";
@@ -16,13 +16,15 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { WatchListSorter } from './watchlist-sorter.service';
 import { LoginService } from '../login.service';
+import postscribe from 'postscribe';
+
 
 @Component({
   selector: 'app-watchlist',
   templateUrl: './watchlist.component.html',
   styleUrls: ['./watchlist.component.scss']
 })
-export class WatchlistComponent implements OnInit {
+export class WatchlistComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   @ViewChild('modalTemplate')
   public modalTemplate:ModalTemplate<ModalContext, string, string>
@@ -62,6 +64,8 @@ export class WatchlistComponent implements OnInit {
   option = "hello";
 
   p:any;
+
+  // symb:any;
 
   functions = [
     { name: "Intraday", apiCall: "function=TIME_SERIES_INTRADAY"},
@@ -104,6 +108,11 @@ export class WatchlistComponent implements OnInit {
 
   public lineChartLegend:boolean = true;
   public lineChartType:string = 'line';
+
+  trading_view_ready = false;
+  trading_tv_set = false;
+  trading_tv_set_2 = false;
+  
 
   constructor(
     public xchangeApp : XChangeController, 
@@ -169,7 +178,134 @@ export class WatchlistComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.trading_view_ready = true;
   }
+
+  ngAfterViewInit(){
+
+  }
+
+  ngAfterViewChecked(){
+
+    if(document.getElementById('tv-container') != null && this.trading_tv_set == false){
+
+      let symb = this.currentCompany.exchange + ":" + this.currentCompany.symbol;
+
+        postscribe('#tv-container', 
+            `<script> 
+              new TradingView.widget({
+                "width": 717,
+                "height": 350,
+                "symbol": "${symb}",
+                "interval": "D",
+                "timezone": "Etc/UTC",
+                "theme": "Light",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "allow_symbol_change": true,
+                "details": true,
+                "hideideas": true
+              });
+            </script>`
+            );    
+
+        this.trading_tv_set = true;
+    }
+
+    // if(document.getElementById('tv-container-2') != null && this.trading_tv_set_2 == false){
+    //   postscribe('#tv-container-2', 
+    //     `<script type="text/javascript">
+    //       new TradingView.MediumWidget({
+    //         "container_id": "tv-medium-widget-13429",
+    //         "symbols": [
+    //           [
+    //             "Apple",
+    //             "AAPL "
+    //           ],
+    //           [
+    //             "Google",
+    //             "GOOGL"
+    //           ],
+    //           [
+    //             "Microsoft",
+    //             "MSFT"
+    //           ]
+    //         ],
+    //         "greyText": "Quotes by",
+    //         "gridLineColor": "#e9e9ea",
+    //         "fontColor": "#83888D",
+    //         "underLineColor": "#a6e5a0",
+    //         "trendLineColor": "#02c202",
+    //         "width": 700,
+    //         "height": 500,
+    //         "locale": "en"
+    //       });
+    //     </script>`
+    //   );   
+
+    //   this.trading_tv_set_2 = true;      
+    // }
+  }
+
+  initTradingViewComponents(exchange:string, symbol: string, name:string){
+
+    let symb = exchange + ":" + symbol;
+
+    // this.initTradingViewComponent1(symb, name);
+    this.initTradingViewComponent2(symb);
+  }
+
+  // initTradingViewComponent1(symbol: string, name: string){
+  //   postscribe('#tv-container-2', 
+  //   `<script type="text/javascript">
+  //     new TradingView.MediumWidget({
+  //       "container_id": "tv-medium-widget-13429",
+  //       "symbols": [
+  //         [
+  //           "${name}",
+  //           "${symbol} "
+  //         ],
+  //       "greyText": "Quotes by",
+  //       "gridLineColor": "#e9e9ea",
+  //       "fontColor": "#83888D",
+  //       "underLineColor": "#a6e5a0",
+  //       "trendLineColor": "#02c202",
+  //       "width": 700,
+  //       "height": 500,
+  //       "locale": "en"
+  //     });
+  //   </script>`
+  //   );   
+  // }
+
+  initTradingViewComponent2(symbol:string){
+
+    document.getElementById("tv-container").innerHTML = null;
+
+    postscribe('#tv-container', 
+    `<script> 
+      new TradingView.widget({
+        "width": 717,
+        "height": 350,
+        "symbol": "${symbol}",
+        "interval": "D",
+        "timezone": "Etc/UTC",
+        "theme": "Light",
+        "style": "1",
+        "locale": "en",
+        "toolbar_bg": "#f1f3f6",
+        "enable_publishing": false,
+        "allow_symbol_change": true,
+        "details": true,
+        "hideideas": true
+      });
+    </script>`
+    );    
+  }
+
 
   public removeFromWatchList(){
 
@@ -250,6 +386,8 @@ export class WatchlistComponent implements OnInit {
     this.apiFunction = _.filter(this.functions, (f)=>{if(f.name == this.selectedFunction) return f;})[0].apiCall;
     this.apiInterval = null;
     this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval);      
+
+    this.initTradingViewComponents(company.exchange, company.symbol);
     
     //Unsubcribes to previous observables that haven't finished loading
     if(!_.isNil(this.click_subscription)) this.click_subscription.unsubscribe();

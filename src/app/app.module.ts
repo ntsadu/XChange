@@ -15,6 +15,9 @@ import { RouterModule, Routes } from '@angular/router';
 //App Routes
 import { appRoutes } from './app.routes';
 
+//Directives
+import { TickerDirective } from './dashboard/ticker.directive';
+
 //App Services.. 
 import { ERSController } from '../providers/ers-controller/ers-controller';
 import { XChangeController } from '../providers/ers-controller/xchange-controller';
@@ -91,7 +94,8 @@ const routes: Routes = [
     SearchComponent,
     WatchlistComponent,
     ListingsComponent,
-    ProfileComponent
+    ProfileComponent,
+    TickerDirective
   ],
   entryComponents: [
     DialogOverviewExampleDialog

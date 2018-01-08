@@ -1,16 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { FetchingService } from '../../providers/fetching.service';
 import { Stock } from '../../model/stock.class';
 import { Observable } from 'rxjs/Observable';
 import { ParsingService } from '../../providers/parsing.service';
 
+import postscribe from 'postscribe';
+
+
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss']
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent implements OnInit, AfterViewInit {
 
   functions = [
     { name: "Intraday", apiCall: "function=TIME_SERIES_INTRADAY"},
@@ -49,5 +52,9 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngAfterViewInit(){
+    
   }
 }
