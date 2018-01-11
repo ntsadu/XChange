@@ -1,4 +1,5 @@
 import { Component, AnimationTransitionEvent, ViewEncapsulation, Output, EventEmitter, NgZone, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { TransitionController, Transition, TransitionDirection } from "ng2-semantic-ui";
 import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui';
 import { SidebarModule } from 'ng-sidebar';
@@ -11,6 +12,7 @@ import { LoginService } from 'app/login.service';
 import { User } from 'interfaces/xchange-interfaces/interfaces';
 import postscribe from 'postscribe';
 import { XChangeController } from 'providers/ers-controller/xchange-controller';
+import { TickerService } from 'providers/ticker.service';
 
 
 export interface ModalContext {
@@ -72,8 +74,13 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   public _MODES: Array<string> = ['over', 'push', 'slide'];
   public _POSITIONS: Array<string> = ['left', 'right', 'top', 'bottom'];
 
+  // ticker_source:string = "https://s.tradingview.com/tickerswidgetembed/#%7B%22symbols%22%3A%5B%7B%22proName%22%3A%22INDEX%3ASPX%22%2C%22title%22%3A%22S%26P%20500%22%7D%2C%7B%22proName%22%3A%22INDEX%3AIUXX%22%2C%22title%22%3A%22Nasdaq%20100%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AEURUSD%22%2C%22title%22%3A%22EUR%2FUSD%22%7D%2C%7B%22proName%22%3A%22COINBASE%3ABTCUSD%22%2C%22title%22%3A%22BTC%2FUSD%22%7D%2C%7B%22proName%22%3A%22NYMEX%3ACL1!%22%2C%22title%22%3A%22Crude%20Oil%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AXAUUSD%22%2C%22title%22%3A%22Gold%22%7D%5D%2C%22locale%22%3A%22en%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A104%2C%22utm_source%22%3A%22www.tradingview.com%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22tickers%22%7D";
+  ticker_source:string;
+
   constructor(public ngZone: NgZone, private loginService: LoginService,
-    private router: Router, public modalService: SuiModalService, public xchangeApp: XChangeController) { 
+              private router: Router, public modalService: SuiModalService, 
+              public xchangeApp: XChangeController, public ticker: TickerService,
+              public sanitizer: DomSanitizer) { 
 
       this.newsPage = true;
       this.listingsPage = false;
@@ -81,11 +88,23 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.subscriptionsPage = false;
       this.searchPage = false;
 
-      this.xchangeApp.httpService
-      .GetAllCompanies()
-      .subscribe((results)=>{
-        this.companies = results;
+      this.ngZone.run(()=>{
+        console.log(this.ticker_source);          
+        this.ticker_source = this.ticker.setTicker([{symbol: "GOOG", name: "GOOGLE"}, {symbol: "FB", name: "FACEBOOK"}, {symbol: "MSFT", name: "MICROSOFT"}, {symbol: "AMZN", name: "AMAZON"}]);
+        console.log(this.ticker_source);
       });
+
+      // this.xchangeApp.httpService
+      // .GetAllCompanies()
+      // .subscribe((results)=>{
+      //   this.companies = results;
+
+      //   this.ngZone.run(()=>{
+      //     console.log(this.ticker_source);          
+      //     this.ticker_source = this.ticker.setTicker([{symbol: "GOOG", name: "GOOGLE"}, {symbol: "FB", name: "FACEBOOK"}, {symbol: "MSFT", name: "MICROSOFT"}, {symbol: "AMZN", name: "AMAZON"}]);
+      //     console.log(this.ticker_source);
+      //   });
+      // });
     }
 
   // Get User Information from local storage
@@ -109,20 +128,20 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   user: User = this.loginService.subscribers.getValue();
 
-  itslit:any = false;
 
   ngOnInit() {
     this.user = this.loginService.subscribers.getValue();
-    this.oldEmail = this.user.email;
-    this.oldUsername = this.user.username;
-    this.oldFirstName = this.user.firstName;
-    this.oldLastName = this.user.lastName;
-    this.oldEmail = this.user.email;
-    this.oldPassword = this.user.password;
 
-    this.itslit = true;
-
-    
+    if(_.isNil(this.user)){
+      this.router.navigate(["dashboard"]);
+    }else{
+      this.oldEmail = this.user.email;
+      this.oldUsername = this.user.username;
+      this.oldFirstName = this.user.firstName;
+      this.oldLastName = this.user.lastName;
+      this.oldEmail = this.user.email;
+      this.oldPassword = this.user.password;
+    }
   }
 
   ngAfterViewInit(){

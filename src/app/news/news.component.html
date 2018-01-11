@@ -1,6 +1,6 @@
 <div class="inner-view" style="background-color: grey;">
-  <div *ngIf="loading" style="height: 100%;">
-    <div class="ui segment" style="height: 100%; background: #23232340; border: none;">
+  <div *ngIf="loading" style="height: 98%;">
+    <div class="ui segment" style="height: calc(100vh - 88px); background: rgba(152, 152, 152, 0.9803921568627451); border: none;">
       <div class="ui active dimmer">
         <div class="ui large text loader">Loading</div>
       </div>
@@ -8,7 +8,13 @@
   </div>
 
   <div infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false"
-    style="overflow-y: scroll; height: 100%; margin-right: 3px; margin-left: 5px;">
+    style="overflow-y: scroll; height: 100%; margin-right: 0px; margin-left: -3px;">
+    
+    <div style="    
+            height: 100%;
+            width: 100%;
+            min-width: 1310px;">
+
     <div *ngFor="let a of Articles">
       <mat-card class="card" style="width: calc((100% - 95px) / 3); min-width: 400px;">
         <a target="_blank" href="{{ a.urlToImage }}">
@@ -19,26 +25,56 @@
             <b>{{ a.title }}</b>
           </mat-card-title>
           <div id="description">
-            <p>{{ a.description }}</p>
+            <p style="padding-left: 0px;">{{ a.description }}</p>
           </div>
         </mat-card-content>
         <div id="footer">
-          <div class="row" style="height: 50px; width: calc((100vw - 510px)/3); min-width: 400px; margin-left: -20px;">
-            <div class="col-md-6" style="padding-left: 0px;">
+          <div id="footer-row" class="row" style="    
+                height: 50px;
+                width: calc((100vw - 510px)/3);
+                min-width: 400px;
+                margin-left: -23px;
+                padding-left: 14px;
+                padding-right: 14px;
+                border-top: 1px solid #777777;
+                padding-top: 4px;">
+
+
+            <div id="author" class="col-md-10" style="padding-left: 0px;
+                padding-right: 10px;
+                padding-top: 10px;
+                color: #5a5a5a;
+                font-weight: bold;
+                ">
+              {{a.author}} | 
+              <span id="date" style="
+                    font-weight: 300 !important;
+                    font-size: 14px;">
+              {{ a.publishedAt | amDateFormat:'MMMM Do YYYY' }}</span>
+              <!-- <div id="date">
+                  {{ a.publishedAt | amDateFormat:'MMMM Do YYYY' }}
+                </div> -->
+            </div>
+<!-- 
+            <div class="col-md-5" style="padding-left: 10px; padding-right: 0px;">
+              <div id="date">
+                {{ a.publishedAt | amDateFormat:'MMMM Do YYYY' }}
+              </div>
+            </div> -->
+
+            <div class="col-md-2" style="text-align: right; padding-left: 0px; padding-right: 0px; padding-top: 2px;">
               <button id="btn" target="_blank" type="submit" class="btn btn-primary" value="Read Full Article" style="width: 40.5px;">
                 <a id="hyper" target="_blank" href="{{a.url}}">
                   <i class="fa fa-external-link" style="padding-top: 1.8px;" aria-hidden="true"></i>
                 </a>
               </button>
-            </div>
-          <div class="col-md-6" style="text-align: right;">
-            <div id="date">
-              {{ a.publishedAt | amDateFormat:'MMMM Do YYYY' }}
+
             </div>
           </div>
         </div>
+      </mat-card>
     </div>
-    </mat-card>
   </div>
-</div>
+
+  </div>
 </div>

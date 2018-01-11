@@ -26,10 +26,15 @@ import { AlphaVantageService } from '../providers/alpha-vantage-service.service'
 import { FetchingService } from '../providers/fetching.service';
 import { ParsingService } from '../providers/parsing.service';
 
+import { TickerService } from '../providers/ticker.service';
+
 import { LoginService } from '../app/login.service';
 import { NewsService } from './news.service';
 
 import { WatchListSorter } from './watchlist/watchlist-sorter.service';
+
+import { PostscribeService } from '../providers/postscribe.service';
+import { LoadService } from '../providers/load.service';
 
 //Root Component
 import { AppComponent } from './app.component';
@@ -131,7 +136,10 @@ const routes: Routes = [
     ParsingService,
     NewsService,
     LoginService,
-    WatchListSorter
+    WatchListSorter,
+    TickerService, 
+    PostscribeService, 
+    LoadService
   ],
   bootstrap: [AppComponent]
 })

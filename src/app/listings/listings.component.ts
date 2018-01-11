@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild, AfterViewChecked } from '@angular/core';
 import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui';
 import { XChangeController } from '../../providers/ers-controller/xchange-controller';
 import { Company } from '../../interfaces/xchange-interfaces/interfaces';
@@ -9,6 +9,8 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { LoginService } from '../login.service';
+import postscribe from 'postscribe';
+
 
 
 export interface ModalContext {
@@ -26,7 +28,7 @@ export interface ModalContext {
   templateUrl: './listings.component.html',
   styleUrls: ['./listings.component.scss']
 })
-export class ListingsComponent implements OnInit {
+export class ListingsComponent implements OnInit, AfterViewChecked {
 
   @ViewChild('modalTemplate')
   public modalTemplate:ModalTemplate<ModalContext, string, string>
@@ -137,6 +139,10 @@ export class ListingsComponent implements OnInit {
   public lineChartLegend:boolean = true;
   public lineChartType:string = 'line';
 
+  trading_view_ready = false;
+  trading_tv_set = false;
+  trading_tv_set_2 = false;
+
   constructor(
     public xchangeApp : XChangeController, 
     public ngZone : NgZone, 
@@ -173,6 +179,63 @@ export class ListingsComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngAfterViewChecked(){
+    console.log("LISTINGS VIEW CHECKED");
+    console.log(document.getElementById('tv-container'));
+    console.log(this.trading_tv_set);
+
+    if((document.getElementById('tv-container') != null && this.trading_tv_set == false)){
+    
+      console.log("YOOOO");
+      // let symb = this.currentCompany.exchange + ":" + this.currentCompany.symbol;
+      let symb = this.currentCompany.symbol;
+
+        postscribe('#tv-container', 
+            `<script> 
+              new TradingView.widget({
+                "width": 1000,
+                "height": 350,
+                "symbol": "${symb}",
+                "interval": "D",
+                "timezone": "Etc/UTC",
+                "theme": "Light",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "allow_symbol_change": true,
+                "details": true,
+                "hideideas": true
+              });
+            </script>`
+            );    
+
+        this.trading_tv_set = true;
+        console.log("*****************************************************************");
+    }
+  }
+
+  initTradingViewComponents(exchange:string, symbol: string, name:string){
+    
+    // let symb = exchange + ":" + symbol;
+    let symb = symbol;
+    // this.initTradingViewComponent1(symb, name);
+    this.initTradingViewComponent(symb);
+  }
+
+  initTradingViewComponent(symbol:string){
+
+    console.log("INIT TRADING VIEW COMPONENT");
+
+    if(document.getElementById('tv-container') == null){
+      // document.getElementById('tv-container').innerHTML = null;
+      this.trading_tv_set = false;
+      console.log("TRADING_TV_SET" + this.trading_tv_set);
+
+      this.ngAfterViewChecked();  
+    } 
   }
 
   public addToWatchList(){
@@ -247,7 +310,10 @@ export class ListingsComponent implements OnInit {
     this.interval_disabled = true;
     this.apiFunction = _.filter(this.functions, (f)=>{if(f.name == this.selectedFunction) return f;})[0].apiCall;
     this.apiInterval = null;
-    this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval);      
+    this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval);  
+
+    this.initTradingViewComponents(company.exchange, company.symbol, company.name);
+
     this.alphaFetcher.getStockData(this.apiFunction, this.apiSymbol, this.apiParser, this.apiInterval)
     .subscribe((results)=>{
       console.log(this.apiParser[1]);

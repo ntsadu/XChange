@@ -1,22 +1,33 @@
+//Core Modules
 import { Component, OnInit, NgZone, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
+
+//UI Modules
 import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui';
+
+//Utilities
 import { Observable } from 'rxjs/Observable';
 import { forkJoin } from "rxjs/observable/forkJoin";
-import { XChangeController } from '../../providers/ers-controller/xchange-controller';
-import { Company } from '../../interfaces/xchange-interfaces/interfaces';
+import { Subscription } from 'rxjs/Subscription';
+import * as moment from 'moment';
+import * as _ from 'lodash';
 
+//Services
+import { XChangeController } from '../../providers/ers-controller/xchange-controller';
 import { AlphaVantageService } from '../../providers/alpha-vantage-service.service';
 import { FetchingService } from '../../providers/fetching.service';
 import { ParsingService } from '../../providers/parsing.service';
-import { Stock } from '../../model/stock.class';
-import * as moment from 'moment';
-import * as _ from 'lodash';
-import { ModalContext } from '../listings/listings.component';
-import { Subscription } from 'rxjs/Subscription';
-
 import { WatchListSorter } from './watchlist-sorter.service';
 import { LoginService } from '../login.service';
-import postscribe from 'postscribe';
+import { PostscribeService } from '../../providers/postscribe.service';
+import { LoadService } from '../../providers/load.service';
+
+//Interfaces
+import { Company } from '../../interfaces/xchange-interfaces/interfaces';
+import { ModalContext } from '../listings/listings.component';
+
+//Constants
+import { FUNCTIONS, INTERVALS } from '../../providers/alpha-vantage-service.service';
+
 
 
 @Component({
@@ -24,96 +35,26 @@ import postscribe from 'postscribe';
   templateUrl: './watchlist.component.html',
   styleUrls: ['./watchlist.component.scss']
 })
-export class WatchlistComponent implements OnInit, AfterViewInit, AfterViewChecked {
+export class WatchlistComponent implements OnInit, AfterViewChecked {
 
   @ViewChild('modalTemplate')
   public modalTemplate:ModalTemplate<ModalContext, string, string>
 
   currentCompany : any = {};
-  click_subscription : Subscription;
-
-  loading = true;
-  loading_chart = true;
-  theres_nothing_here = false;
+  // click_subscription : Subscription;
 
   tableHeader: string = "Watch List";
   options : string[] = [];
   companyList: Company[] = [];
 
-  apiFunction: string = '';
-  apiSymbol: string = '';
-  apiInterval: string = '';
-  apiParser: string[] = [];
-
-  ohlc_outlook = {open: " ", high: " ", low: " ", close: " ", volume: " "};
-  ohlc_outlook_type = " ";
-  closing_icon_class = "fa fa-arrow-up";
-  closing_color_indicator = "black";
-  closing_percent = " ";
-
-  fav_icon_color = "#dadada";  
-  fav_icon_active_color = "#ffff09";
-  fav_icon_inactive_color = "#dadada";
-  fav_tooltip_message = " ";
-
-  selectedFunction = "Daily";
-  selectedInterval = " ";
-  function_options:Array<string> = ["Intraday", "Daily", "Weekly", "Monthly"];
-  interval_options:Array<string> = ["1 Minute", "5 Minute", "15 Minute", "30 Minute", "60 Minute"];
-  interval_disabled = true;
-  option = "hello";
+  function_options:Array<string>;
+  interval_options:Array<string>;
+  option = " ";
 
   p:any;
 
-  // symb:any;
-
-  functions = [
-    { name: "Intraday", apiCall: "function=TIME_SERIES_INTRADAY"},
-    { name: "Daily", apiCall: "function=TIME_SERIES_DAILY", forParsing: "Time Series (Daily)"},
-    { name: "Weekly", apiCall: "function=TIME_SERIES_WEEKLY", forParsing: "Weekly Time Series"},
-    { name: "Monthly", apiCall: "function=TIME_SERIES_MONTHLY", forParsing: "Monthly Time Series"},
-    { name: "Daily Adjusted", apiCall: "function=TIME_SERIES_DAILY_ADJUSTED", forParsing: "Time Series(Daily)"},
-    { name: "Weekly Adjusted", apiCall: "function=TIME_SERIES_WEEKLY_ADJUSTED", forParsing: "Weekly Adjusted Time Series"},
-    { name: "Monthly Adjusted", apiCall: "function=TIME_SERIES_MONTHLY_ADJUSTED", forParsing: "Monthly Adjusted Time Series"}
-  ];
-
-  intervals = [
-    { name: "1 minute", apiCall: "interval=1min", forParsing: "Time Series (1min)" },
-    { name: "5 minute", apiCall: "interval=5min", forParsing: "Time Series (5min)" },
-    { name: "15 minute", apiCall: "interval=15min", forParsing: "Time Series (15min)" },
-    { name: "30 minute", apiCall: "interval=30min", forParsing: "Time Series (30min)" },
-    { name: "60 minute", apiCall: "interval=60min", forParsing: "Time Series (60min)" }
-  ];
-
-  public lineChartData:Array<any> = [
-    {data: [65, 59, 80, 81, 56, 55, 40], label: 'Time Series (Daily)'}
-  ];
-
-  public lineChartLabels:Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-  public lineChartOptions:any = {
-    responsive: true
-  };
-
-  public lineChartColors:Array<any> = [
-    { // grey
-      backgroundColor: 'rgba(2, 194, 2, 0.432)',
-      borderColor: '#02c202',
-      pointBackgroundColor: 'white',
-      pointBorderColor: '#02c202',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-    }
-  ];
-
-  public lineChartLegend:boolean = true;
-  public lineChartType:string = 'line';
-
-  trading_view_ready = false;
   trading_tv_set = false;
-  trading_tv_set_2 = false;
   
-
   constructor(
     public xchangeApp : XChangeController, 
     public ngZone : NgZone, 
@@ -122,34 +63,29 @@ export class WatchlistComponent implements OnInit, AfterViewInit, AfterViewCheck
     public alphaFetcher: FetchingService, 
     public alphaParser: ParsingService,
     public sorter: WatchListSorter,
-    public loginService: LoginService) { 
+    public loginService: LoginService,
+    public postscribeService: PostscribeService,
+    public loadService: LoadService) { 
 
-      console.log(this.loginService.subscribers.getValue().userId);
+
+    this.loadService.initialize();
+    this.ngZone.run(()=>{   
+    this.function_options = this.alphaVantage.function_options;
+    this.interval_options = this.alphaVantage.interval_options;
+    });
+
 
     forkJoin([
         this.xchangeApp.httpService.GetAllUserFavorites({userId: this.loginService.subscribers.getValue().userId}), 
         this.xchangeApp.httpService.GetAllCompanies()
     ]).subscribe(results => {
 
-      console.log(results);
-      console.log();
-      console.log();
-
       if(results[0].length == 0){
-        this.ngZone.run(()=>{
-          this.loading = false;
-          this.loading_chart = false;
-          this.theres_nothing_here = true;          
+        this.ngZone.run(()=>{     
+          this.loadService.nothing();
         });
       }else if(!_.isNil(results[0]) && results[0].length > 0){
-
-        if(results[0].length == 0){
-          this.ngZone.run(()=>{
-            this.loading = false;
-            this.loading_chart = false;
-            this.theres_nothing_here = true;
-          });
-        }else if(!_.isNil(results[0]) && results[0].length > 0){
+        
           _.map(results[1], (c:any)=>{
             _.map(results[0], (uf:any)=>{
               if(c.companyId == uf.companyId) this.companyList.push(c);
@@ -164,263 +100,81 @@ export class WatchlistComponent implements OnInit, AfterViewInit, AfterViewCheck
           });
   
           this.selectedFunctionEvent("Daily");
-  
-          // if(!_.isNil(this.companyList)) {
-          //   this.ngZone.run(()=>{
-          //     this.loading_chart = false;
-          //     this.loading_chart = false;
-          //   });
-          // }
-        }
-
       }
     });
   }
 
   ngOnInit() {
 
-    this.trading_view_ready = true;
-  }
-
-  ngAfterViewInit(){
-
   }
 
   ngAfterViewChecked(){
-
     if(document.getElementById('tv-container') != null && this.trading_tv_set == false){
-
-      let symb = this.currentCompany.exchange + ":" + this.currentCompany.symbol;
-
-        postscribe('#tv-container', 
-            `<script> 
-              new TradingView.widget({
-                "width": 717,
-                "height": 350,
-                "symbol": "${symb}",
-                "interval": "D",
-                "timezone": "Etc/UTC",
-                "theme": "Light",
-                "style": "1",
-                "locale": "en",
-                "toolbar_bg": "#f1f3f6",
-                "enable_publishing": false,
-                "allow_symbol_change": true,
-                "details": true,
-                "hideideas": true
-              });
-            </script>`
-            );    
-
-        this.trading_tv_set = true;
+      this.postscribeService.postscribeChart(this.currentCompany.symbol, ()=>{this.trading_tv_set = true});
     }
-
-    // if(document.getElementById('tv-container-2') != null && this.trading_tv_set_2 == false){
-    //   postscribe('#tv-container-2', 
-    //     `<script type="text/javascript">
-    //       new TradingView.MediumWidget({
-    //         "container_id": "tv-medium-widget-13429",
-    //         "symbols": [
-    //           [
-    //             "Apple",
-    //             "AAPL "
-    //           ],
-    //           [
-    //             "Google",
-    //             "GOOGL"
-    //           ],
-    //           [
-    //             "Microsoft",
-    //             "MSFT"
-    //           ]
-    //         ],
-    //         "greyText": "Quotes by",
-    //         "gridLineColor": "#e9e9ea",
-    //         "fontColor": "#83888D",
-    //         "underLineColor": "#a6e5a0",
-    //         "trendLineColor": "#02c202",
-    //         "width": 700,
-    //         "height": 500,
-    //         "locale": "en"
-    //       });
-    //     </script>`
-    //   );   
-
-    //   this.trading_tv_set_2 = true;      
-    // }
   }
 
   initTradingViewComponents(exchange:string, symbol: string, name:string){
-
-    let symb = exchange + ":" + symbol;
-
-    // this.initTradingViewComponent1(symb, name);
-    this.initTradingViewComponent2(symb);
-  }
-
-  // initTradingViewComponent1(symbol: string, name: string){
-  //   postscribe('#tv-container-2', 
-  //   `<script type="text/javascript">
-  //     new TradingView.MediumWidget({
-  //       "container_id": "tv-medium-widget-13429",
-  //       "symbols": [
-  //         [
-  //           "${name}",
-  //           "${symbol} "
-  //         ],
-  //       "greyText": "Quotes by",
-  //       "gridLineColor": "#e9e9ea",
-  //       "fontColor": "#83888D",
-  //       "underLineColor": "#a6e5a0",
-  //       "trendLineColor": "#02c202",
-  //       "width": 700,
-  //       "height": 500,
-  //       "locale": "en"
-  //     });
-  //   </script>`
-  //   );   
-  // }
-
-  initTradingViewComponent2(symbol:string){
-
     document.getElementById("tv-container").innerHTML = null;
-
-    postscribe('#tv-container', 
-    `<script> 
-      new TradingView.widget({
-        "width": 717,
-        "height": 350,
-        "symbol": "${symbol}",
-        "interval": "D",
-        "timezone": "Etc/UTC",
-        "theme": "Light",
-        "style": "1",
-        "locale": "en",
-        "toolbar_bg": "#f1f3f6",
-        "enable_publishing": false,
-        "allow_symbol_change": true,
-        "details": true,
-        "hideideas": true
-      });
-    </script>`
-    );    
+    this.postscribeService.postscribeChart(symbol);
   }
-
 
   public removeFromWatchList(){
-
-    this.ngZone.run(()=>{
-      this.loading = true;
-      this.loading_chart = true;
-    });
-
     this.xchangeApp.httpService
     .RemoveUserFavorite({userId: this.loginService.subscribers.getValue().userId, companyId: this.currentCompany.companyId})
     .subscribe((results:any)=>{
-      console.log(results);
 
-      this.companyList = _.filter(this.companyList, (c)=>{
-        if(c.name != this.currentCompany.name) return c;
-      });
+      this.companyList = _.filter(this.companyList, (c)=>{ if(c.name != this.currentCompany.name) return c; });
 
       if(!_.isNil(this.companyList[0])){
         this.ngZone.run(()=>{
           this.currentCompany = this.companyList[0];
-          this.loading = false;
-          this.loading_chart = false;
-          this.theres_nothing_here = false;
+          this.loadService.complete();
         });
       }else{
-        this.loading = false;
-        this.loading_chart = false;
-        this.theres_nothing_here = true;
+        this.loadService.nothing();
       }
     });
   }
 
   public removeFromWatchListWithArgs(company:any){
-
-    this.ngZone.run(()=>{
-      this.loading = true;
-      this.loading_chart = true;
-    });
-
     this.xchangeApp.httpService
     .RemoveUserFavorite({userId: this.loginService.subscribers.getValue().userId, companyId: company.companyId})
     .subscribe((results:any)=>{
-    console.log(results);
 
-          this.companyList = _.filter(this.companyList, (c)=>{
-            if(c.name != company.name) return c;
-          });
+          this.companyList = _.filter(this.companyList, (c)=>{ if(c.name != company.name) return c; });
 
           if(!_.isNil(this.companyList[0])){
             this.ngZone.run(()=>{
               this.currentCompany = this.companyList[0];
-              this.loading = false;
-              this.loading_chart = false;
-              this.theres_nothing_here = false;
+              this.loadService.complete();
             });
           }else{
-            this.loading = false;
-            this.loading_chart = false;
-            this.theres_nothing_here = true;
+            this.loadService.nothing();
           }
     });
   }
-  
 
   public openModal(company : any) {
-    this.ngZone.run(()=>{this.loading_chart = true});
+    this.ngZone.run(()=>{this.loadService.loadingChart();});
     this.currentCompany = company;
-    this.apiSymbol = company.symbol;
+    this.initTradingViewComponents(company.exchange, company.symbol, company.name);
 
-    const config = new TemplateModalConfig<ModalContext, string, string>(this.modalTemplate);
-
-    config.closeResult = "closed!";
-    config.mustScroll = true;
-    config.context = { symbol: company.symbol, name: company.name, exchange: company.exchange, sector: company.sector, industry: company.industry, isFavorite: true, dataString: JSON.stringify(company)};
-
-    this.selectedInterval = " "; 
-    this.interval_disabled = true;
-    this.apiFunction = _.filter(this.functions, (f)=>{if(f.name == this.selectedFunction) return f;})[0].apiCall;
-    this.apiInterval = null;
-    this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval);      
-
-    this.initTradingViewComponents(company.exchange, company.symbol);
-    
-    //Unsubcribes to previous observables that haven't finished loading
-    if(!_.isNil(this.click_subscription)) this.click_subscription.unsubscribe();
-
-    this.click_subscription = this.alphaFetcher.getStockData(this.apiFunction, this.currentCompany.symbol, this.apiParser, this.apiInterval)
-    .subscribe((results)=>{
-
-      if(results.json()[this.apiParser[0]][this.apiParser[1]]){
-        this.apiParser[1] = moment(this.apiParser[1]).subtract(1, 'days').format("YYYY-MM-DD");
-      }
-      
-      switch(this.selectedFunction){
-        case "Daily": this.daily(results); break;
-        case "Weekly": this.weekly(results); break;
-        case "Monthly": this.monthly(results); break;
-      }
-    });
+    this.alphaVantage.open(this.currentCompany);
   }
 
   refreshModal(){
-    // this.ngZone.run(()=>{this.loading = true});
-    this.selectedFunctionEvent(this.selectedFunction);
+    this.selectedFunctionEvent(this.alphaVantage.selectedFunction);
   }
 
   public resultSelected($event : any){
-    this.ngZone.run(()=>{this.loading_chart = true});
+    this.ngZone.run(()=>{this.loadService.loadingChart()});
     console.log($event.substring(0, $event.indexOf(" ")));
     
     let company = _.filter(this.companyList, (c)=>{
       if(c.symbol == ($event.substring(0, $event.indexOf(" ")))) return c;
     })[0];
 
-    // this.dismissed();
     this.openModal(company);
   }
 
@@ -432,90 +186,12 @@ export class WatchlistComponent implements OnInit, AfterViewInit, AfterViewCheck
     return moment().format('hh:mm');
   }
 
-  public daily(results : any){
-    this.alphaVantage.processDailyTimeSeries(results, (time_series:any[], chartLabels:any, chartData:any)=>{
-      this.avCallBack(time_series, chartLabels, chartData);
-    });
-  }
-
-  public weekly(results : any){
-    this.alphaVantage.processWeeklyTimeSeries(results, (time_series:any[], chartLabels:any, chartData:any)=>{
-      this.avCallBack(time_series, chartLabels, chartData);
-    });
-  }
-
-  public monthly(results : any){
-    this.alphaVantage.processMonthlyTimeSeries(results, (time_series:any[], chartLabels:any, chartData:any)=>{
-      this.avCallBack(time_series, chartLabels, chartData);
-    });
-  }
-
-  public avCallBack(time_series:any[], chartLabels:any, chartData:any){
-    this.ngZone.run(()=>{
-      this.ohlc_outlook.open = time_series[0].open;
-      this.ohlc_outlook.high = time_series[0].high;
-      this.ohlc_outlook.low = time_series[0].low;
-      this.ohlc_outlook.close = time_series[0].close;
-      this.ohlc_outlook.volume = time_series[0].volume;
-
-      this.ohlc_outlook_type = " for the day of " + moment(time_series[0].key).format("MMM Do, YYYY");
-      this.closing_percent = "(" + (((parseFloat(time_series[1].close) - parseFloat(time_series[0].close)) / parseFloat(time_series[1].close)) * -100).toFixed(2) + "%)";
-
-      if(this.ohlc_outlook.close > this.ohlc_outlook.open){
-        this.closing_icon_class = "fa fa-arrow-up";
-        this.closing_color_indicator = "rgb(2, 194, 2)";
-      }else{
-        this.closing_icon_class = "fa fa-arrow-down";
-        this.closing_color_indicator = "rgb(212, 27, 27)";
-      }
-
-      this.lineChartLabels = chartLabels;
-      this.lineChartData[0].data = chartData;
-      this.loading = false;
-      this.loading_chart = false;
-    });
-  }
-
   public selectedFunctionEvent($event : any){
-    if($event == "Intraday") {this.ngZone.run(()=>{this.interval_disabled = false});}
-    else if($event != "Intraday"){
-      this.ngZone.run(()=>{this.loading_chart = true});
-      this.selectedInterval = " "; 
-      this.interval_disabled = true;
-      this.apiFunction = _.filter(this.functions, (f)=>{if(f.name == this.selectedFunction) return f;})[0].apiCall;
-      this.apiInterval = null;
-      this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval);      
-      this.alphaFetcher.getStockData(this.apiFunction, this.currentCompany.symbol, this.apiParser, this.apiInterval)
-      .subscribe((results)=>{
-        console.log(results.json());
-        // results = results.json();
-        if(results.json()[this.apiParser[0]][this.apiParser[1]]) this.apiParser[1] = moment(this.apiParser[1]).subtract(1, 'days').format("YYYY-MM-DD");
-
-        console.log("$event: " + $event);
-        console.log($event == "Weekly");
-        if($event == "Daily"){this.daily(results);}
-        else if($event == "Weekly"){ this.weekly(results);}
-        else if($event == "Monthly"){ console.log("YOOO"); this.monthly(results);}
-      });
-    }
-
-    this.selectedFunction = $event;
-    console.log(this.interval_disabled);
-    console.log(this.selectedFunction);
-  }
-  
-  public selectedIntervalEvent($event : any){
-    this.ngZone.run(()=>{this.loading_chart = true});
-    this.selectedInterval = $event;
-    this.apiFunction = _.filter(this.functions, (f)=>{if(f.name == this.selectedFunction) return f;})[0].apiCall;
-    this.apiInterval = _.filter(this.intervals, (i)=>{if(i.name == _.lowerCase(this.selectedFunction)) return i;})[0].apiCall;
-    this.apiParser = this.alphaParser.buildParser(this.apiFunction, this.apiInterval);      
-
-    console.log(this.selectedInterval);
+    this.alphaVantage.selectedFunctionEvent($event, this.currentCompany);
   }
 
   sort(op?:any){
-    if(!this.theres_nothing_here){
+    if(!this.loadService.theres_nothing_here){
       this.sorter.sort(op, (column:string, order:string)=>{
         this.ngZone.run(()=>{
               this.companyList = _.orderBy(this.companyList, [column], [order]);

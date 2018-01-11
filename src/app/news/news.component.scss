@@ -53,11 +53,11 @@
     bottom: 0;
 }
 
-#date {
-    // margin-left: 160px;
-    margin-top: 10px;
-    color: #616161;
-}
+// #date {
+//     // margin-left: 160px;
+//     margin-top: 10px;
+//     color: #616161;
+// }
 
 #hyper {
     color: white;
@@ -82,4 +82,12 @@
 
 .card.card:hover #date {
     color: white;
+}
+
+.card.card:hover #author {
+    color: white !important;
+}
+
+.card.card:hover #footer-row {
+    border-top-color: white !important;
 }

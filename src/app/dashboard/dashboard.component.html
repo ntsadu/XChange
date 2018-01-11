@@ -12,7 +12,7 @@
         </div>
         <div class="col-4" style="padding-right: 4px; padding-top: 4px;">
           <button class="demo-control close" (click)="_toggleOpened()">
-            <i class="fa fa-times" style="color: black;"></i>
+            <i class="fa fa-times" style="color: #252525;"></i>
           </button>
         </div>
       </div>
@@ -53,7 +53,7 @@
             <img src='../../assets/logos/xchange-logo.svg' height="30" width="30" style="width: 72px; margin-left: 0%;">
         </div>
         <div class="col-md-10 col-sm-8" style="padding: 0px; background: #dedede;">
-            <iframe scrolling="yes" allowtransparency="true" frameborder="0" style="background: #afaeae !important;" width="100%" height="40" src="https://s.tradingview.com/tickerswidgetembed/#%7B%22symbols%22%3A%5B%7B%22proName%22%3A%22INDEX%3ASPX%22%2C%22title%22%3A%22S%26P%20500%22%7D%2C%7B%22proName%22%3A%22INDEX%3AIUXX%22%2C%22title%22%3A%22Nasdaq%20100%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AEURUSD%22%2C%22title%22%3A%22EUR%2FUSD%22%7D%2C%7B%22proName%22%3A%22NYMEX%3ACL1!%22%2C%22title%22%3A%22Crude%20Oil%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AXAUUSD%22%2C%22title%22%3A%22Gold%22%7D%5D%2C%22locale%22%3A%22en%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A104%2C%22utm_source%22%3A%22www.tradingview.com%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22tickers%22%7D" style="box-sizing: border-box; padding-bottom: 0px; height: 73px; margin-bottom: -1px;"></iframe>            
+            <iframe scrolling="yes" allowtransparency="true" frameborder="0" style="background: #afaeae !important;" width="100%" height="40" [src]="sanitizer.bypassSecurityTrustResourceUrl(ticker_source)" style="box-sizing: border-box; padding-bottom: 0px; height: 73px; margin-bottom: -1px;"></iframe>            
         </div>
       </div>    
     </header>
@@ -89,11 +89,13 @@
                 <div class="row" (click)="openProfileModal()">
                   <div class="col-md-4 col-sm-6" style="padding-right: 1px;">
                     <div style="height: 45px; width: 45px; border-radius: 5px; background: rgb(224, 224, 224);">
-                      <i class="fa fa-user" aria-hidden="true" style="color: #7d7d7d;
-                                      height: 43px;
-                                      padding-left: 10.5px;
-                                      margin-bottom: 0px;
-                                      padding-bottom: 0px;"></i>
+                      <i class="fa fa-user" aria-hidden="true" style="
+                              color: rgba(82, 82, 82, 0.788235294117647);
+                              height: 43px;
+                              padding-left: 10.5px;
+                              padding-top: 7px;
+                              margin-bottom: 0px;
+                              padding-bottom: 0px;"></i>
                     </div>
                   </div>
                   <div class="col-md-8 col-sm-6" style="
@@ -104,9 +106,10 @@
                                         overflow: hidden;
                                         text-overflow: ellipsis;
                                         white-space: nowrap;">
-                    {{ user.username }}
+                    {{ user.firstName }} {{ user.lastName }}
                     <br>
-                    <span style="font-size: x-small;">View Profile</span>
+                    <span style="font-size: small; text-transform: lowercase;">@{{user.username}}</span>
+                    <!-- <span style="font-size: x-small;">View Profile</span> -->
                   </div>
                 </div>
 
@@ -123,10 +126,10 @@
                 </a>
                 <a *ngIf="!listingsPage" id="listings" class="list-group-item list-group-item-action" (click)="switchPage($event)">Equity Listings</a>
 
-                <a *ngIf="watchlistPage" id="watchlist" class="list-group-item list-group-item-clicked list-group-item-action" (click)="switchPage($event)">My Watch List
+                <a *ngIf="watchlistPage" id="watchlist" class="list-group-item list-group-item-clicked list-group-item-action" (click)="switchPage($event)">Watchlist
                   <i class="fa fa-chevron-right" style="padding-top: 3px; float: right;" aria-hidden="true"></i>
                 </a>
-                <a *ngIf="!watchlistPage" id="watchlist" class="list-group-item list-group-item-action" (click)="switchPage($event)">My Watch List</a>
+                <a *ngIf="!watchlistPage" id="watchlist" class="list-group-item list-group-item-action" (click)="switchPage($event)">Watchlist</a>
 
                 <a *ngIf="subscriptionsPage" id="subscriptions" class="list-group-item list-group-item-clicked list-group-item-action" (click)="switchPage($event)">Subscriptions
                   <i class="fa fa-chevron-right" style="padding-top: 3px; float: right;" aria-hidden="true"></i>

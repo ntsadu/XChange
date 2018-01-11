@@ -10,7 +10,6 @@
                             padding-left: 10px;
                             padding-right: 10px;
                             background-color: rgba(255, 255, 255, 0);
-                            border-bottom: 1px solid rgba(34,36,38,.15);
                             ">
                             <i class="favorite icon" [style.color]="fav_icon_active_color" (click)="removeFromWatchList()"></i> 
                         </a> 
@@ -45,17 +44,17 @@
                         <div class="ui segment" style="width: 33.6vw; height: 53px;">
                             <div class="row">
                                 <div class="col-md-5" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding-left: 0px;">
-                                    <span style="font-weight: bold;">Sector:</span> &ensp; {{context.sector}}
+                                    <span style="font-weight: bold; color: #636363;">Sector:</span> &ensp; <span style="color: #565656;">{{context.sector}}</span>
                                 </div>
                                 <div class="col-md-7" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border-left: 1px solid #c3c3c391;">
-                                    <span style="font-weight: bold;">Industry:</span> &ensp; {{context.industry}}
+                                    <span style="font-weight: bold; color: #636363;">Industry:</span> &ensp; <span style="color: #565656;">{{context.industry}}</span> 
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="ui segment" style="width: 28.6vw; height: 53px; float: right;">
-                                <span style="font-weight: bold;">Last Updated:</span> &ensp; {{getCurrentDate()}} at {{getCurrentTime()}} 
+                                <span style="font-weight: bold; color: #636363;">Last Updated:</span> &ensp; <span style="color: #565656;"> {{getCurrentDate()}} at {{getCurrentTime()}} </span>
                             <button style="background-color:transparent;
                                             border: none; float: right;" 
                                             (click)="refreshModal()">
@@ -206,7 +205,7 @@
                                         <div *ngIf="loading_chart" class="ui active mini inverted dimmer" style="margin-top: 70px; height: 8px; background: transparent;">
                                             <div  class="ui medium loader"></div>
                                         </div>
-                                      <div *ngIf="loading_chart == false" class="ui statistic" style="width: 100%; margin-top: 25px;">
+                                      <div *ngIf="loading_chart == false" class="ui statistic" style="width: 100%; margin-top: 18px;">
                                         <div class="value">
                                             {{ohlc_outlook.volume}}
                                         </div>
@@ -230,6 +229,16 @@
                                     </div> -->
                             </div>
                           </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                                <div class="ui segment" style="width: 64.65vw; height: 385px; padding-top: 16px; margin-top: -4px;">
+
+                                <div id="tv-container"></div>                    
+                                </div>            
+                        </div>
+                    </div>
+
                 </div>
                 <!-- <div class="actions">
                     <button class="ui red button" (click)="modal.deny('denied')">Cancel</button>
@@ -266,40 +275,40 @@
                 </span>
         </div> -->
     </div>
-<table class="table table-striped" [mfData]="companyList" [mfActivePage] = "1" [mfRowsOnPage]="5">
+<table class="table table-striped" [mfData]="companyList" [mfActivePage] = "1" [mfRowsOnPage]="5" style="height: calc(100vh - 157px);">
     <thead style="color: rgba(224, 224, 224, 0.94); background-color: rgba(76, 76, 76, 0.7607843137254902);">
         <tr>
             <th style="width: 7%;" 
-                [style.padding-left]="symbol_left" [style.padding-top]="symbol_top">
-                <mfDefaultSorter id="symbol" by="name" (click)="sort('symbol')">SYMBOL
+                [style.padding-left]="symbol_left" [style.padding-top]="symbol_top" (click)="sort('symbol')">
+                <mfDefaultSorter id="symbol" by="name">SYMBOL
                     <i *ngIf="symbol_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
                     <i *ngIf="symbol_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
                 </mfDefaultSorter>
             </th>
-            <th style="width: 10%;"
-                [style.padding-left]="exchange_left" [style.padding-top]="exchange_top">
-                <mfDefaultSorter by="name" (click)="sort('exchange')">EXCHANGE
+            <th style="width: 10%; padding-left: 20px !important;"
+                style.padding-left="20px" [style.padding-top]="exchange_top" (click)="sort('exchange')">
+                <mfDefaultSorter by="name">EXCHANGE
                     <i *ngIf="exchange_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
                     <i *ngIf="exchange_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
                 </mfDefaultSorter>
             </th>
-            <th style="width: 27%"
-                [style.padding-left]="name_left" [style.padding-top]="name_top">
-                <mfDefaultSorter by="email" (click)="sort('name')">NAME
+            <th style="width: 27%; padding-left: 20px !important;"
+                style.padding-left="20px" [style.padding-top]="name_top" (click)="sort('name')">
+                <mfDefaultSorter by="email">NAME
                     <i *ngIf="name_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
                     <i *ngIf="name_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
                 </mfDefaultSorter>
             </th>
-            <th style="width: 20%"
-                [style.padding-left]="sector_left" [style.padding-top]="sector_top">
-                <mfDefaultSorter by="age" (click)="sort('sector')">SECTOR
+            <th style="width: 20%; padding-left: 20px !important;"
+                style.padding-left="20px" [style.padding-top]="sector_top" (click)="sort('sector')">
+                <mfDefaultSorter by="age">SECTOR
                     <i *ngIf="sector_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
                     <i *ngIf="sector_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
                 </mfDefaultSorter>
             </th>
-            <th style="width: 25%"
-                [style.padding-left]="industry_left" [style.padding-top]="industry_top">
-                <mfDefaultSorter by="city" (click)="sort('industry')">INDUSTRY
+            <th style="width: 25%; padding-left: 20px !important;"
+                style.padding-left="20px" [style.padding-top]="industry_top" (click)="sort('industry')">
+                <mfDefaultSorter by="city">INDUSTRY
                     <i *ngIf="industry_asc" class="fa fa-sort-asc" style="padding-left: 4px;" aria-hidden="true"></i>
                     <i *ngIf="industry_desc" class="fa fa-sort-desc" style="padding-left: 4px;" aria-hidden="true"></i>
                 </mfDefaultSorter>
@@ -318,12 +327,21 @@
                 </div>
             </div>
             <div *ngIf="loading == false" style="height: calc(100vh - 283px);">
-                <tr *ngFor="let c of companyList | paginate: { itemsPerPage: 50, currentPage: p }; let i = index;" class="table-row" style="background-color: rgba(255, 255, 255, 0.611764705882353);; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #c5bdbd; color: #5a5656; font-family: 'Arimo', sans-serif; font-weight: 600;">
+                <tr *ngFor="let c of companyList | paginate: { itemsPerPage: 200, currentPage: p }; let i = index;" class="table-row" 
+                        style="
+                            background-color: rgba(255, 255, 255, 0.611764705882353);
+                            border-bottom-style: solid;
+                            border-bottom-width: 1px;
+                            border-bottom-color: #c7c1c1;
+                            color: rgba(37, 35, 35, 0.8705882352941177);
+                            font-family: 'Arimo', sans-serif;
+                            font-weight: 500;
+                            letter-spacing: .5px;">
                     <td style="width: 7%; padding-left: 16px;"><a (click)="openModal(c)">{{c.symbol}}</a></td>
                     <td style="width: 10%; padding-left: 20px;">{{c.exchange}}</td>
-                    <td style="width: 28%; padding-left: 12px;"><a (click)="openModal(c)">{{c.name}}</a></td>
-                    <td style="width: 20%; padding-left: 0px;">{{c.sector}}</td>
-                    <td style="width: 25%; padding-left: 5px;">{{c.industry}}</td>
+                    <td style="width: 27%; padding-left: 22px;"><a (click)="openModal(c)">{{c.name}}</a></td>
+                    <td style="width: 20%; padding-left: 20px;">{{c.sector}}</td>
+                    <td style="width: 25%; padding-left: 20px;">{{c.industry}}</td>
                     <td style="width: 10%; padding-top: 10px; padding-left: 3.55%;">
                         <button type="button" class="btn btn-primary" style="padding-left: 10px; padding-right: 10px;" (click)="openModal(c)">
                             <i class="fa fa-arrows-alt"></i>

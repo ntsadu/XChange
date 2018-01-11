@@ -31,6 +31,12 @@ $duration: 10000s;
       transform: translate3d(-100%, 0, 0);
     }
   }
+
+//   aside{
+//     display: block;
+//     background-color: rgba(100, 208, 36, 0.86) !important;
+//     color: white !important;
+//   }
   
 
 //   iframe{
@@ -195,6 +201,10 @@ input:not([type]):focus:not([readonly]) + label, input[type=text]:not(.browser-d
     color: #9a9a9a;
 }
 
+
+.ui.table thead th {
+    color: rgb(100, 99, 99) !important;
+}
 
 
 // .ui.modal{
